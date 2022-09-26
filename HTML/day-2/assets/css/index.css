@@ -4,6 +4,12 @@
 body{
     margin: 0;
 }
+header{
+    margin: 15px;
+    padding: 20px;
+    text-align: center;
+    background-color: #ddd;
+}
 .container{
     display: flex;
     flex-wrap: wrap;
@@ -74,7 +80,7 @@ ul li{
     left: 0;
     bottom: 0;
     width: 100%;
-    background-color: rgb(181, 243, 181);
+    background-color: #ddd;
     color: black;
 }
 .particles-js-canvas-el{
