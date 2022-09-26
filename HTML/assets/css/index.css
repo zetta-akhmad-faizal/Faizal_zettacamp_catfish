@@ -1,0 +1,88 @@
+*{
+    box-sizing: border-box;
+}
+body{
+    margin: 0;
+}
+.container{
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    padding: 0 100px;
+}
+.row:after{
+    content: "";
+    display: table;
+    clear: both;
+}
+.column-image{
+    float: left;
+    width: 33.3%;
+    padding-top: 50px;
+}
+.column-description{
+    float: left;
+    width: 66.7%;
+    padding: 50px;
+}
+.photos{
+    margin-right: auto;
+    margin-left: auto;
+    height: 100pt;
+}
+.dropdown{
+    position: relative;
+    display: inline-block;
+}
+.dropdown-content{
+    display: none;
+    position: absolute;
+    background-color: rgb(187, 187, 187);
+    min-width: 140px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.dropdown:hover .dropdown-content{
+    display: block;
+}
+.desc {
+    padding: 15px;
+    text-align: center;
+    color: white;
+}
+.sosmed:hover{
+    transform: rotateY(20deg);
+}
+.parent-table{
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+}
+th, td, thead, tbody{
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+tr:hover{
+    background-color: coral;
+}
+ul li{
+    list-style: none;
+}
+.footer{
+    position: relative;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(181, 243, 181);
+    color: black;
+}
+.particles-js-canvas-el{
+    position: absolute;
+    bottom: 0;
+}
+@media screen and (max-width: 600px) {
+    .column-image, .column-description {
+      width: 100%;
+    }
+}
