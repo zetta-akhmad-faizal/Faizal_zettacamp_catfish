@@ -85,7 +85,42 @@ ul li{
 }
 .particles-js-canvas-el{
     position: absolute;
+    bottom: 10px;
+    left: 0;
+    z-index: 0;
+}
+.button-days{
+    position: fixed;
+    right: 0;
     bottom: 0;
+}
+.mini-element{
+    margin: 10px;
+    width: 100%;
+}
+input[type=text]{
+    float: right;
+    position: relative;
+    right: 0;
+    width: 130px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: white;
+    background-image: url('https://cdn.onlinewebfonts.com/svg/img_536022.png');
+    background-size: 18px;
+    background-position: 10px 10px; 
+    background-repeat: no-repeat;
+    padding: 10px 18px 10px 38px;
+    transition: 0.4s ease-in-out;
+    z-index: 1;
+}
+input[type=text]:focus{
+    width: 100%;
+}
+small{
+    float: right;
 }
 @media screen and (max-width: 600px) {
     .column-image, .column-description {

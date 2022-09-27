@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Zettacamp Day Three</title>
+        <meta charset="UTF-8" http-equiv="X-UA-Compatible" name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="assets/css/index.css">
+    </head>
+    <body>
+        <header>
+            My Shopping List
+        </header>
+        <div class="container">
+            <div class="mini-element">
+                <input type="text" id="searching" class="searching" placeholder="Items..." onkeyup="searchBar()">
+            </div>
+            <table class="parent-table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Items</th>
+                        <th>Amounts</th>
+                        <th>Prices</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td>
+                            <ul>
+                                <li>
+                                    Aqua Mineral
+                                    <ul>
+                                        <li>
+                                            <img 
+                                            src="https://klikigr.s3-ap-southeast-1.amazonaws.com/images/products/0436250.png" 
+                                            alt="aqua 330mL" style="width:25px;height:25px;">
+                                            330mL
+                                        </li>
+                                        <li>
+                                            <img
+                                            src="https://aqua.co.id/uploads/2019/09/5d832aefd7856_1568877295.png"
+                                            alt="aqua 450mL" style="width:15px;height:30px;">
+                                            &nbsp;450mL
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </td>
+                        <td>21</td>
+                        <td>5000</td>
+                        <td>105000</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            <ul>
+                                <li>
+                                    Indomie Instant
+                                    <ul>
+                                        <li>
+                                            <img
+                                            src="https://cdn.shopify.com/s/files/1/1257/6393/products/Indomie_Mi_Goreng_Fried_Noodles.png?v=1484364679"
+                                            alt="mie goreng" style="width:25px;height:20px;">
+                                            <i>Mie goreng</i>
+                                        </li>
+                                        <li>
+                                            <img
+                                            src="https://th.bing.com/th/id/OIP.vdUmjCuPJkzrEdQj1lZ7VgHaE8?pid=ImgDet&rs=1"
+                                            alt="mie rebus" style="width:25px;height:20px;">
+                                            <i>Mie rebus</i>
+                                            <ul>
+                                                <li>Onion chicken</li>
+                                                <li>Chicken soto</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </td>
+                        <td>12</td>
+                        <td>3200</td>
+                        <td>38400</td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td>
+                            <img
+                            src="https://w7.pngwing.com/pngs/209/133/png-transparent-gulaku-sugar-breadstick-food-discounts-and-allowances-alat-tulis-white-food-supermarket-thumbnail.png"
+                            alt="gulaku" style="width:25px;height:25px;">
+                            &nbsp;Sugar
+                        </td>
+                        <td>2</td>
+                        <td>12000</td>
+                        <td>24000</td>
+                    </tr>
+                    <tr>
+                        <td>4.</td>
+                        <td>
+                            <img
+                            src="https://library.kissclipart.com/20181203/gqe/kissclipart-bimoli-clipart-soybean-oil-cooking-oils-a22b22acf7ea6719.jpg"
+                            alt="bimoli" style="width:30px;height:25px;">
+                            &nbsp;Bimoli Oil
+                        </td>
+                        <td>3</td>
+                        <td>14000</td>
+                        <td>42000</td>
+                    </tr>
+                    <tr>
+                        <td>5.</td>
+                        <td>
+                            <img
+                            src="https://image1ws.indotrading.com/s3/productimages/co37129/p409962/w220-h220/21c5644f-edcd-4c68-ad47-b94d576acd12w.png"
+                            alt="bimoli" style="width:30px;height:25px;">
+                            &nbsp;Nutrisari
+                        </td>
+                        <td>16</td>
+                        <td>2500</td>
+                        <td>40000</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="mini-element">
+                <button style="float:left;background-color: rgb(158, 229, 158);border: 1px green;">
+                    <a href="first-day.html" style="text-decoration:none;color:black;">&lsaquo; About me</a>
+                </button>
+                <small> 
+                    <code id="code">5 of 25</code> 
+                    <button>&laquo;</button>
+                    <button>&raquo;</button>
+                </small>
+            </div>
+            <script type="text/Javascript" src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+            <script type="text/Javascript" src="https://threejs.org/examples/js/libs/stats.min.js"></script>
+            <script type="text/Javascript" src="assets/js/app.js"></script>
+        </div>
+        <div class="footer">
+            <div class="row">
+                <div class="column-description">
+                    <button onclick="getLocation()" style="background-color:black;color:white;">Click me</button>
+                    <div id="googleMap" style="width:500px; height:200px;"></div>
+                </div>
+                <div class="column-image">
+                    <a style="text-decoration:none;" id="anchor" target="_blank">Please click me button</a>
+                    <p style="text-justify:auto;text-align:justify;padding-right: 15px;">
+                        If you the click me button, you will know your position via maps 
+                        or you can open a webpage about your current position
+                    </p>
+                </div>
+                <script src="assets/js/index.js"></script>
+                <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGM0uIef9f97H889spGAGwL16SPnWW_Cc&callback=myMap"></script>
+            </div>
+        </div>
+    </body>
+</html>
