@@ -8,9 +8,6 @@ function getValue(){
     let ln = document.getElementById("ln").value;
     let m = document.getElementById("m").value;
     let fm = document.getElementById("fm").value;
-    // let talent_ac = document.getElementsByClassName("ac").value;
-    // let talent_sp = document.getElementsByClassName("sp").value;
-    // let talent_tr = document.getElementsByClassName("tr").value;
     let talent = document.querySelectorAll("input[type='checkbox']");
     let git = document.getElementById("git").value;
     let email = document.getElementById("email").value;
@@ -25,9 +22,13 @@ function getValue(){
     document.getElementById("mytelp").innerHTML = telp;
     document.getElementById("born").innerHTML = dob;
     document.getElementById("mydesc").innerHTML = desc;
+    let my_talent;
     for(let i=0;i < talent.length;i++){
-        document.getElementById("talent").innerHTML = `My Hobbies: <ul><li>${talent[i].value}</li></ul>`
+        my_talent += `<li>${talent[i].value}</li>`;
+        console.log(talent[i].value)
     }
+    document.getElementById("hobi").innerHTML = "My Hobies:"
+    document.getElementById("talent").innerHTML = my_talent;
 }
 
 function searchBar(){
