@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Zettacamp Day Two</title>
+        <meta charset="utf-8" http-equiv="X-UA-Compatible" content="width=device-width, initial-scale=1.0" name="viewport">
+        <link rel="stylesheet" href="assets/css/index.css">
+    </head>
+    <body>
+        <header>
+            About Me
+        </header>
+        <div class="container">
+            <div class="row">
+                <div class="column-image">
+                    <div class="dropdown">
+                        <img src="assets/img/profile.jpg" alt="my_photo" class="photos" title="hover me">
+                        <div class="dropdown-content">
+                            <img src="assets/img/sec-image.jfif" alt="my-sec-photo" width="100" height="160">
+                            <p class="desc">Akhmad Faizal</p>
+                            <a href="http://www.linkedin.com/in/akhfzz" target="_blank" style="text-decoration:none;">
+                                <img src="https://cdn.onlinewebfonts.com/svg/img_4650.png" alt="linkedin" height="30px" width="25px" class="sosmed">
+                            </a>
+                            <a href="https://www.instagram.com/akhfzl_/" target="_blank" style="text-decoration:none;">
+                                <img src="https://logos-world.net/wp-content/uploads/2020/04/Instagram-Emblem.png" alt="instagram" height="30px" width="30px" class="sosmed">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="column-description" id="particles-js">
+                    <p style="text-justify:auto;text-align:justify;">
+                        &nbsp; &nbsp; &nbsp;Hi. You can call me Faizal. I'm Informatics <sup>7</sup>th semester at Jenderal Achmad Yani University of Yogyakarta.
+                        Now, i'm following zettacamp activity as <i>Back-End Developer</i>. As you should know, before following the zettacamp,
+                        i interested to learn <i>Back-End Developers</i> roadmap as Cloud computing, practise some programming language and
+                        created mini-project. For more details, you can read in the table below &darr; or hover picture beside &larr;
+                    </p>
+                </div>
+            </div>
+            <table class="parent-table">
+                <thead>
+                    <tr>
+                        <th>Generals</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>High school</td>
+                        <td>SMAN 2 Meulaboh</td>
+                    </tr>
+                    <tr>
+                        <td>Campus</td>
+                        <td>Jenderal Achmad Yani University of Yogyakarta</td>
+                    </tr>
+                    <tr>
+                        <td>Majors</td>
+                        <td>S-1 Informatics</td>
+                    </tr>
+                    <tr>
+                        <td>Programmings</td>
+                        <td>
+                            <ul>
+                                <li>Python</li>
+                                <li>Javascript/Nodejs</li>
+                                <li>Dart/Flutter</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Deployments</td>
+                        <td>
+                            <ul>
+                                <li>Google Cloud Platform</li>
+                                <li>Heroku</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Databases</td>
+                        <td>
+                            <ul>
+                                <li>MySQL</li>
+                                <li>PostgreSQL</li>
+                                <li>MongoDB</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Interests</td>
+                        <td>
+                            <ul>
+                                <li>Cloud Computing</li>
+                                <li>Data Science</li>
+                                <li>Software development/Back-End Enthusiast</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="button-days">
+                <button style="background-color: rgb(158, 229, 158);border: 1px green;">
+                    <a href="three-days.html" style="text-decoration:none;color: black;">Shopping List &rsaquo;</a>
+                </button>
+            </div>
+       </div>
+        <div class="footer">
+            <div class="row">
+                <div class="column-description">
+                    <button onclick="getLocation()" style="background-color:black;color:white;">Click me</button>
+                    <div id="googleMap" style="width:500px; height:200px;"></div>
+                </div>
+                <div class="column-image">
+                    <a style="text-decoration:none;" id="anchor" target="_blank">Please click me button</a>
+                    <p style="text-justify:auto;text-align:justify;padding-right: 15px;">
+                        If you the click me button, you will know your position via maps 
+                        or you can open a webpage about your current position
+                    </p>
+                </div>
+                <script src="assets/js/index.js"></script>
+                <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGM0uIef9f97H889spGAGwL16SPnWW_Cc&callback=myMap"></script>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+        <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
+        <script src="assets/js/app.js"></script>
+    </body>
+</html>

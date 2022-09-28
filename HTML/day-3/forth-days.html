@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>HTML Day 4</title>
+    <meta charset="UTF-8" http-equiv="X-UA-Compatible" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/index.css">
+    <script type="text/javascript" src="assets/js/app.js"></script>
+</head>
+
+<body>
+    <header>
+        My Multimedia Task
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <h3 class="font">My Social Media</h3>
+                <blockquote style='width:300px;' class='instagram-media' data-instgrm-version='14'>
+                    <a href='https://www.instagram.com/p/BNWGSuHh5TW/?utm_source=ig_web_copy_link'></a>
+                </blockquote>
+                <script src="//www.instagram.com/embed.js"></script>
+                <h3 class="font">Song Favorite</h3>
+                <audio controls style="width:300px;">
+                    <source src="assets/audio/James Arthur - Impossible.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <h3 class="font">Video Favorite</h3>
+                <iframe width="320" height="400" src="https://www.youtube.com/embed/nF3YydGfOe8"></iframe>
+            </div>
+            <div class="col-7">
+                <div class="form-wrap">
+                    <form action="#">
+                        <div class="form-row">
+                            <div class="input-data">
+                                <input type="text" required id="fn" name="fn">
+                                <div class="underline"></div>
+                                <label for="fn">First Name*</label>
+                            </div>
+                            <div class="input-data">
+                                <input type="text" required id="ln" name="ln">
+                                <div class="underline"></div>
+                                <label for="ln">Last Name*</label>
+                            </div>
+                        </div>
+                        <div style="padding: 15px;" for="m">
+                            <h4 class="font">Gender</h4>
+                            <label class="radio-button" for="m">Male
+                                <input type="radio" name="radio" id="m" value="male">
+                                <span class="radio_class"></span>
+                            </label>
+                            <label class="radio-button" for="fm">Female
+                                <input type="radio" name="radio" id="fm" value="female">
+                                <span class="radio_class"></span>
+                            </label>
+                        </div>
+                        <div style="padding: 15px;">
+                            <h4 class="font">Talent</h4>
+                            <label class="checkbox-custom">
+                                Academic
+                                <input type="checkbox" id="input" value="academic" class="ac">
+                                <span class="mark"></span>
+                            </label>
+                            <label class="checkbox-custom">
+                                Sporty
+                                <input type="checkbox" id="input" value="sporty" class="sp">
+                                <span class="mark"></span>
+                            </label>
+                            <label class="checkbox-custom">
+                                Travelling
+                                <input type="checkbox" id="input" value="travelling" class="tr">
+                                <span class="mark"></span>
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-data">
+                                <input type="email" required id="email" name="email">
+                                <div class="underline"></div>
+                                <label for="email">Email Address</label>
+                            </div>
+                            <div class="input-data">
+                                <input type="url" required id="git" name="git">
+                                <div class="underline"></div>
+                                <label for="git">Github Account</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-data">
+                                <input type="text" required id="telp" name="telp">
+                                <div class="underline"></div>
+                                <label for="telp">Telephone</label>
+                            </div>
+                            <div class="input-data">
+                                <input type="date" required id="date" name="date">
+                                <div class="underline"></div>
+                                <label for="date"></label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-data textarea">
+                                <textarea rows="8" cols="80" required id="desc_myself"></textarea>
+                                <br />
+                                <div class="underline"></div>
+                                <label for="">Description yourself</label>
+                                <br />
+                                <div class="form-row submit-btn">
+                                    <div class="input-data">
+                                        <div class="inner"></div>
+                                        <input type="button" value="submit" onclick="getValue()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div style="margin-top: 200px;">
+                    <table class="parent-table">
+                        <thead>
+                            <th>Properties</th>
+                            <th>Details</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>First Name</td>
+                                <td id="first_name"></td>
+                            </tr>
+                            <tr>
+                                <td>Last Name</td>
+                                <td id="last_name"></td>
+                            </tr>
+                            <tr>
+                                <td>Gender</td>
+                                <td id="gen"></td>
+                            </tr>
+                            <tr>
+                                <td>Talent</td>
+                                <td id="talent"></td>
+                            </tr>
+                            <tr>
+                                <td>Email address</td>
+                                <td id="e-mail"></td>
+                            </tr>
+                            <tr>
+                                <td>Github Account</td>
+                                <td id="git_acc"></td>
+                            </tr>
+                            <tr>
+                                <td>Mobile Phone</td>
+                                <td id="mytelp"></td>
+                            </tr>
+                            <tr>
+                                <td>Date of Born</td>
+                                <td id="born"></td>
+                            </tr>
+                            <tr>
+                                <td>Description</td>
+                                <td id="mydesc"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
