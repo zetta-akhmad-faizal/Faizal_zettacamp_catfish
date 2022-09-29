@@ -32,8 +32,8 @@ header {
 
 [class*="col-"] {
     float: left;
-    padding: 15px;
-    margin: 50px;
+    padding: 5px;
+    margin: 5px;
 }
 
 .col-1 {
@@ -164,6 +164,14 @@ ul li {
     width: 100%;
     padding: 10px;
     height: auto;
+    background-color: #ddd;
+    color: black;
+}
+#footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
     background-color: #ddd;
     color: black;
 }
@@ -440,4 +448,111 @@ mark:after {
     height: 10px;
     border-radius: 80%;
     background: white;
+}
+
+section {
+    padding: 50px;
+    float: right;
+    width: 60%;
+    margin-left: 10px;
+}
+
+aside {
+    width: 30%;
+    padding: 50px;
+    float: left;
+    margin-right: 10px;
+}
+
+nav {
+    margin: 0 15px 0 15px;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #e7e7e7;
+    background-color: #f3f3f3;
+}
+
+a {
+    float: left;
+}
+
+nav a {
+    display: block;
+    color: #666;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+nav a:hover {
+    background-color: #5a6681;
+    color: white;
+}
+
+nav a.active {
+    background-color: #5a6681;
+    color: white;
+}
+
+details {
+    margin: 15px;
+}
+
+summary {
+    padding: 10px;
+}
+
+.drop-zone {
+    margin: auto;
+    max-width: 200px;
+    height: 200px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+    cursor: pointer;
+    color: #cccccc;
+    border: 4px dashed #009578;
+    border-radius: 10px;
+}
+
+.drop-zone--over {
+    border-style: solid;
+}
+
+.drop-zone__input {
+    display: none;
+}
+
+.drop-zone__thumb {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #cccccc;
+    background-size: cover;
+    position: relative;
+}
+
+.drop-zone__thumb::after {
+    /* content: attr(data-label); */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 5px 0;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.75);
+    font-size: 14px;
+    text-align: center;
+}
+
+.box-result{
+    border: 1px solid silver;
+    background-color: #e6f3ef;
+    margin: 12px 0;
 }

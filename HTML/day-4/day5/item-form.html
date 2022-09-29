@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Day 5</title>
+        <meta charset="UTF-8" content="width=device-width, initial-scale=1.0" name="viewport" http-equiv="X-UA-Compatible">
+        <link rel="stylesheet" href="../assets/css/index.css" type="text/css">
+    </head>
+    <body>
+        <header>My Item Task</header>
+        <nav>
+            <a href="item-form.html" class="active">Item Form</a>
+            <a href="item-list.html">Item List</a>
+        </nav>
+        <aside>
+            <details>
+                <summary>My Social Media</summary>
+                <blockquote style='width:300px;' class='instagram-media' data-instgrm-version='14'>
+                    <a href='https://www.instagram.com/p/BNWGSuHh5TW/?utm_source=ig_web_copy_link'></a>
+                </blockquote>
+                <script src="//www.instagram.com/embed.js"></script>
+            </details>
+            <details>
+                <summary>My Song Favorite</summary>
+                <audio controls style="width:300px;">
+                    <source src="../assets/audio/James Arthur - Impossible.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </details>
+            <details>
+                <summary>My Video Favorite</summary>
+                <iframe width="320" height="400" src="https://www.youtube.com/embed/nF3YydGfOe8"></iframe>
+            </details>
+            <img id="my_image" style="width: 300px;height:400px;margin: 0 17px;" alt="my_image">
+        </aside>
+        <section>            
+            <form action="#">
+                <div class="drop-zone">
+                    <span class="drop-zone__prompt">Drop or Click</span>
+                    <input type="file" name="myFile" class="drop-zone__input" id="photo">
+                </div>
+                <div class="form-row">
+                    <div class="input-data">
+                        <input type="text" required id="fn" name="fn">
+                        <div class="underline"></div>
+                        <label for="fn">First Name*</label>
+                    </div>
+                    <div class="input-data">
+                        <input type="text" required id="ln" name="ln">
+                        <div class="underline"></div>
+                        <label for="ln">Last Name*</label>
+                    </div>
+                </div>
+                <div style="padding: 15px;" for="m">
+                    <h4 class="font">Gender</h4>
+                    <label class="radio-button" for="m">Male
+                        <input type="radio" name="radio" id="m" value="male">
+                        <span class="radio_class"></span>
+                    </label>
+                    <label class="radio-button" for="fm">Female
+                        <input type="radio" name="radio" id="fm" value="female">
+                        <span class="radio_class"></span>
+                    </label>
+                </div>
+                <div style="padding: 15px;">
+                    <h4 class="font">Talent</h4>
+                    <label class="checkbox-custom">
+                        Academic
+                        <input type="checkbox" id="input" value="academic" class="ac">
+                        <span class="mark"></span>
+                    </label>
+                    <label class="checkbox-custom">
+                        Sporty
+                        <input type="checkbox" id="input" value="sporty" class="sp">
+                        <span class="mark"></span>
+                    </label>
+                    <label class="checkbox-custom">
+                        Travelling
+                        <input type="checkbox" id="input" value="travelling" class="tr">
+                        <span class="mark"></span>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <div class="input-data">
+                        <input type="email" required id="email" name="email">
+                        <div class="underline"></div>
+                        <label for="email">Email Address</label>
+                    </div>
+                    <div class="input-data">
+                        <input type="url" required id="git" name="git">
+                        <div class="underline"></div>
+                        <label for="git">Github Account</label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-data">
+                        <input type="text" required id="telp" name="telp">
+                        <div class="underline"></div>
+                        <label for="telp">Telephone</label>
+                    </div>
+                    <div class="input-data">
+                        <input type="date" required id="date" name="date">
+                        <div class="underline"></div>
+                        <label for="date"></label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-data textarea">
+                        <textarea rows="8" cols="80" required id="desc_myself"></textarea>
+                        <br />
+                        <div class="underline"></div>
+                        <label for="">Description yourself</label>
+                        <br />
+                        <div class="form-row submit-btn">
+                            <div class="input-data">
+                                <div class="inner"></div>
+                                <input type="button" value="submit" onclick="getValue()" id="formButton">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+        <section>
+            <div class="box-result">
+                <h3 class="font">Result</h3>
+                <article class="row">
+                    <div class="col-2">
+                        <p>First name</p>
+                    </div>
+                    <div class="col-2">
+                        <p>:</p>
+                    </div>
+                    <div class="col-2">
+                        <p id="first_name"></p>
+                    </div>
+                </article>
+                <article class="row" style="padding:0; margin: 0;">
+                    <div class="col-2">
+                        <p>Last name</p>
+                    </div>
+                    <div class="col-2">
+                        <p>:</p>
+                    </div>
+                    <div class="col-2">
+                        <p id="last_name"></p>
+                    </div>
+                </article>
+                <article class="row" style="padding:0; margin: 0;">
+                    <div class="col-2">
+                        <p>Gender</p>
+                    </div>
+                    <div class="col-2">
+                        <p>:</p>
+                    </div>
+                    <div class="col-2">
+                        <p id="gen"></p>
+                    </div>
+                </article>
+                <article class="row" style="padding:0; margin: 0;">
+                    <div class="col-2">
+                        <p>Email</p>
+                    </div>
+                    <div class="col-2">
+                        <p>:</p>
+                    </div>
+                    <div class="col-2">
+                        <p id="e-mail"></p>
+                    </div>
+                </article>
+                <article class="row" style="padding:0; margin: 0;">
+                    <div class="col-2">
+                        <p>Github Account</p>
+                    </div>
+                    <div class="col-2">
+                        <p>:</p>
+                    </div>
+                    <div class="col-2">
+                        <p id="git_acc"></p>
+                    </div>
+                </article>
+                <article class="row" style="padding:0; margin: 0;">
+                    <div class="col-2">
+                        <p>My Interest</p>
+                    </div>
+                    <div class="col-2">
+                        <p>:</p>
+                    </div>
+                    <div class="col-2">
+                        <h6 class="font" id="hobi"></h6>
+                        <ul>
+                            <li id="talent"></li>
+                        </ul>
+                    </div>
+                </article>
+                <article class="row" style="padding:0; margin: 0;">
+                    <div class="col-2">
+                        <p>Mobile Phone</p>
+                    </div>
+                    <div class="col-2">
+                        <p>:</p>
+                    </div>
+                    <div class="col-2">
+                        <p id="mytelp"></p>
+                    </div>
+                </article>
+                <article class="row" style="padding:0; margin: 0;">
+                    <div class="col-2">
+                        <p>Date of Born</p>
+                    </div>
+                    <div class="col-2">
+                        <p>:</p>
+                    </div>
+                    <div class="col-2">
+                        <p id="born"></p>
+                    </div>
+                </article>
+                <article class="row" style="padding:0; margin: 0;">
+                    <div class="col-2">
+                        <p>Description</p>
+                    </div>
+                    <div class="col-2">
+                        <p>:</p>
+                    </div>
+                    <div class="col-2">
+                        <p id="mydesc"></p>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </body>
+    <script src="../assets/js/index.js" type="text/javascript"></script>
+    <script src="../assets/js/app.js" type="text/javascript"></script>
+</html>
