@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Homepage</title>
+        <meta charset="UTF-8" http-equiv="X-UA-Compatible" name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../assets/css/index.css">
+    </head>
+    <main class="container-form">
+        <section class="box">
+            <form action="#">
+                <div class="drop-zone">
+                    <span class="drop-zone__prompt">Drop or Click</span>
+                    <input type="file" name="myFile" class="drop-zone__input" id="photo">
+                </div>
+                <div class="form-row">
+                    <div class="input-data">
+                        <input type="text" required id="username" name="username">
+                        <div class="underline"></div>
+                        <label for="username">Username*</label>
+                    </div>
+                    <div class="input-data">
+                        <input type="password" required id="password" name="password">
+                        <div class="underline"></div>
+                        <label for="password">Password*</label>
+                    </div>
+                    <div class="input-data">
+                        <input type="email" required id="email" name="email">
+                        <div class="underline"></div>
+                        <label for="email">Email</label>
+                    </div>
+                </div>
+                <div style="display: flex;justify-content: center;">
+                    <select id="country" onchange="update()">
+                    </select>
+                </div>
+                <div class="submit-btn">
+                    <button type="button" 
+                    style="padding: 15px;border-radius: 10px;background-color: black;color: white;" 
+                    onclick="getCookies()"
+                    >
+                    Register</button>
+                </div>
+            </form>
+            <script type="text/javascript" src="../assets/js/country.js"></script>
+            <script type="text/javascript" src="../assets/js/index.js"></script>
+            <script type="text/javascript">
+                let i = 0;
+                let option = '';
+                for(i; i < countryList.length;i++){
+                    option += `<option value=${countryList[i]}>${countryList[i]}</option>`;
+                }
+                document.getElementById("country").innerHTML = option;
+                // console.log(countryList)
+            </script>
+        </section>
+    </main>
+</html>

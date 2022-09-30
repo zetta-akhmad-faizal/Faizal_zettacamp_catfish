@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Song Listing</title>
+        <meta charset="UTF-8" http-equiv="X-UA-Compatible" name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../assets/css/index.css">
+    </head>
+    <body>
+        <header>
+            <section class="slideshow-container">
+                <article class="mySlides fade">
+                    <div class="numbertext">1 / 3</div>
+                    <img src="https://i.pinimg.com/originals/11/f4/f5/11f4f5666483d951e7c3a02a4d1f1630.jpg" class="img" style="width:100%; height:500px;">
+                    <div class="text">Rock</div>
+                </article>
+                <article class="mySlides fade">
+                    <div class="numbertext">2 / 3</div>
+                    <img src="https://res.cloudinary.com/teepublic/image/private/s--c1cC7JFi--/t_Preview/b_rgb:42332c,c_limit,f_auto,h_630,q_90,w_630/v1446156489/production/designs/40164_2.jpg" class="img" style="width:100%">
+                    <div class="text">Jazz</div>
+                </article>
+    
+                <article class="mySlides fade">
+                    <div class="numbertext">3 / 3</div>
+                    <img src="https://64.media.tumblr.com/tumblr_lrr246pPFH1qdeys9o1_500.jpg" class="img" style="width:100%">
+                    <div class="text">POP</div>
+                </article>
+    
+                <a class="prev" onclick="plusSlides(-1)">❮</a>
+                <a class="next" onclick="plusSlides(1)">❯</a>
+            </section>
+            <nav class="topnav">
+                <a class="anchor" href="profile.html">Profile</a>
+                <a class="anchor active" href="song-listing.html">Song Listing</a>
+                <a class="anchor" href="album-preview.html">Albums Preview</a>
+            </nav>
+        </header>
+        <script type="text/javascript" src="../assets/js/slide.js"></script>
+        <main class="container">
+            <form>
+                <input type="text" name="search" class="searchbar" placeholder="Search..">
+            </form>
+            <table id="customers">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Title</th>
+                    <th>Artist</th>
+                    <th>Duration</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <img src="https://i.ytimg.com/vi/WNeLUngb-Xg/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLD60NdmN9Amu1uHRcWEF0Akj2pUKw">
+                        </td>
+                        <td>In the End</td>
+                        <td>Linkin Park</td>
+                        <td>3:38</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://i.ytimg.com/vi/eQ4mWc7W2TM/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLC9OMsqwmbY685O4bIC2vbd3VgR5Q">
+                        </td>
+                        <td>Señorita</td>
+                        <td>Shawn Mendes, Camila Cabello</td>
+                        <td>4:01</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://i.ytimg.com/vi/1ieSEOX5OEE/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLDuDfQPKfM6l476WMhTwCw5pPUfKQ">
+                        </td>
+                        <td>It's You </td>
+                        <td>Sezairi</td>
+                        <td>4:12</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://i.ytimg.com/vi/2Vv-BfVoq4g/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLA10odJyg6t041gxMu8v-6iUhbuQQ">
+                        </td>
+                        <td>Perfect</td>
+                        <td>Ed Sheeran</td>
+                        <td>4:39</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://i.ytimg.com/vi/lY2yjAdbvdQ/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLAN99B_jpMvwJeFKpx9iSaM3se4Xw">
+                        </td>
+                        <td>Treat You Better</td>
+                        <td>Shawn Mendes</td>
+                        <td>4:16</td>
+                    </tr>
+                </tbody>
+              </table>
+              <div style="float: right;">
+                <small> 
+                    <code id="code">5 of 25</code> 
+                    <button>&laquo;</button>
+                    <button>&raquo;</button>
+                </small>
+            </div>
+        </main>
+        <footer style="text-align: center;background-color: rgb(203, 189, 189);padding:15px;">
+            Akhmad Faizal
+        </footer>
+    </body>
+</html>
