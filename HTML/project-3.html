@@ -3,5 +3,35 @@
     <head>
         <title>External Style</title>
         <meta charset="UTF-8" http-equiv="X-UA-Compatible" name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="assets/css/index.css" type="text/css">
     </head>
+    <body>
+        <main class="container">
+            <section>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                      <div class="flip-card-front">
+                        <img src="assets/img/myimage.jfif" alt="Avatar" style="width:450px;height:400px;">
+                      </div>
+                      <div class="flip-card-back">
+                        <h1>Akhmad Faizal</h1> 
+                        <form>
+                            <label for="dob">Date of Birth :</label>
+                            <input type="date" required id="dob" name="dob">
+                            <button type="button" class="btn" onclick="getValue()">Check</button>
+                        </form>
+                        <p>My old is <span id="old"></span></p>
+                        <div class="text-rows">
+                            I'm <sup>7</sup>th semester Informatics in Jenderal Achmad Yani Yogyakarta University. During study, i'm interest as <span id="first_paragraph">Back-End Developer</span>,
+                            and I continue to explore by took courses according to the roadmap. Currently, i also dive into the Cloud Computing course for 6 months.<br>
+                            Before that, i followed some activities that related with <span id="first_paragraph">Back-End Developer</span> roadmap. Then, I've also switched to studying <span id="second_paragraph">Data Mining</span> and looking for experience 
+                            at the <span id="second_paragraph">Gemastik 2021</span> event and my teams became a finalist, although it failed to get good data accuracy
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </section>
+            <script type="text/javascript" src="assets/js/index.js"></script>
+        </main>
+    </body>
 </html>
