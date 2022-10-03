@@ -3,38 +3,38 @@
     <head>
         <title>Embedded Styling</title>
         <meta charset="UTF-8" http-equiv="X-UA-Compatible" name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body{
+                margin: 0;
+            }
+            #myhobbies, #mymovie, #mySong{
+                font-family: Arial, Helvetica, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+            #myhobbies td, #mytable th, #mymovie td, #mymovie th, #mySong td, #mySong th{
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+            #mymovie th, #myhobbies th, #mySong th{
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+            }
+            #myhobbies tr:nth-child(1){
+                background-color: green;
+            }
+            #mymovie tr:nth-child(2){
+                background-color: red;
+            }
+            #mySong tr:nth-child(3){
+                background-color: blue;
+            }
+            section{
+                margin: 50px;
+            }
+        </style>
     </head>
-    <style>
-        body{
-            margin: 0;
-        }
-        #myhobbies, #mymovie, #mySong{
-            font-family: Arial, Helvetica, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-        #myhobbies td, #mytable th, #mymovie td, #mymovie th, #mySong td, #mySong th{
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        #mymovie th, #myhobbies th, #mySong th{
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-        }
-        #myhobbies tr:nth-child(1){
-            background-color: green;
-        }
-        #mymovie tr:nth-child(2){
-            background-color: red;
-        }
-        #mySong tr:nth-child(3){
-            background-color: blue;
-        }
-        section{
-            margin: 50px;
-        }
-    </style>
     <body>
         <section>
             <table id="myhobbies">
