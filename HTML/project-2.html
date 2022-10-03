@@ -4,4 +4,123 @@
         <title>Embedded Styling</title>
         <meta charset="UTF-8" http-equiv="X-UA-Compatible" name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
+    <style>
+        body{
+            margin: 0;
+        }
+        #myhobbies, #mymovie, #mySong{
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #myhobbies td, #mytable th, #mymovie td, #mymovie th, #mySong td, #mySong th{
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #mymovie th, #myhobbies th, #mySong th{
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+        }
+        #myhobbies tr:nth-child(1){
+            background-color: green;
+        }
+        #mymovie tr:nth-child(2){
+            background-color: red;
+        }
+        #mySong tr:nth-child(3){
+            background-color: blue;
+        }
+        section{
+            margin: 50px;
+        }
+    </style>
+    <body>
+        <section>
+            <table id="myhobbies">
+                <thead>
+                    <tr>
+                        <th>Hobbies</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cycling &amp; Riding</td>
+                        <td>Sometimes when i had free time, I cycle at least 25 km, or ride a motorbike around Jogja, Purworejo or Solo</td>
+                    </tr>
+                    <tr>
+                        <td>Reading</td>
+                        <td>
+                            I read some books, it consist of <em>Ad-dawa' Wa-da'waa</em>, <em>Kudeta Majapahit dan Berdirinya Kerajaan Islam di Jawa</em>.
+                            And soon will read <em>Aceh's Kingdom History</em>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Programming</td>
+                        <td>Recently, i learn some programmings, such as Python, Javascript/Nodejs, Dart</td>
+                    </tr>
+                    <tr>
+                        <td>Martial Arts</td>
+                        <td>Since sits in Junior school until now, i really like martial arts. 
+                            I've join to <em>Karate's Dojo</em> in South Aceh and now i'm in Jogja, before that i also joined to <em>Taekwondo's dojang</em> of West Aceh.
+                            Both of martial arts, only Karate that i completed until black belt. My inspiration is <strong>Donny Yen</strong> and <strong>Scott Adkins</strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section>
+            <table id="mymovie">
+                <thead>
+                    <tr>
+                        <th>Favorites Movie</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Emergency Declaration</td>
+                        <td>A 2021 South Korean disaster-action film</td>
+                    </tr>
+                    <tr>
+                        <td>Exit</td>
+                        <td>A 2019 South Korean disaster action comedy film</td>
+                    </tr>
+                    <tr>
+                        <td>Cinta Subuh</td>
+                        <td>A 2022 Indonesian Romance Islamic Film</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section>
+            <table id="mySong">
+                <thead>
+                    <tr>
+                        <th>Favorites Song</th>
+                        <th>Artist</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Impossible</td>
+                        <td>James Arthur</td>
+                    </tr>
+                    <tr>
+                        <td>In the Ends</td>
+                        <td>Linkink Park</td>
+                    </tr>
+                    <tr>
+                        <td>Here's Your Perfect</td>
+                        <td>Jamie Miller</td>
+                    </tr>
+                    <tr>
+                        <td>Say You Won't Let Go</td>
+                        <td>James Arthur</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </body>
 </html>
