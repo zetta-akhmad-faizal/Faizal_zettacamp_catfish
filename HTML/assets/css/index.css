@@ -1,37 +1,49 @@
-*{
+* {
     box-sizing: border-box;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
-body{
+
+body {
     margin: 0;
 }
-main > h2{
+
+main>h2 {
     text-align: center;
     margin: 50px 0 0 0;
 }
-main .row:first-child{
+
+main .row:first-child {
     margin: 0;
 }
-main .row:last-child{
+
+main .row:last-child {
     margin: 0;
 }
-main .row:nth-child(3){
+
+main .row:nth-child(3) {
     margin: 1rem 0;
 }
-.row::after{
+
+.row::after {
     content: "";
     display: table;
     clear: both;
     width: 100%;
 }
-[class*="col-"]{
+
+[class*="col-"] {
     padding: 5px;
     float: left;
     margin: 0 95px;
 }
-.col-1 {width: 8.33%;}
 
-.col-2 {width: 16.66%;}
+.col-1 {
+    width: 8.33%;
+}
+
+.col-2 {
+    width: 16.66%;
+}
 
 .col-3 {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -40,11 +52,13 @@ main .row:nth-child(3){
     font-family: arial;
     height: 650px;
 }
-.col-3 > p {
+
+.col-3>p {
     color: grey;
     font-size: 22px;
 }
-.col-3 > a{
+
+.col-3>button {
     border: none;
     border-radius: 25px;
     outline: 0;
@@ -53,24 +67,82 @@ main .row:nth-child(3){
     background-color: #000;
     text-align: center;
     cursor: pointer;
-    width: 50%;
+    width: 70%;
     font-size: 18px;
     margin: 0 0 12px 0;
 }
-.col-3 > img {
+
+.col-3>img {
     height: 350px;
 }
-.col-3 > a:hover{
+
+.col-3>a:hover {
     opacity: 0.7;
 }
 
-nav{
+nav {
     text-align: center;
     padding: 30px;
     background-color: black;
 }
-a{
+
+a {
     color: white;
     padding: 15px;
     text-decoration: none;
 }
+
+.card-detail {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    margin: auto;
+    text-align: center;
+    font-family: arial;
+}
+
+#prices {
+    color: grey;
+    font-size: 22px;
+}
+
+input[type=text],
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+}
+
+input[type=submit] {
+    background-color: #04AA6D;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+.form-container{
+    display: flex;
+    justify-content: center;
+    margin: 120px 0;
+}
+footer a:hover{
+    background-color: aliceblue;
+    color: black;
+}
+footer a:active{
+    background-color: rgb(133, 135, 138);
+    color: white;
+}
+/* footer a:visited{
+    color: green;
+} */
