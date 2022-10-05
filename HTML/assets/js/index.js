@@ -16,7 +16,7 @@ function callJson(){
     let cookies = localStorage.getItem('cookies');
 
     if(cookies === null){
-        document.getElementById('header').innerHTML = 'Cookies is null'
+        alert('Cookies is null')
     }
 
     var xmlhttp = new XMLHttpRequest(); 
