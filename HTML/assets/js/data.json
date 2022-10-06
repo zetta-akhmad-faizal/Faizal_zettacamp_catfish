@@ -71,6 +71,78 @@
             "desc":"Brand New With Box",
             "from": "Jakarta",
             "size": [39,40,41,42,43]
+        },
+        {
+            "title": "Nk Airmax 270 Galaxy",
+            "url": "https://i.pinimg.com/originals/57/02/0b/57020bd8088fd8921d9adf68f590f744.jpg",
+            "price": "Nk Airmax 270 Galaxy",
+            "desc":"55 nike air max's best shoes suitable for your every day in summer",
+            "from": "Jakarta",
+            "size": [39,40,41,42,43]
+        },
+        {
+            "title": "Nike Zoom VaporFly NEXT%",
+            "url": "https://www.nicekicks.com/files/2019/07/luis-torres-nike-zoomx-vaporfly-next-7.jpg",
+            "price": "IDR 550.000",
+            "desc":"Become the fastest shoe for the fastest runners.",
+            "from": "Jakarta",
+            "size": [39,40,41,42,43]
+        },
+        {
+            "title": "NB 997s Bodega",
+            "url": "https://www.lesitedelasneaker.com/wp-content/images/2020/09/bodega-new-balance-997s-better-days-01-1100x772.jpg",
+            "price": "IDR 630.000",
+            "desc":"Be the color in your daily life",
+            "from": "Jakarta",
+            "size": [39,40,41,42,43]
+        },
+        {
+            "title": "NB MT410",
+            "url": "https://cf.shopee.tw/file/c348d2c7c57cf38c3df7b953cc33efc3",
+            "price": "IDR 500.000",
+            "desc":"Enjoy to school or campus",
+            "from": "Jakarta",
+            "size": [39,40,41,42,43]
+        },
+        {
+            "title": "Adidas Alphabounce",
+            "url": "https://i1.wp.com/weartesters.com/wp-content/uploads/2018/06/adidas-alphabounce-instinct.jpg?fit=1868%2C1396&ssl=1",
+            "price": "IDR 450.000",
+            "desc":"Soft color and box premium will be yours",
+            "from": "Jakarta",
+            "size": [39,40,41,42,43]
+        },
+        {
+            "title": "NB 247 LB BrownTan",
+            "url": "https://image.goat.com/crop/750/attachments/product_template_pictures/images/006/200/342/original/MRL247LB.png.png",
+            "price": "IDR 450.000",
+            "desc":"For you, fanbase Balance BrownTan",
+            "from": "Jakarta",
+            "size": [39,40,41,42,43]
+        },
+        {
+            "title": "Puma Suede Outsider Cream Black",
+            "url": "https://cf.shopee.co.id/file/ba107d36f812072afa1e7a9055f098a8_tn",
+            "price": "IDR 300.000",
+            "desc":"Casual shoes for your holiday outfit",
+            "from": "Jakarta",
+            "size": [39,40,41,42,43]
+        },
+        {
+            "title": "Under Armour Hovr Phantom",
+            "url": "https://th.bing.com/th/id/OIP.xsfznqgmzLMkar73MxELmAHaGd?pid=ImgDet&rs=1",
+            "price": "IDR 500.000",
+            "desc":"Men's running shoes",
+            "from": "Jakarta",
+            "size": [39,40,41,42,43]
+        },
+        {
+            "title": "StanSmith White Navy",
+            "url": "https://i.pinimg.com/originals/c9/23/dd/c923ddefe60d6a14c6021db5c83f5cdd.jpg",
+            "price": "IDR 299.000",
+            "desc":"Brand New With Box",
+            "from": "Jakarta",
+            "size": [39,40,41,42,43]
         }
     ]
 }
