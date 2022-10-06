@@ -8,11 +8,13 @@
     <body>
         <main class="container">
             <section class="box-storage per-item">
-                <h2>Storage</h2>
+                <h2 style="float: left;">Available</h2>
+                <input class="search" id="search-available" type="text" name="search" placeholder="Search.." onkeyup="keyUpAvailable()">
                 <ul id="list-available"></ul>
             </section>
             <section class="box-storage per-item">
                 <h2>Sold</h2>
+                <input class="search" id="search-sold" type="text" name="search" placeholder="Search.." onkeyup="keyUpSold()">
                 <ul id="list-sold"></ul>
             </section>
         </main>
@@ -28,6 +30,8 @@
         <script type="application/javascript">
             storageAvailableJson();
             storageSoldJson();
+            ul = document.getElementById("list-availableS");
+            console.log(ul)
         </script>
     </body>
 </html>
