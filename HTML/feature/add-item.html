@@ -8,6 +8,7 @@
     <body>
         <header>
             <h1>WarungPedia</h1>
+            <a href="shopping-list.html">Shopping List</a>
         </header>
         <section class="tab">
             <button class="tablinks" onclick="openForm(event, 'url')">URL</button>
@@ -25,7 +26,7 @@
                     <label for="title">Product name</label>
                     <input type="text" id="title" name="title"  class="input" placeholder="Product name here..">
                     <label for="price">Product price</label>
-                    <input type="text" id="price" name="price" class="input" placeholder="Product price here..">
+                    <input type="text" id="price" name="price" class="input" placeholder="Product price here. Example 120.000">
                     <button type="button" onclick="cardInputByImage()">Save</button>
                 </div>
             </form>
@@ -36,7 +37,7 @@
                     <label for="title">Product name</label>
                     <input type="text" id="title-url" name="title"  class="input" placeholder="Product name here..">
                     <label for="price">Product price</label>
-                    <input type="text" id="price-url" name="price" class="input" placeholder="Product price here..">
+                    <input type="text" id="price-url" name="price" class="input" placeholder="Product price here. Example 120.000">
                     <label for="url">URL</label>
                     <input type="url" id="myURL" name="url" class="input" placeholder="Product images link here..">
                     <button type="button" onclick="cardInputByURL()">Save</button>

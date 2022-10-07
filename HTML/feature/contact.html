@@ -16,13 +16,9 @@
                 <input type="email" id="email" name="email" placeholder="Email here.." class="input">
             
                 <label for="country" class="input">Country</label>
-                <select id="country" name="country" class="input">
-                  <option value="australia">Australia</option>
-                  <option value="canada">Canada</option>
-                  <option value="usa">USA</option>
-                </select>
+                <select id="country" name="country" class="input"></select>
             
-                <label for="subject">Subject</label>
+                <label for="subject">Critics/Suggestion</label>
                 <textarea id="subject" name="subject" placeholder="Write something.." style="height:200px" class="input"></textarea>
             
                 <input type="submit" value="Submit" class="button">
@@ -32,5 +28,9 @@
             <a href="about.html">About</a>
             <a href="contact.html" class="active-anchor">Contact</a>
         </footer>
+        <script type="application/javascript" src="../assets/js/index.js"></script>
+        <script>
+            countryFecth()
+        </script>
     </body>
 </html>

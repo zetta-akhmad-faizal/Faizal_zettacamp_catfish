@@ -22,19 +22,41 @@ function homeData() {
     request.send();
 }
 
+function countryFecth() {
+    let home = document.getElementById('country');
+    let init = '';
+    let request = new XMLHttpRequest();
+    request.open("GET", '../assets/js/country.json', true);
+    request.setRequestHeader("Content-type", "application/json");
+    request.onload = (res) => {
+        let message = JSON.parse(res['target']['response']);
+        for (let i = 0; i < message.length - 6; i++) {
+            init += `
+            <option>
+                ${message[i].name}
+            </option>
+            `;
+        }
+        // console.log(init)
+        home.innerHTML = init
+    };
+    request.send();
+}
+
 function cardInputByImage(){
     let price = document.getElementById('price').value;
     let title = document.getElementById('title').value;
     let urlInput = document.getElementById('myFile').value;
     let cardByImage = JSON.parse(localStorage.getItem('cardByImage'));
     let urlValue = urlInput.split('\\');
-    let url = `../assets/img/${urlValue[2]}`
+    let url = `../assets/img/${urlValue[2]}`;
 
     let data = {
         url, title, price
-    }
-    cardByImage.push(data)
-    localStorage.setItem('cardByImage',JSON.stringify(cardByImage))
+    };
+    cardByImage.push(data);
+    localStorage.setItem('cardByImage',JSON.stringify(cardByImage));
+    alert('Refresh page');
 }
 
 function cardInputByURL(){
@@ -45,10 +67,11 @@ function cardInputByURL(){
 
     let data = {
         url, title, price
-    }
-    console.log(url)
-    cardByImage.push(data)
-    localStorage.setItem('cardByImage',JSON.stringify(cardByImage))
+    };
+    // console.log(url)
+    cardByImage.push(data);
+    localStorage.setItem('cardByImage',JSON.stringify(cardByImage));
+    alert('Refresh page');
 }
 
 function catalogData() {
@@ -83,7 +106,7 @@ function cardData() {
         <article class="items shopping-basis">
             <img src='${message[i].url}' alt='${message[i].title}'>
             <p>${message[i].title}</p>
-            <span>${message[i].price}</span>
+            <span>IDR ${message[i].price}</span>
         </article>
         `;
     }
@@ -99,7 +122,7 @@ function cardData() {
         <article class="items shopping-basis">
             <img src='${message[i].url}' alt='${message[i].title}'>
             <p>${message[i].title}</p>
-            <span>${message[i].price}</span>
+            <span>IDR ${message[i].price}</span>
         </article>
         `;
     }
