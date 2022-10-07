@@ -5,5 +5,53 @@
         <meta http-equiv="X-UA-Compatible" content="width=device-width, initial-scale=1.0" name="viewport" charset="utf-8">
         <link rel="stylesheet" href="../assets/css/index.css" type="text/css">
     </head>
-    <body></body>
+    <body>
+        <header>
+            <h1>WarungPedia</h1>
+        </header>
+        <section class="tab">
+            <button class="tablinks" onclick="openForm(event, 'url')">URL</button>
+            <button class="tablinks" onclick="openForm(event, 'image')">Image</button>
+        </section>
+        <section class="container tabcontent" style="width: 70%;margin: auto;" id="image">
+            <form>
+                <div class="multimedia">
+                    <div class="drop-zone" style="margin: auto;">
+                        <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                        <input type="file" name="myFile" class="drop-zone__input" id="myFile">
+                    </div>
+                </div>
+                <div class="desc">
+                    <label for="title">Product name</label>
+                    <input type="text" id="title" name="title"  class="input" placeholder="Product name here..">
+                    <label for="price">Product price</label>
+                    <input type="text" id="price" name="price" class="input" placeholder="Product price here..">
+                    <button type="button" onclick="cardInputByImage()">Save</button>
+                </div>
+            </form>
+        </section>
+        <section class="container tabcontent" style="width: 70%;margin: auto;" id="url">
+            <div class="desc">
+                <form>
+                    <label for="title">Product name</label>
+                    <input type="text" id="title-url" name="title"  class="input" placeholder="Product name here..">
+                    <label for="price">Product price</label>
+                    <input type="text" id="price-url" name="price" class="input" placeholder="Product price here..">
+                    <label for="url">URL</label>
+                    <input type="url" id="myURL" name="url" class="input" placeholder="Product images link here..">
+                    <button type="button" onclick="cardInputByURL()">Save</button>
+                </form>
+            </div>
+        </section>
+        <h2 style="text-align: center;">Card Preview</h2>
+        <main class="container distance" id="card" style="height: 600px;"></main>
+        <footer>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </footer>
+        <script type="application/javascript" src="../assets/js/index.js"></script>
+        <script type="application/javascript">
+            cardData()
+        </script>
+    </body>
 </html>

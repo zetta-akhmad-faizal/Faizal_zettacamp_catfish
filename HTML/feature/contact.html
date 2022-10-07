@@ -5,5 +5,32 @@
         <meta http-equiv="X-UA-Compatible" content="width=device-width, initial-scale=1.0" name="viewport" charset="utf-8">
         <link rel="stylesheet" href="../assets/css/index.css" type="text/css">
     </head>
-    <body></body>
+    <body>
+        <header>
+            <h1>WarungPedia</h1>
+            <a href="shopping-list.html">Shopping List</a>
+        </header>
+        <main class="container" style="margin-top: 40px;">
+            <form action="/action_page.php">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Email here.." class="input">
+            
+                <label for="country" class="input">Country</label>
+                <select id="country" name="country" class="input">
+                  <option value="australia">Australia</option>
+                  <option value="canada">Canada</option>
+                  <option value="usa">USA</option>
+                </select>
+            
+                <label for="subject">Subject</label>
+                <textarea id="subject" name="subject" placeholder="Write something.." style="height:200px" class="input"></textarea>
+            
+                <input type="submit" value="Submit" class="button">
+              </form>
+        </main>
+        <footer style="margin: 230px 0 0 0;">
+            <a href="about.html">About</a>
+            <a href="contact.html" class="active-anchor">Contact</a>
+        </footer>
+    </body>
 </html>
