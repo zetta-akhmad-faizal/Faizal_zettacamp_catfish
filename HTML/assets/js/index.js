@@ -1,4 +1,4 @@
-function homeData() {
+function homeData(){
     let home = document.getElementById('home');
     let init = '';
     let request = new XMLHttpRequest();
@@ -6,7 +6,7 @@ function homeData() {
     request.setRequestHeader("Content-type", "application/json");
     request.onload = (res) => {
         let message = JSON.parse(res['target']['response']);
-        for (let i = 0; i < message.data.length - 6; i++) {
+        for(let i=0;i<message.data.length - 6;i++){
             init += `
             <article class="items home-basis">
                 <img src='${message.data[i].url}' alt='${message.data[i].title}'>
@@ -21,7 +21,6 @@ function homeData() {
     };
     request.send();
 }
-
 function countryFecth() {
     let home = document.getElementById('country');
     let init = '';
@@ -82,7 +81,7 @@ function catalogData() {
     request.setRequestHeader("Content-type", "application/json");
     request.onload = (res) => {
         let message = JSON.parse(res['target']['response']);
-        for (let i = 0; i < message.data.length; i++) {
+        for(let i=0;i<message.data.length;i++){
             init += `
             <article class="items shopping-basis">
                 <img src='${message.data[i].url}' alt='${message.data[i].title}'>
