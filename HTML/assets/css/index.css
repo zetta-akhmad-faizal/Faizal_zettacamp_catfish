@@ -152,6 +152,12 @@ div a:nth-child(2):hover {
     border: 1px solid #ccc;
     border-top: none;
 }
+input[type=url]:invalid{
+    border: 1px solid red;
+}
+input[type=text]:focus{
+    color: #009578;
+}
 
 .input {
     width: 100%;
