@@ -1,7 +1,9 @@
 let request = require('request');
 
+let page = [1,2,3,4,5,6,7]
+
 const options = {
-    url: 'https://laravel-books-db.herokuapp.com/api/books?page=1&category=historical-fiction&language=en',
+    url: `http://laravel-books-db.herokuapp.com/api/books?category=historical-fiction&language=en&page=${page[1]}`,
     headers: {
         'User-Agent': 'request',
         'Authorization': 'Bearer 175|35rv9k0sTZLGyOSpUd2Db171SkqAqCo8QMiKyWO3'
@@ -48,13 +50,13 @@ let purchasingBook = (bookList, title, stock, bookPurchased) => {
                 Link Market: ${bookList[i].url}
 
                 --Nota--
-                Percentage of Discount: ${discount}, so amount of discount is Rp. ${amountOfDiscount.toFixed(3)}. Price will become ${priceAfterDiscount}
+                Percentage of Discount: ${discount}, so amount of discount is Rp. ${amountOfDiscount.toFixed(3)}. Price will become Rp. ${priceAfterDiscount.toFixed(3)} from Rp. ${getPrice[1]}
                 Percentage of Tax: ${tax}, so amount of tax is Rp. ${amountOfTax.toFixed(3)}
                 The books must be paid Rp. ${amountAfterTax.toFixed(3)}/books
 
                 --Prices--
                 Total order: ${bookPurchased} X ${amountAfterTax.toFixed(3)}
-                    Rp. ${paid}
+                    Rp. ${paid.toFixed(3)}
             `)
         }
     }
@@ -69,7 +71,7 @@ let getBooks = async(error, response, body) =>  {
             if(purchased > stock){
                 break;
             }else{
-                purchasingBook(info.books, "On Rough Seas", stock, purchased);
+                purchasingBook(info.books, "A Sitting in St. James", stock, purchased);
                 stock -= purchased
             }
             console.log(`Stock still ${stock} but amount of purchased is ${purchased}`)
