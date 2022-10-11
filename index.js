@@ -14,15 +14,8 @@ let purchasingBook = (bookList, title, stock, bookPurchased) => {
     let tax = 10/100;
 
     for(let i=0; i < bookList.length; i++){
+
         if(title === bookList[i].title){
-
-            if(bookPurchased > stock){
-                console.log(`Ups, now my stock are ${stock} books, You cant purchased ${bookPurchased} books`);
-                break;
-            }else if(bookPurchased <= title){
-                continue;
-            }
-
             let getPrice = bookList[i].price.split(" ");
             let amountOfDiscount = parseInt(getPrice[1]) * discount;
             let priceAfterDiscount = parseInt(getPrice[1]) - amountOfDiscount;
@@ -31,6 +24,7 @@ let purchasingBook = (bookList, title, stock, bookPurchased) => {
 
             let totalOrder = bookPurchased*amountAfterTax;
             let paid;
+
             if(parseInt(totalOrder) > 999){
                 let orderSpliter = parseInt(totalOrder).toString().split('');
                 if(orderSpliter.length === 4){
@@ -45,6 +39,7 @@ let purchasingBook = (bookList, title, stock, bookPurchased) => {
             }else{
                 paid = totalOrder
             }
+
             console.log(`
                 ---Detail of Books---
                 Image: ${bookList[i].image}
@@ -53,9 +48,9 @@ let purchasingBook = (bookList, title, stock, bookPurchased) => {
                 Link Market: ${bookList[i].url}
 
                 --Nota--
-                Percentage of Discount: ${discount}, so amount of discount is Rp. ${amountOfDiscount.toFixed(3)}
+                Percentage of Discount: ${discount}, so amount of discount is Rp. ${amountOfDiscount.toFixed(3)}. Price will become ${priceAfterDiscount}
                 Percentage of Tax: ${tax}, so amount of tax is Rp. ${amountOfTax.toFixed(3)}
-                The books must be paid Rp. ${amountAfterTax.toFixed(3)}/items
+                The books must be paid Rp. ${amountAfterTax.toFixed(3)}/books
 
                 --Prices--
                 Total order: ${bookPurchased} X ${amountAfterTax.toFixed(3)}
@@ -68,12 +63,22 @@ let purchasingBook = (bookList, title, stock, bookPurchased) => {
 let getBooks = async(error, response, body) =>  {
     if (!error && response.statusCode == 200) {
         const info = await JSON.parse(body);
-        purchasingBook(info.books, "On Rough Seas", 10, 9);
+
+        let stock = 12;let purchased = 4;
+        for(purchased; purchased<stock; purchased++){
+            if(purchased > stock){
+                break;
+            }else{
+                purchasingBook(info.books, "On Rough Seas", stock, purchased);
+                stock -= purchased
+            }
+            console.log(`Stock still ${stock} but amount of purchased is ${purchased}`)
+        }
     }
 }
 
 try{
-    console.log("Hi Guys...");
+    console.log("Garamedia");
     request(options, getBooks);
 }catch(e){
     console.log(e);
