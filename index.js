@@ -24,26 +24,42 @@ let purchasingBook = (bookList, title, stock, bookPurchased) => {
             }
 
             let getPrice = bookList[i].price.split(" ");
-            let amountOfDiscount = parseFloat(getPrice[1]) * discount;
-            let priceAfterDiscount = parseFloat(getPrice[1]) - amountOfDiscount;
+            let amountOfDiscount = parseInt(getPrice[1]) * discount;
+            let priceAfterDiscount = parseInt(getPrice[1]) - amountOfDiscount;
             let amountOfTax = priceAfterDiscount * tax;
             let amountAfterTax = priceAfterDiscount + amountOfTax ;
 
+            let totalOrder = bookPurchased*amountAfterTax;
+            let paid;
+            if(parseInt(totalOrder) > 999){
+                let orderSpliter = parseInt(totalOrder).toString().split('');
+                if(orderSpliter.length === 4){
+                    orderSpliter.splice(1, 0, '.');
+                    let join = orderSpliter[0]+orderSpliter[1]+orderSpliter[2]+orderSpliter[3]+orderSpliter[4]
+                    paid = `${join}.000`
+                }else if(orderSpliter.length > 4){
+                    orderSpliter.splice(2, 0, '.');
+                    let join = orderSpliter[0]+orderSpliter[1]+orderSpliter[2]+orderSpliter[3]+orderSpliter[4]+orderSpliter[5]
+                    paid = `${join}.000`
+                }
+            }else{
+                paid = totalOrder
+            }
             console.log(`
-                Detail of Books
+                ---Detail of Books---
                 Image: ${bookList[i].image}
                 Title: ${bookList[i].title}
+                Author: ${bookList[i].author}
                 Link Market: ${bookList[i].url}
 
-            `)
-            console.log(`
-                Percentage of Discount: ${discount}, so amount of discount is Rp. ${amountOfDiscount}00
-                Percentage of Tax: ${tax}, so amount of tax is Rp. ${amountOfTax}0
-                The books must be paid Rp. ${amountAfterTax}0/items
-            `);
-            console.log(`
-                Total order: ${bookPurchased} X ${amountAfterTax}
-                    ${bookPurchased*amountAfterTax}
+                --Nota--
+                Percentage of Discount: ${discount}, so amount of discount is Rp. ${amountOfDiscount.toFixed(3)}
+                Percentage of Tax: ${tax}, so amount of tax is Rp. ${amountOfTax.toFixed(3)}
+                The books must be paid Rp. ${amountAfterTax.toFixed(3)}/items
+
+                --Prices--
+                Total order: ${bookPurchased} X ${amountAfterTax.toFixed(3)}
+                    Rp. ${paid}
             `)
         }
     }
@@ -52,13 +68,13 @@ let purchasingBook = (bookList, title, stock, bookPurchased) => {
 let getBooks = async(error, response, body) =>  {
     if (!error && response.statusCode == 200) {
         const info = await JSON.parse(body);
-        purchasingBook(info.books, "How I Found the Strong", 5, 5)
+        purchasingBook(info.books, "On Rough Seas", 10, 9);
     }
 }
 
 try{
-    console.log("Hi Guys...")
-    request(options, getBooks)
+    console.log("Hi Guys...");
+    request(options, getBooks);
 }catch(e){
-    console.log(e)
+    console.log(e);
 };
