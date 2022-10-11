@@ -19,9 +19,9 @@ let purchasingBook = (detail, price) => {
     let amountAfterTax = priceAfterDiscount + amountOfTax 
     console.log(`
         Detail of Book: ${detail}
-        Percentage of Discount: ${discount}, so amount of discount is Rp. ${amountOfDiscount}00
-        Percentage of Tax: ${tax}, so amount of tax is Rp. ${amountOfTax}0
-        The books must be paid Rp. ${amountAfterTax}0
+        Percentage of Discount: ${discount}, so amount of discount is Rp. ${amountOfDiscount.toFixed(3)}
+        Percentage of Tax: ${tax}, so amount of tax is Rp. ${amountOfTax.toFixed(3)}
+        The books must be paid Rp. ${amountAfterTax.toFixed(3)}
     `)
 }
 
