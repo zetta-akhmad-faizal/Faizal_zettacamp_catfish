@@ -1,16 +1,16 @@
 let GroupSongArtist = ({playlist} ,vocalist) => {
-    let getArtist = playlist.filter(({artist}) => artist === vocalist);
+    let getArtist = playlist.filter(({artist}) => artist.toUpperCase() === vocalist.toUpperCase());
     return getArtist;
 }
 
 let GroupSongGenre = ({playlist} ,genres) => {
-    let getGenre = playlist.filter(({genre}) => genre === genres);
+    let getGenre = playlist.filter(({genre}) => genre.toUpperCase() === genres.toUpperCase());
     return getGenre;
 }
 
 let LessThanHour = ({playlist}) => {
-    let i = 0
-    let jam=0;let menit=0;let detik=0
+    let i = 0; let remainTime = 0;
+    let jam=0;let menit=0;let detik=0;
 
     for(i; i < playlist.length;i++){
         let splitter = playlist[i].duration.split(":");
@@ -34,11 +34,7 @@ let LessThanHour = ({playlist}) => {
             menit += parseInt(minute)
         }
 
-        if(parseInt(hour) < 1){
-            jam += 0
-        }else{
-            jam += parseInt(hour);
-        }
+        parseInt(hour) < 1 ? jam += 0 : jam += parseInt(hour)
 
         if(detik > 59){
             detik -= 60;
@@ -53,10 +49,13 @@ let LessThanHour = ({playlist}) => {
         if(jam < 1){
             console.log(playlist[i]);
             if(detik < 10){
-                console.log(`Time duration [${jam}:${menit}:0${detik}]`)
+                console.log(`---Time duration [${jam}:${menit}:0${detik}]---`)
             }
+            remainTime = (playlist.length-1) -i
         }
     }
+    let remaining = playlist.slice(playlist.length-remainTime, playlist.length)
+    console.log('recomended: ', remaining)
 }
 
 module.exports = {GroupSongArtist,GroupSongGenre,LessThanHour};
