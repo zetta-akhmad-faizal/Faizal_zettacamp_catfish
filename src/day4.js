@@ -9,32 +9,54 @@ let GroupSongGenre = ({playlist} ,genres) => {
 }
 
 let LessThanHour = ({playlist}) => {
-    let startAt = 0;let timeStr = '';let i = 0
+    let i = 0
+    let jam=0;let menit=0;let detik=0
+
     for(i; i < playlist.length;i++){
         let splitter = playlist[i].duration.split(":");
         let [hour, minute, second] = splitter;
-        if(parseInt(hour) < 1){
-            timeStr = '';
-        }else{
-            timeStr += hour;
-        }
-        if(parseInt(minute) < 1){
-            timeStr += '00';
-        }else{
-            timeStr += minute;
-        }
+
         if(parseInt(second) < 1){
-            timeStr += '00';
+            detik += 0;
+        }else if(parseInt(second) > 59){
+            detik = parseInt(detik) - 59;
+            menit += 1
         }else{
-            timeStr += second;
+            detik += parseInt(second)
         }
-        startAt += parseInt(timeStr);
-        if(startAt <= 6000){
+
+        if(parseInt(minute) < 1){
+            menit += 0;
+        }else if(parseInt(minute) > 59){
+            menit = parseInt(minute) - 59;
+            jam += 1;
+        }else{
+            menit += parseInt(minute)
+        }
+
+        if(parseInt(hour) < 1){
+            jam += 0
+        }else{
+            jam += parseInt(hour);
+        }
+
+        if(detik > 59){
+            detik -= 60;
+            menit += 1;
+        }
+
+        if(menit > 59){
+            menit -= 59;
+            jam += 1;
+        }
+
+        if(jam < 1){
             console.log(playlist[i]);
-            // console.log(i);
+            if(detik < 10){
+                console.log(`Time duration [${jam}:${menit}:0${detik}]`)
+            }
         }
     }
-    // console.log(playlist.length)
 }
 
 module.exports = {GroupSongArtist,GroupSongGenre,LessThanHour};
