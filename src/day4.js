@@ -1,5 +1,3 @@
-const { parse } = require("path");
-
 let GroupSongArtist = ({playlist} ,vocalist) => {
     let getArtist = playlist.filter(({artist}) => artist.toUpperCase() === vocalist.toUpperCase());
     return getArtist;
@@ -13,7 +11,7 @@ let GroupSongGenre = ({playlist} ,genres) => {
 let LessThanHour = ({playlist}) => {
     let i = 0; let remainTime = 0;let remainMin = 0
     let jam=0;let menit=0;let detik=0;
-    let arr = [];let menitNow=0;let jamNow=0; let detikNow=0
+    let arr = [];
 
     for(i; i < playlist.length;i++){
         let splitter = playlist[i].duration.split(":");
