@@ -1,3 +1,5 @@
+const { parse } = require("path");
+
 let GroupSongArtist = ({playlist} ,vocalist) => {
     let getArtist = playlist.filter(({artist}) => artist.toUpperCase() === vocalist.toUpperCase());
     return getArtist;
@@ -9,8 +11,9 @@ let GroupSongGenre = ({playlist} ,genres) => {
 }
 
 let LessThanHour = ({playlist}) => {
-    let i = 0; let remainTime = 0;
+    let i = 0; let remainTime = 0;let remainMin = 0
     let jam=0;let menit=0;let detik=0;
+    let arr = [];let menitNow=0;let jamNow=0; let detikNow=0
 
     for(i; i < playlist.length;i++){
         let splitter = playlist[i].duration.split(":");
@@ -47,15 +50,23 @@ let LessThanHour = ({playlist}) => {
         }
 
         if(jam < 1){
-            console.log(playlist[i]);
+            arr.push(playlist[i]);
+            console.log(playlist[i])
             if(detik < 10){
                 console.log(`---Time duration [${jam}:${menit}:0${detik}]---`)
             }
-            remainTime = (playlist.length-1) -i
+            remainTime = (playlist.length-1) -i;
+            remainMin = 59 - menit;
         }
     }
-    let remaining = playlist.slice(playlist.length-remainTime, playlist.length)
-    console.log('recomended: ', remaining)
+    let remaining = playlist.slice(playlist.length-remainTime, playlist.length);
+    for(let b=0;b<remaining.length;b++){
+        let [h, m, s] = remaining[b].duration.split(':');
+        if(parseInt(m) < remainMin){
+            detik += parseInt(s);
+            console.log('Recommended: ',remaining[b]);
+        }
+    }
 }
 
 module.exports = {GroupSongArtist,GroupSongGenre,LessThanHour};
