@@ -3,12 +3,12 @@ const jwt = require('jsonwebtoken');
 const {users} = require('../assets/user.json');
 dotenv.config();
 
-const auth = async(req, res, next) => {
+const authorization = async(req, res, next) => {
     try{
         const token = req.header('Authorization').replace('Bearer ', '');
         const authUser = jwt.verify(token, process.env.SECRET_TOKEN);
         const user = await users.find(({id}) => id === authUser._id);
-        console.log()
+       
         if(!user){
             res.status(401).send({
                 status:401,
@@ -25,4 +25,4 @@ const auth = async(req, res, next) => {
     }
 }
 
-module.exports = auth;
+module.exports = authorization;

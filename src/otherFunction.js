@@ -56,7 +56,7 @@ let purchasingBook = (bookList, title, stock, bookPurchased, termOfCredit) => {
             ];
         }
     }
-    return summary
+    return summary;
 }
 
 module.exports = purchasingBook;
