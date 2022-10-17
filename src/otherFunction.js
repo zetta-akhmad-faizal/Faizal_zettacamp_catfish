@@ -3,60 +3,48 @@ let month = {
     'july':7, 'august':8, 'september':9, 'october':10, 'november':11, 'desember':12
 };
 
-let purchasingBook = (bookList, title, stock, bookPurchased, termOfCredit) => {
-    let discount = 30/100;
-    let tax = 10/100;
-    let summary;
-
-    for(let i=0; i < bookList.length; i++){
-
-        if(title === bookList[i].title){
-            let getPrice = bookList[i].price.split(" ");
-            let amountOfDiscount = parseInt(getPrice[1]) * discount;
-            let priceAfterDiscount = parseInt(getPrice[1]) - amountOfDiscount;
-            let amountOfTax = priceAfterDiscount * tax;
-            let amountAfterTax = priceAfterDiscount + amountOfTax;
-
-            let totalOrder = (bookPurchased*amountAfterTax).toFixed(3);
-
-            let totalMustPaid = (totalOrder/termOfCredit).toFixed(3);
-            let monthOfCredit = Object.keys(month).filter(m => month[m] <= termOfCredit).map(m => ({'monthly': m,'payment': totalMustPaid}));
-            let priceCredit = monthOfCredit.map(({payment}) => parseFloat(payment));
-            const reducer = (accumulator, curr) => accumulator + curr;
-            const totalCredit = priceCredit.reduce(reducer);
-
-            let [...arr] = monthOfCredit;
-
-            summary = [ 
-                {
-                    discount,
-                    tax,
-                    amountOfDiscount,
-                    amountOfTax
-                },
-                {
-                    stock,
-                    bookPurchased,
-                    remaining: stock-bookPurchased
-                },
-                {
-                    priceAfterDiscount,
-                    amountAfterTax,
-                    totalOrder
-                },
-                {   
-                    type: 'Credit',
-                    termOfCredit
-                },
-                ...arr,
-                {
-                    priceCredit,
-                    totalCredit
-                }
-            ];
+let purchasingBook = async(bookList, termOfCredit, stockBook, purchase, title, discount, taxAmnesty) => {
+    let disc = parseFloat(discount.replace('Rp ', ''));
+    let tax = parseFloat(taxAmnesty.replace('Rp ', ''));
+    let [monthOfCredit, stock, remain] = await calculateCredit(termOfCredit, stockBook, purchase);
+    let books = bookList.map(e => {
+        e.tax = taxAmnesty;
+        e.discount = discount;
+        let getPrice = parseFloat(e.price.replace('Rp ', ''));
+        let AfterDiscount = getPrice - disc;
+        let AfterTax = AfterDiscount + tax;
+        e.afterDiscount = `Rp ${AfterDiscount.toFixed(3)}`;
+        e.AfterTax = `Rp ${AfterTax.toFixed(3)}`;
+        e.stock = stockBook;
+        if(e.title === title){
+            e.monthly = monthOfCredit;   
+            e.purchase = purchase;
+            e.remain = remain;
+            e.stock = stock;
+            e.termOfCredit = termOfCredit
+            e.monthPaid = `Rp ${(AfterTax/termOfCredit).toFixed(3)}/monthly`
         }
+        return e
+    })
+    return books
+}
+
+let calculateCredit = async(termOfCredit, stock, purchase) => {
+    let monthOfCredit = Object.keys(month).filter(m => month[m] <= termOfCredit);
+    let textOver = `Stock only ${stock}, so it isn't enough`;
+    let monthOver = "The term of credit only less than 12 month"
+    let remain = 0;
+    remain = stock - purchase;
+    if(termOfCredit > 12){
+        return [monthOver, stock, remain];
     }
-    return summary;
+    if(stock > purchase){
+        return [monthOfCredit, stock, remain];
+    }else if(stock < purchase){
+        return [monthOfCredit, textOver, stock];
+    }else{
+        return [monthOfCredit, stock, remain]
+    }
 }
 
 module.exports = purchasingBook;
