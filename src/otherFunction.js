@@ -69,7 +69,10 @@ let PromiseAwait = (f) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             fs.readFile(f, 'utf-8', (err, data) => {
-                if(err) reject(`${err.path} isn't found`);
+                if(err) reject({
+                    status: 400,
+                    message: `${err.path} isn't found`
+                });
                 resolve(data);
             })
         }, 5000)
@@ -78,8 +81,8 @@ let PromiseAwait = (f) => {
 
 let PromiseAwaitCall = async() => {
     try{
-        const data = await PromiseAwait('./assets/user.txt')
-        return data;
+        const data = await PromiseAwait('./assets/user.txt');
+        return JSON.parse(data);
     }catch(err){
         return err
     }

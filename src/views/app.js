@@ -55,8 +55,12 @@ api.get('/promiseUnAwait', authorization, (req, res) => {
 
 api.get('/promiseAwait', authorization, async(req, res) => {
     let obj = await PromiseAwaitCall();
-    res.send({
-        message: obj
+    if(obj.status === 400){
+        res.status(400).send(obj)
+    }
+    res.status(200).send({
+        status: 200,
+        message: obj.users
     })
 })
 
