@@ -1,0 +1,868 @@
+{ "books": 
+    [
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78606/thumb_image_normal/BLK_WWLOH2022792030.jpg",
+            "title": "When We Lost Our Heads",
+            "author": "Heather O'Neill",
+            "price": "Rp 249.000",
+            "original_url": "https://ebooks.gramedia.com/books/when-we-lost-our-heads",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/when-we-lost-our-heads",
+            "slug": "when-we-lost-our-heads"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78603/thumb_image_normal/BLK_HIFTS2022544822.jpg",
+            "title": "How I Found the Strong",
+            "author": "Margaret McMullan",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/how-i-found-the-strong",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/how-i-found-the-strong",
+            "slug": "how-i-found-the-strong"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78600/thumb_image_normal/BLK_T2022115029.jpg",
+            "title": "T4",
+            "author": "Ann Clare LeZotte",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/t4",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/t4",
+            "slug": "t4"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78587/thumb_image_normal/BLK_COTC2022801516.jpg",
+            "title": "Children of the Catastrophe",
+            "author": "Sarah Shoemaker",
+            "price": "Rp 199.000",
+            "original_url": "https://ebooks.gramedia.com/books/children-of-the-catastrophe",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/children-of-the-catastrophe",
+            "slug": "children-of-the-catastrophe"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78549/thumb_image_normal/BLK_TBS2022680829.jpg",
+            "title": "The Bonobo Sisterhood",
+            "author": "Diane Rosenfeld",
+            "price": "Rp 229.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-bonobo-sisterhood",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-bonobo-sisterhood",
+            "slug": "the-bonobo-sisterhood"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78547/thumb_image_normal/BLK_AIP2022175656.jpg",
+            "title": "An Indiscreet Princess",
+            "author": "Georgie Blalock",
+            "price": "Rp 229.000",
+            "original_url": "https://ebooks.gramedia.com/books/an-indiscreet-princess",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/an-indiscreet-princess",
+            "slug": "an-indiscreet-princess"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78530/thumb_image_normal/BLK_TAA202260973.jpg",
+            "title": "The American Adventuress",
+            "author": "C. W. Gortner",
+            "price": "Rp 229.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-american-adventuress",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-american-adventuress",
+            "slug": "the-american-adventuress"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78522/thumb_image_normal/BLK_JIP2022670294.jpg",
+            "title": "Jacqueline in Paris",
+            "author": "Ann Mah",
+            "price": "Rp 229.000",
+            "original_url": "https://ebooks.gramedia.com/books/jacqueline-in-paris",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/jacqueline-in-paris",
+            "slug": "jacqueline-in-paris"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78423/thumb_image_normal/BLK_AOO2022144661.jpg",
+            "title": "Act of Oblivion",
+            "author": "Robert Harris",
+            "price": "Rp 249.000",
+            "original_url": "https://ebooks.gramedia.com/books/act-of-oblivion",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/act-of-oblivion",
+            "slug": "act-of-oblivion"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78333/thumb_image_normal/BLK_TCT2022575708.jpg",
+            "title": "The Circus Train",
+            "author": "Amita Parikh",
+            "price": "Rp 229.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-circus-train",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-circus-train",
+            "slug": "the-circus-train"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78330/thumb_image_normal/BLK_TAG2022750886.jpg",
+            "title": "The Apothecary's Garden",
+            "author": "Jeanette Lynes",
+            "price": "Rp 369.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-apothecary-s-garden",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-apothecary-s-garden",
+            "slug": "the-apothecary-s-garden"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78296/thumb_image_normal/BLK_ORS202271071.jpg",
+            "title": "On Rough Seas",
+            "author": "Nancy L. Hull",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/on-rough-seas",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/on-rough-seas",
+            "slug": "on-rough-seas"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78289/thumb_image_normal/BLK_SNS2022808916.jpg",
+            "title": "Serpent Never Sleeps",
+            "author": "Scott O'Dell",
+            "price": "Rp 199.000",
+            "original_url": "https://ebooks.gramedia.com/books/serpent-never-sleeps",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/serpent-never-sleeps",
+            "slug": "serpent-never-sleeps"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78267/thumb_image_normal/BLK_FB2022817899.jpg",
+            "title": "Finishing Becca",
+            "author": "Ann Rinaldi",
+            "price": "Rp 129.000",
+            "original_url": "https://ebooks.gramedia.com/books/finishing-becca",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/finishing-becca",
+            "slug": "finishing-becca"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78266/thumb_image_normal/BLK_CTS2022577428.jpg",
+            "title": "Cast Two Shadows",
+            "author": "Ann Rinaldi",
+            "price": "Rp 129.000",
+            "original_url": "https://ebooks.gramedia.com/books/cast-two-shadows",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/cast-two-shadows",
+            "slug": "cast-two-shadows"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78209/thumb_image_normal/BLK_TOM202220970.jpg",
+            "title": "Theatre of Marvels",
+            "author": "Lianne Dillsworth",
+            "price": "Rp 209.000",
+            "original_url": "https://ebooks.gramedia.com/books/theatre-of-marvels",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/theatre-of-marvels",
+            "slug": "theatre-of-marvels"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78075/thumb_image_normal/BLK_SAOD2022110535.jpg",
+            "title": "Small Acts of Defiance",
+            "author": "Michelle Wright",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/small-acts-of-defiance",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/small-acts-of-defiance",
+            "slug": "small-acts-of-defiance"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78044/thumb_image_normal/BLK_TLQ2022684621.jpg",
+            "title": "The Last Queen",
+            "author": "Chitra Banerjee Divakaruni",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-last-queen",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-last-queen",
+            "slug": "the-last-queen"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78042/thumb_image_normal/BLK_TMG2022929568.jpg",
+            "title": "The Manhattan Girls",
+            "author": "Gill Paul",
+            "price": "Rp 199.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-manhattan-girls",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-manhattan-girls",
+            "slug": "the-manhattan-girls"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78039/thumb_image_normal/BLK_WGS2022840297.jpg",
+            "title": "Wrath Goddess Sing",
+            "author": "Maya Deane",
+            "price": "Rp 459.000",
+            "original_url": "https://ebooks.gramedia.com/books/wrath-goddess-sing",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/wrath-goddess-sing",
+            "slug": "wrath-goddess-sing"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78005/thumb_image_normal/BLK_TSS2022821039.jpg",
+            "title": "The Soviet Sisters",
+            "author": "Anika Scott",
+            "price": "Rp 199.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-soviet-sisters",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-soviet-sisters",
+            "slug": "the-soviet-sisters"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/78004/thumb_image_normal/BLK_B2022885227.jpg",
+            "title": "Benevolence",
+            "author": "Julie Janson",
+            "price": "Rp 249.000",
+            "original_url": "https://ebooks.gramedia.com/books/benevolence",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/benevolence",
+            "slug": "benevolence"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77952/thumb_image_normal/BLK_TSFGB202274930.jpg",
+            "title": "The School for German Brides",
+            "author": "Aimie K. Runyan",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-school-for-german-brides",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-school-for-german-brides",
+            "slug": "the-school-for-german-brides"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77938/thumb_image_normal/BLK_TTW2022189993.jpg",
+            "title": "The Tobacco Wives",
+            "author": "Adele Myers",
+            "price": "Rp 229.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-tobacco-wives",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-tobacco-wives",
+            "slug": "the-tobacco-wives"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77908/thumb_image_normal/BLK_SS2022368271.jpg",
+            "title": "Switchboard Soldiers",
+            "author": "Jennifer Chiaverini",
+            "price": "Rp 229.000",
+            "original_url": "https://ebooks.gramedia.com/books/switchboard-soldiers",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/switchboard-soldiers",
+            "slug": "switchboard-soldiers"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77894/thumb_image_normal/BLK_TFE2022284035.jpg",
+            "title": "The Falcon's Eyes",
+            "author": "Francesca Stanfill",
+            "price": "Rp 259.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-falcon-s-eyes",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-falcon-s-eyes",
+            "slug": "the-falcon-s-eyes"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77887/thumb_image_normal/BLK_TMB2022959012.jpg",
+            "title": "The Mayfair Bookshop",
+            "author": "Eliza Knight",
+            "price": "Rp 369.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-mayfair-bookshop",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-mayfair-bookshop",
+            "slug": "the-mayfair-bookshop"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77879/thumb_image_normal/BLK_AWOE2022179160.jpg",
+            "title": "A Woman of Endurance",
+            "author": "Dahlma Llanos-Figueroa",
+            "price": "Rp 459.000",
+            "original_url": "https://ebooks.gramedia.com/books/a-woman-of-endurance",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/a-woman-of-endurance",
+            "slug": "a-woman-of-endurance"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77787/thumb_image_normal/BLK_WL2022299065.jpg",
+            "title": "Westside Lights",
+            "author": "W.M. Akers",
+            "price": "Rp 449.000",
+            "original_url": "https://ebooks.gramedia.com/books/westside-lights",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/westside-lights",
+            "slug": "westside-lights"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77569/thumb_image_normal/BLK_B2022981967.jpg",
+            "title": "Babel",
+            "author": "R. F. Kuang",
+            "price": "Rp 249.000",
+            "original_url": "https://ebooks.gramedia.com/books/babel",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/babel",
+            "slug": "babel"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77568/thumb_image_normal/BLK_OWIM2022446440.jpg",
+            "title": "Our Woman in Moscow",
+            "author": "Beatriz Williams",
+            "price": "Rp 199.000",
+            "original_url": "https://ebooks.gramedia.com/books/our-woman-in-moscow",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/our-woman-in-moscow",
+            "slug": "our-woman-in-moscow"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77562/thumb_image_normal/BLK_TGW2022875991.jpg",
+            "title": "The Ghetto Within",
+            "author": "Santiago H. Amigorena",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-ghetto-within",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-ghetto-within",
+            "slug": "the-ghetto-within"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77452/thumb_image_normal/BLK_HHFAC2022321924.jpg",
+            "title": "Her Heart for a Compass",
+            "author": "Sarah Ferguson",
+            "price": "Rp 199.000",
+            "original_url": "https://ebooks.gramedia.com/books/her-heart-for-a-compass",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/her-heart-for-a-compass",
+            "slug": "her-heart-for-a-compass"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77450/thumb_image_normal/BLK_TWM2022228697.jpg",
+            "title": "The Women's March",
+            "author": "Jennifer Chiaverini",
+            "price": "Rp 149.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-women-s-march",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-women-s-march",
+            "slug": "the-women-s-march"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77442/thumb_image_normal/BLK_MSOTC2022670613.jpg",
+            "title": "M: Son of the Century",
+            "author": "Antonio Scurati",
+            "price": "Rp 249.000",
+            "original_url": "https://ebooks.gramedia.com/books/m-son-of-the-century",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/m-son-of-the-century",
+            "slug": "m-son-of-the-century"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77427/thumb_image_normal/BLK_DB2022294763.jpg",
+            "title": "Dr. B.",
+            "author": "Daniel Birnbaum",
+            "price": "Rp 249.000",
+            "original_url": "https://ebooks.gramedia.com/books/dr-b",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/dr-b",
+            "slug": "dr-b"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77353/thumb_image_normal/BLK_B20223377.jpg",
+            "title": "Blonde",
+            "author": "Joyce Carol Oates",
+            "price": "Rp 229.000",
+            "original_url": "https://ebooks.gramedia.com/books/blonde",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/blonde",
+            "slug": "blonde"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77351/thumb_image_normal/BLK_TES2022235801.jpg",
+            "title": "The Essex Serpent",
+            "author": "Sarah Perry",
+            "price": "Rp 209.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-essex-serpent",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-essex-serpent",
+            "slug": "the-essex-serpent"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/77344/thumb_image_normal/BLK_ASISJ2022405295.jpg",
+            "title": "A Sitting in St. James",
+            "author": "Rita Williams-Garcia",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/a-sitting-in-st-james",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/a-sitting-in-st-james",
+            "slug": "a-sitting-in-st-james"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76931/thumb_image_normal/BLK_DOTO2022408571.jpg",
+            "title": "Daughters of the Occupation",
+            "author": "Shelly Sanders",
+            "price": "Rp 229.000",
+            "original_url": "https://ebooks.gramedia.com/books/daughters-of-the-occupation",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/daughters-of-the-occupation",
+            "slug": "daughters-of-the-occupation"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76901/thumb_image_normal/BLK_SB2022663330.jpg",
+            "title": "Sarah Bishop",
+            "author": "Scott O'Dell",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/sarah-bishop",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/sarah-bishop",
+            "slug": "sarah-bishop"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76867/thumb_image_normal/BLK_TBM2022585909.jpg",
+            "title": "The Beaded Moccasins",
+            "author": "Lynda Durrant",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-beaded-moccasins",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-beaded-moccasins",
+            "slug": "the-beaded-moccasins"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76863/thumb_image_normal/BLK_APITS2022579421.jpg",
+            "title": "A Place In The Sun",
+            "author": "Jill Rubalcaba",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/a-place-in-the-sun",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/a-place-in-the-sun",
+            "slug": "a-place-in-the-sun"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76827/thumb_image_normal/BLK_MC2022313230.jpg",
+            "title": "Moon's Crossing",
+            "author": "Barbara Croft",
+            "price": "Rp 199.000",
+            "original_url": "https://ebooks.gramedia.com/books/moon-s-crossing",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/moon-s-crossing",
+            "slug": "moon-s-crossing"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76746/thumb_image_normal/BLK_MI2022639209.jpg",
+            "title": "Mustique Island",
+            "author": "Sarah McCoy",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/mustique-island",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/mustique-island",
+            "slug": "mustique-island"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76745/thumb_image_normal/BLK_TG2022616913.jpg",
+            "title": "The Godmothers",
+            "author": "Camille Aubray",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-godmothers",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-godmothers",
+            "slug": "the-godmothers"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76731/thumb_image_normal/BLK_TCATK2022174667.jpg",
+            "title": "The Cat And The King",
+            "author": "Louis Auchincloss",
+            "price": "Rp 249.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-cat-and-the-king",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-cat-and-the-king",
+            "slug": "the-cat-and-the-king"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76629/thumb_image_normal/BLK_R2022764231.jpg",
+            "title": "Revelations",
+            "author": "Mary Sharratt",
+            "price": "Rp 479.000",
+            "original_url": "https://ebooks.gramedia.com/books/revelations",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/revelations",
+            "slug": "revelations"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76612/thumb_image_normal/BLK_CA2022266516.jpg",
+            "title": "Cherokee America",
+            "author": "Margaret Verble",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/cherokee-america",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/cherokee-america",
+            "slug": "cherokee-america"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76569/thumb_image_normal/BLK_WTWHWO2022565474.jpg",
+            "title": "When The White House Was Ours",
+            "author": "Porter Shreve",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/when-the-white-house-was-ours",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/when-the-white-house-was-ours",
+            "slug": "when-the-white-house-was-ours"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76565/thumb_image_normal/BLK_FF2022230010.jpg",
+            "title": "Fiddle Fever",
+            "author": "Sharon Arms Doucet",
+            "price": "Rp 79.000",
+            "original_url": "https://ebooks.gramedia.com/books/fiddle-fever",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/fiddle-fever",
+            "slug": "fiddle-fever"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76557/thumb_image_normal/BLK_TUO2022294012.jpg",
+            "title": "The Ugly One",
+            "author": "Leanne Statland Ellis",
+            "price": "Rp 99.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-ugly-one",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-ugly-one",
+            "slug": "the-ugly-one"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76528/thumb_image_normal/BLK_NBN2022611801.jpg",
+            "title": "Norwegian By Night",
+            "author": "Derek B. Miller",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/norwegian-by-night",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/norwegian-by-night",
+            "slug": "norwegian-by-night"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76481/thumb_image_normal/BLK_WSR2022706684.jpg",
+            "title": "Will Sparrow's Road",
+            "author": "Karen Cushman",
+            "price": "Rp 109.000",
+            "original_url": "https://ebooks.gramedia.com/books/will-sparrow-s-road",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/will-sparrow-s-road",
+            "slug": "will-sparrow-s-road"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76470/thumb_image_normal/BLK_BL2022683780.jpg",
+            "title": "Beautiful Lies",
+            "author": "Clare Clark",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/beautiful-lies",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/beautiful-lies",
+            "slug": "beautiful-lies"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76402/thumb_image_normal/BLK_W2022284699.jpg",
+            "title": "Watchfires",
+            "author": "Louis Auchincloss",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/watchfires",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/watchfires",
+            "slug": "watchfires"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76399/thumb_image_normal/BLK_TOOBO2022737585.jpg",
+            "title": "The Odyssey Of Ben O'neal",
+            "author": "Theodore Taylor",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-odyssey-of-ben-o-neal",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-odyssey-of-ben-o-neal",
+            "slug": "the-odyssey-of-ben-o-neal"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76363/thumb_image_normal/BLK_HIV202244703.jpg",
+            "title": "Her Infinite Variety",
+            "author": "Louis Auchincloss",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/her-infinite-variety",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/her-infinite-variety",
+            "slug": "her-infinite-variety"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76352/thumb_image_normal/BLK_TLC2022316172.jpg",
+            "title": "The Ludwig Conspiracy",
+            "author": "Oliver Pötzsch",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-ludwig-conspiracy",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-ludwig-conspiracy",
+            "slug": "the-ludwig-conspiracy"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76348/thumb_image_normal/BLK_TTAT2022358949.jpg",
+            "title": "The Thing About Thugs",
+            "author": "Tabish Khair",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-thing-about-thugs",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-thing-about-thugs",
+            "slug": "the-thing-about-thugs"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76344/thumb_image_normal/BLK_K2022653607.jpg",
+            "title": "Kaltenburg",
+            "author": "Marcel Beyer",
+            "price": "Rp 299.000",
+            "original_url": "https://ebooks.gramedia.com/books/kaltenburg",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/kaltenburg",
+            "slug": "kaltenburg"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76313/thumb_image_normal/BLK_STH202215156.jpg",
+            "title": "Something To Hold",
+            "author": "Katherine Schlick Noe",
+            "price": "Rp 209.000",
+            "original_url": "https://ebooks.gramedia.com/books/something-to-hold",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/something-to-hold",
+            "slug": "something-to-hold"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76299/thumb_image_normal/BLK_TUPOER202225638.jpg",
+            "title": "The Unruly Passions Of Eugénie R.",
+            "author": "Carole DeSanti",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-unruly-passions-of-eugenie-r",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-unruly-passions-of-eugenie-r",
+            "slug": "the-unruly-passions-of-eugenie-r"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76275/thumb_image_normal/BLK_LFM2022475124.jpg",
+            "title": "Looking For Me",
+            "author": "Betsy R. Rosenthal",
+            "price": "Rp 99.000",
+            "original_url": "https://ebooks.gramedia.com/books/looking-for-me",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/looking-for-me",
+            "slug": "looking-for-me"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76260/thumb_image_normal/BLK_BTW2022866487.jpg",
+            "title": "Bridle The Wind",
+            "author": "Joan Aiken",
+            "price": "Rp 79.000",
+            "original_url": "https://ebooks.gramedia.com/books/bridle-the-wind",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/bridle-the-wind",
+            "slug": "bridle-the-wind"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76248/thumb_image_normal/BLK_TPC2022799667.jpg",
+            "title": "The Prague Cemetery",
+            "author": "Umberto Eco",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-prague-cemetery",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-prague-cemetery",
+            "slug": "the-prague-cemetery"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76239/thumb_image_normal/BLK_TNOTR2022750478.jpg",
+            "title": "The Name Of The Rose",
+            "author": "Umberto Eco",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-name-of-the-rose",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-name-of-the-rose",
+            "slug": "the-name-of-the-rose"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76201/thumb_image_normal/BLK_JR(2022661521.jpg",
+            "title": "Jacob's Room (annotated)",
+            "author": "Virginia Woolf",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/jacob-s-room-annotated",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/jacob-s-room-annotated",
+            "slug": "jacob-s-room-annotated"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76199/thumb_image_normal/BLK_BD2022364576.jpg",
+            "title": "Burmese Days",
+            "author": "George Orwell",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/burmese-days",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/burmese-days",
+            "slug": "burmese-days"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76196/thumb_image_normal/BLK_TG2022848102.jpg",
+            "title": "The Go-Between",
+            "author": "Frederick Turner",
+            "price": "Rp 209.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-go-between",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-go-between",
+            "slug": "the-go-between"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76191/thumb_image_normal/BLK_AOTF2022209638.jpg",
+            "title": "Anna On The Farm",
+            "author": "Mary Downing Hahn",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/anna-on-the-farm",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/anna-on-the-farm",
+            "slug": "anna-on-the-farm"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76190/thumb_image_normal/BLK_AAYR2022652233.jpg",
+            "title": "Anna All Year Round",
+            "author": "Mary Downing Hahn",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/anna-all-year-round",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/anna-all-year-round",
+            "slug": "anna-all-year-round"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76189/thumb_image_normal/BLK_TGRK2022759390.jpg",
+            "title": "The Gold Rush Kid",
+            "author": "Mary Waldorf",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-gold-rush-kid",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-gold-rush-kid",
+            "slug": "the-gold-rush-kid"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76188/thumb_image_normal/BLK_PB202219188.jpg",
+            "title": "Preacher's Boy",
+            "author": "Katherine Paterson",
+            "price": "Rp 109.000",
+            "original_url": "https://ebooks.gramedia.com/books/preacher-s-boy",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/preacher-s-boy",
+            "slug": "preacher-s-boy"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76126/thumb_image_normal/BLK_BTA202281085.jpg",
+            "title": "Bridge To America",
+            "author": "Linda Glaser",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/bridge-to-america",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/bridge-to-america",
+            "slug": "bridge-to-america"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76041/thumb_image_normal/BLK_INGOOTWA2022181370.jpg",
+            "title": "I'll Never Get Out Of This World Alive",
+            "author": "Steve Earle",
+            "price": "Rp 159.000",
+            "original_url": "https://ebooks.gramedia.com/books/i-ll-never-get-out-of-this-world-alive",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/i-ll-never-get-out-of-this-world-alive",
+            "slug": "i-ll-never-get-out-of-this-world-alive"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/76040/thumb_image_normal/BLK_TDOTK2022380043.jpg",
+            "title": "The Days Of The King",
+            "author": "Filip Florian",
+            "price": "Rp 219.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-days-of-the-king",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-days-of-the-king",
+            "slug": "the-days-of-the-king"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/75977/thumb_image_normal/BLK_TOTC2022856196.jpg",
+            "title": "Timothy Of The Cay",
+            "author": "Theodore Taylor",
+            "price": "Rp 99.000",
+            "original_url": "https://ebooks.gramedia.com/books/timothy-of-the-cay",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/timothy-of-the-cay",
+            "slug": "timothy-of-the-cay"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/75955/thumb_image_normal/BLK_TROPF2022289005.jpg",
+            "title": "The Riddle Of Penncroft Farm",
+            "author": "Dorothea Jensen",
+            "price": "Rp 99.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-riddle-of-penncroft-farm",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-riddle-of-penncroft-farm",
+            "slug": "the-riddle-of-penncroft-farm"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/75951/thumb_image_normal/BLK_WT2022402568.jpg",
+            "title": "Winter's Tale",
+            "author": "Mark Helprin",
+            "price": "Rp 179.000",
+            "original_url": "https://ebooks.gramedia.com/books/winter-s-tale",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/winter-s-tale",
+            "slug": "winter-s-tale"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/73687/thumb_image_normal/BLK_DOF2022238237.jpg",
+            "title": "Dawn Of Fear",
+            "author": "Susan Cooper",
+            "price": "Rp 59.000",
+            "original_url": "https://ebooks.gramedia.com/books/dawn-of-fear",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/dawn-of-fear",
+            "slug": "dawn-of-fear"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/73630/thumb_image_normal/BLK_HTWB2022370903.jpg",
+            "title": "Hear The Wind Blow",
+            "author": "Mary Downing Hahn",
+            "price": "Rp 89.000",
+            "original_url": "https://ebooks.gramedia.com/books/hear-the-wind-blow",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/hear-the-wind-blow",
+            "slug": "hear-the-wind-blow"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/73621/thumb_image_normal/BLK_TWOS2022993585.jpg",
+            "title": "The Well Of Sacrifice",
+            "author": "Chris Eboch",
+            "price": "Rp 149.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-well-of-sacrifice",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-well-of-sacrifice",
+            "slug": "the-well-of-sacrifice"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/73606/thumb_image_normal/BLK_WICN2022832038.jpg",
+            "title": "When I Crossed No-Bob",
+            "author": "Margaret McMullan",
+            "price": "Rp 119.000",
+            "original_url": "https://ebooks.gramedia.com/books/when-i-crossed-no-bob",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/when-i-crossed-no-bob",
+            "slug": "when-i-crossed-no-bob"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/73430/thumb_image_normal/BLK_TWBH2022441527.jpg",
+            "title": "The World Before Her",
+            "author": "Deborah Weisgall",
+            "price": "Rp 149.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-world-before-her",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-world-before-her",
+            "slug": "the-world-before-her"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/73427/thumb_image_normal/BLK_TBF2022653674.jpg",
+            "title": "The Blue Flower",
+            "author": "Penelope Fitzgerald",
+            "price": "Rp 149.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-blue-flower",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-blue-flower",
+            "slug": "the-blue-flower"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/73423/thumb_image_normal/BLK_AUS2022697032.jpg",
+            "title": "An Unfinished Season",
+            "author": "Ward Just",
+            "price": "Rp 149.000",
+            "original_url": "https://ebooks.gramedia.com/books/an-unfinished-season",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/an-unfinished-season",
+            "slug": "an-unfinished-season"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/73415/thumb_image_normal/BLK_DS2022581868.jpg",
+            "title": "Dog Soldiers",
+            "author": "Robert Stone",
+            "price": "Rp 149.000",
+            "original_url": "https://ebooks.gramedia.com/books/dog-soldiers",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/dog-soldiers",
+            "slug": "dog-soldiers"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/73097/thumb_image_normal/BLK_EII2022867306.jpg",
+            "title": "Everything Is Illuminated",
+            "author": "Jonathan Safran Foer",
+            "price": "Rp 149.000",
+            "original_url": "https://ebooks.gramedia.com/books/everything-is-illuminated",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/everything-is-illuminated",
+            "slug": "everything-is-illuminated"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/73096/thumb_image_normal/BLK_LB2022986011.jpg",
+            "title": "Lucky Billy",
+            "author": "John Vernon",
+            "price": "Rp 149.000",
+            "original_url": "https://ebooks.gramedia.com/books/lucky-billy",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/lucky-billy",
+            "slug": "lucky-billy"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/73030/thumb_image_normal/BLK_TBB2022593949.jpg",
+            "title": "The Bronze Bow",
+            "author": "Elizabeth George Speare",
+            "price": "Rp 129.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-bronze-bow",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-bronze-bow",
+            "slug": "the-bronze-bow"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/72929/thumb_image_normal/BLK_TS2022392391.jpg",
+            "title": "Three Sisters",
+            "author": "Bi Feiyu",
+            "price": "Rp 249.000",
+            "original_url": "https://ebooks.gramedia.com/books/three-sisters-1",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/three-sisters-1",
+            "slug": "three-sisters-1"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/72926/thumb_image_normal/BLK_THTFHM2022744520.jpg",
+            "title": "The Hand That First Held Mine",
+            "author": "Maggie O'Farrell",
+            "price": "Rp 149.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-hand-that-first-held-mine",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-hand-that-first-held-mine",
+            "slug": "the-hand-that-first-held-mine"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/72921/thumb_image_normal/BLK_WILTD202293061.jpg",
+            "title": "What Is Left The Daughter",
+            "author": "Howard Norman",
+            "price": "Rp 149.000",
+            "original_url": "https://ebooks.gramedia.com/books/what-is-left-the-daughter",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/what-is-left-the-daughter",
+            "slug": "what-is-left-the-daughter"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/72917/thumb_image_normal/BLK_S2022410136.jpg",
+            "title": "Slammerkin",
+            "author": "Emma Donoghue",
+            "price": "Rp 149.000",
+            "original_url": "https://ebooks.gramedia.com/books/slammerkin",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/slammerkin",
+            "slug": "slammerkin"
+        },
+        {
+            "image": "https://ebooks.gramedia.com/ebook-covers/72859/thumb_image_normal/BLK_TEB2022930039.jpg",
+            "title": "The Ever-After Bird",
+            "author": "Ann Rinaldi",
+            "price": "Rp 99.000",
+            "original_url": "https://ebooks.gramedia.com/books/the-ever-after-bird",
+            "url": "http://laravel-books-db.herokuapp.com/api/books/the-ever-after-bird",
+            "slug": "the-ever-after-bird"
+        }
+    ]
+}

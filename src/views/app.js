@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const authorization = require('../auth');
 const exp = require('express');
-const purchasingBook = require('../otherFunction')
+const {purchasingBook, PromiseUnAwait, PromiseAwait, PromiseAwaitCall} = require('../otherFunction')
 const {users} = require('../../assets/user.json');
 const {books} = require('../../assets/data.json');
 const dotenv = require('dotenv');
@@ -32,8 +32,31 @@ api.post('/login', (req, res) => {
 
 api.get('/bookList', authorization, async(req, res) => {
     let {termOfCredit, stock, purchase, title, discount, tax} = req.body;
+    let data = await purchasingBook(books, termOfCredit, stock, purchase, title, discount, tax);
     res.status(200).send({
-        message: await purchasingBook(books, termOfCredit, stock, purchase, title, discount, tax)
+        message: data
+    })
+})
+
+api.get('/promiseUnAwait', authorization, (req, res) => {
+    let promiseVar = new Promise(PromiseUnAwait);
+    promiseVar.then(val => {
+        res.status(200).send({
+            status: 200,
+            message: JSON.parse(val)
+        })
+    }).catch(err => {
+        res.status(400).send({
+            status: 400,
+            message: err
+        })
+    })
+})
+
+api.get('/promiseAwait', authorization, async(req, res) => {
+    let obj = await PromiseAwaitCall();
+    res.send({
+        message: obj
     })
 })
 
