@@ -55,17 +55,20 @@ let calculateCredit = async(termOfCredit, stock, purchase) => {
 }
 
 let PromiseUnAwait = (resolve, reject) => {
+    console.log('Wait, data will display 5s')
     setTimeout(() => {
         fs.readFile('./assets/data.txt', 'utf-8', (err, data) =>{
             if(err){
                 reject(`${err.path} is not found`)
             }
+            console.log('Data success')
             resolve(data)
         });
     }, 5000)
 }
 
 let PromiseAwait = (f) => {
+    console.log('Wait, data will display 5s')
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             fs.readFile(f, 'utf-8', (err, data) => {
@@ -73,6 +76,7 @@ let PromiseAwait = (f) => {
                     status: 400,
                     message: `${err.path} isn't found`
                 });
+                console.log('Data success')
                 resolve(data);
             })
         }, 5000)
@@ -87,4 +91,5 @@ let PromiseAwaitCall = async() => {
         return err
     }
 }
+
 module.exports = {purchasingBook, PromiseUnAwait, PromiseAwaitCall};
