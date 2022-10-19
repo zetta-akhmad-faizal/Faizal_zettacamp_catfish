@@ -1,31 +1,28 @@
 let fs = require('fs');
-const book = require('../assets/data.json');
 
 let month = {
     'january': 1, 'febuary': 2, 'march':3, 'april':4, 'may':5, 'june':6, 
     'july':7, 'august':8, 'september':9, 'october':10, 'november':11, 'desember':12
 };
 
-let splitterString = (str) => {
-    let txt = parseFloat(str.replace('Rp ', ''));
-    return txt
+let splitterString = (discount, tax, additional, price) => {
+    let disc = parseFloat(discount.replace('Rp ', ''));
+    let taxAmnesty = parseFloat(tax.replace('Rp ', ''));
+    let additionalPrice = parseFloat(additional.replace('Rp ', ''));
+    let priceOrigin = parseFloat(price.replace('Rp ', ''));
+    return [disc, taxAmnesty, additionalPrice, priceOrigin]
 }
 
-let array_move = (arr, old_index, new_index) => {
-    if (new_index >= arr.length) {
-        var k = new_index - arr.length + 1;
-        while (k--) {
-            arr.push(undefined);
-        }
-    }
-    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-    return arr; // for testing
-};
-
-let callDataJson = () => {
-    let {books} = book;
-    return books;
-}
+// let array_move = (arr, old_index, new_index) => {
+//     if (new_index >= arr.length) {
+//         var k = new_index - arr.length + 1;
+//         while (k--) {
+//             arr.push(undefined);
+//         }
+//     }
+//     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+//     return arr; // for testing
+// };
 
 let purchasingBooks = async(termOfCredit, stockBook, purchase, title, discount, taxAmnesty) => {
     try{
@@ -34,7 +31,7 @@ let purchasingBooks = async(termOfCredit, stockBook, purchase, title, discount, 
         let tax = parseFloat(taxAmnesty.replace('Rp ', ''));
         let [monthOfCredit, stock, remain] = await calculateCredit(termOfCredit, stockBook, purchase);
 
-        const bookList = callDataJson();
+        const bookList = await PromiseAwaitCall();
 
         let books = bookList.map(e => {
             e.tax = taxAmnesty;
@@ -63,27 +60,24 @@ let purchasingBooks = async(termOfCredit, stockBook, purchase, title, discount, 
 
 let purchasingBook = async(termOfCredit, stockBook, purchase, discount, taxAmnesty, additionalPrice, title) => {
     try{
-        //map in line 58-59, 79-85
-        //set in line 57 and 78
         let sets = new Set(title);
         let maps = new Map();
-        let text = {};
+        let text={};let arr1 =[];let arr2=[];
 
-        let getPrice; let AfterDiscount;let AfterTax;let adminPayment; let objLength; let move;
-        let disc = splitterString(discount);
-        let tax = splitterString(taxAmnesty);
-        let additional = splitterString(additionalPrice);
-        let [monthOfCredit, stock, remain] = await calculateCredit(termOfCredit, stockBook, purchase);
+        const [monthOfCredit, stock, remain] = await calculateCredit(termOfCredit, stockBook, purchase);
 
-        let bookList = callDataJson() 
+        let myobj = await PromiseAwaitCall();
+        let bookList = new Set(myobj);
+        const [...data] = bookList;
 
-        let books = bookList.map(e => {
+        let books = data.map(e => {
+            const [disc, tax, additional, getPrice] = splitterString(discount, taxAmnesty, additionalPrice, e.price)
+
             e.tax = taxAmnesty;
             e.discount = discount;
-            getPrice = splitterString(e.price)
-            AfterDiscount = getPrice - disc;
-            AfterTax = AfterDiscount + tax;
-            adminPayment = AfterTax + additional;
+            let AfterDiscount = getPrice - disc;
+            let AfterTax = AfterDiscount + tax;
+            let adminPayment = AfterTax + additional;
             e.afterDiscount = `Rp ${AfterDiscount.toFixed(3)}`;
             e.AfterTax = `Rp ${AfterTax.toFixed(3)}`;
             e.adminPayment = additionalPrice
@@ -110,17 +104,19 @@ let purchasingBook = async(termOfCredit, stockBook, purchase, discount, taxAmnes
         })
 
         for(const [i, v] of books.entries()){
-            objLength = Object.keys(books[i]).length
+            let objLength = Object.keys(books[i]).length
             if(objLength > 14){
-                move = array_move(books, i, 0)
+                arr1.push(books[i])
+            }else if(objLength < 15){
+                arr2.push(books[i])
             }
         }
-
-        let unique = new Set(move)
-        let [...data] = unique
-        return data
+        
+        let newMaps = new Map([['billing', arr1], ['book_order', arr2]])
+        
+        return Object.fromEntries(newMaps)
     }catch(e){
-        return "The required field is empty"
+        return "Something wrong, please check hard code."
     }
 }
 
@@ -156,7 +152,7 @@ let PromiseUnAwait = (resolve, reject) => {
 }
 
 let PromiseAwait = (f) => {
-    console.log('Wait, data will display 5s')
+    console.log('Data will display 5s')
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             fs.readFile(f, 'utf-8', (err, data) => {
@@ -173,8 +169,9 @@ let PromiseAwait = (f) => {
 
 let PromiseAwaitCall = async() => {
     try{
-        const data = await PromiseAwait('./assets/user.txt');
-        return JSON.parse(data);
+        const data = await PromiseAwait('./assets/data.txt');
+        const {books} = JSON.parse(data);
+        return books;
     }catch(err){
         return err
     }
