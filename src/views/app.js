@@ -66,8 +66,7 @@ api.get('/promiseAwait', authorization, async(req, res) => {
 api.post('/MapSet', authorization, async(req, res) => {
     let {termOfCredit, stock, purchase, title:[...ordered], discount, tax, additional} = req.body;
     let data = await purchasingBook(termOfCredit, stock, purchase, discount, tax, additional, ordered);
-    res.status(200).send({
-        status: 200,
+    res.send({
         message: data
     })
 })

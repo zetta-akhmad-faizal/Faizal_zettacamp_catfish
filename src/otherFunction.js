@@ -83,11 +83,11 @@ let purchasingBook = async(termOfCredit, stockBook, purchase, discount, taxAmnes
             e.adminPayment = additionalPrice
             e.total = `Rp ${adminPayment.toFixed(3)}`;
             e.stock = stockBook;
-
             if(sets.has(e.title)){
                 monthOfCredit.map(val => {
                     maps.set(val, adminPayment/termOfCredit)
                 })
+                //['january', 'feb', 'march']
 
                 maps.forEach((v, k) => {
                     text[k] = `Rp ${v.toFixed(3)}`;
@@ -106,17 +106,17 @@ let purchasingBook = async(termOfCredit, stockBook, purchase, discount, taxAmnes
         for(const [i, v] of books.entries()){
             let objLength = Object.keys(books[i]).length
             if(objLength > 14){
-                arr1.push(books[i])
+                arr1.push(books[i]);
             }else if(objLength < 15){
-                arr2.push(books[i])
+                arr2.push(books[i]);
             }
         }
         
-        let newMaps = new Map([['billing', arr1], ['book_order', arr2]])
-        
-        return Object.fromEntries(newMaps)
+        let newMaps = new Map([['billing', arr1], ['book_order', arr2]]);
+
+        return Object.fromEntries(newMaps);
     }catch(e){
-        return "Something wrong, please check hard code."
+        return e.message
     }
 }
 
