@@ -3,49 +3,49 @@
         {
             "title": "Say You Won't Let Go",
             "duration": "00:03:30",
-            "artist": "James Arthur",
+            "artist": "James-Arthur",
             "genre": "Pop rock"
         },
         {
             "title": "We Don't Talk Anymore (feat. Selena Gomez)",
             "duration": "00:03:50",
-            "artist": "Charlie Puth",
+            "artist": "Charlie-Puth",
             "genre": "Pop"
         },
         {
             "title": "Closer (Lyric) ft. Halsey",
             "duration": "00:04:21",
-            "artist": "The Chainsmokers",
+            "artist": "The-Chainsmokers",
             "genre": "ElectroPOP."
         },
         {
             "title": "Perfect",
             "duration": "00:04:23",
-            "artist": "Ed Sheeran",
+            "artist": "Ed-Sheeran",
             "genre": "Pop"
         },
         {
             "title": "Photograph",
             "duration": "00:05:00",
-            "artist": "Ed Sheeran",
+            "artist": "Ed-Sheeran",
             "genre": "Pop"
         },
         {
             "title": "Shape Of You",
             "duration": "00:04:23",
-            "artist": "Ed Sheeran",
+            "artist": "Ed-Sheeran",
             "genre": "Pop"
         },
         {
             "title": "Impossible",
             "duration": "00:04:13",
-            "artist": "James Arthur",
+            "artist": "James-Arthur",
             "genre": "Pop rock"
         },
         {
-            "title": "You're the reason",
+            "title": "You'rethe reason",
             "duration": "00:03:24",
-            "artist": "Calum Scott",
+            "artist": "Calum-Scott",
             "genre": "Pop"
         },
         {
@@ -75,17 +75,17 @@
         {
             "title": "Akad",
             "duration": "00:04:16",
-            "artist": "Payung Teduh",
+            "artist": "Payung-Teduh",
             "genre": "Jazz"
         },
         {
             "title": "Seperti Kisah",
             "duration": "00:04:57",
-            "artist": "Rizki Febian",
+            "artist": "Rizki-Febian",
             "genre": "Jazz"
         },
         {
-            "title": "Bukan Untukku",
+            "title": "Bukan-Untukku",
             "duration": "00:03:09",
             "artist": "Tulus",
             "genre": "Pop"
@@ -93,7 +93,7 @@
         {
             "title": "In The End ",
             "duration": "00:01:45",
-            "artist": "Linkin Park",
+            "artist": "Linkin-Park",
             "genre": "Pop"
         }
     ]
