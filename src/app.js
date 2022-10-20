@@ -1,16 +1,5 @@
 const {playlistPromiseCall} = require('./another');
 
-let randomArray = (arrays) => {
-    let arr = []
-    while(arrays.length !== 0){
-        let randomIndex = Math.floor(Math.random() * arrays.length);
-        arr.push(arrays[randomIndex]);
-        xarrays.splice(randomIndex, 1);
-    }
-    arrays = arr;
-    return arrays;
-}
-
 let GroupSongArtist = async(vocalist) => {
     let data = await playlistPromiseCall();
     let getArtist = data.filter(({artist}) => artist.toUpperCase() === vocalist.toUpperCase());
@@ -41,17 +30,35 @@ let GroupSongGenre = async(genres) => {
     };
 }
 
+let randomArray = (arrays) => {
+    let arrSet = new Set(arrays);
+    let [...arrPlaylist] = arrSet;
+    let arr = [];
+    while(arrPlaylist.length !== 0){
+        let randomIndex = Math.floor(Math.random() * arrPlaylist.length);
+        arr.push(arrPlaylist[randomIndex]);
+        arrPlaylist.splice(randomIndex, 1);
+    }
+    arrPlaylist = arr;
+    return arrPlaylist;
+}
+
 let LessThanHour = async() => {
     let index = 0;
     let jam=0;let menit=0;let detik=0;
+    let newMap = new Map();
+    let newArr = [];
 
     let playlist = await playlistPromiseCall(); 
     playlist = randomArray(playlist)
 
+    if(playlist.length < 1){
+        return 'Music playlist doesnt'
+    }
+
     for(index; index < playlist.length;index++){
         let splitter = playlist[index].duration.split(":");
         let [hour, minute, second] = splitter;
-        let newMap = new Map();
 
         if(parseInt(second) < 1){
             detik += 0;
@@ -84,22 +91,13 @@ let LessThanHour = async() => {
         }
 
         if(jam < 1){
-            return {
-                music: playlist[index],
-                duration: `${menit} minute ${detik} second`
-            }
-            // remainTime = (playlist.length-1) -i;
-            // remainMin = 59 - menit;
+            newArr.push(playlist[index]);
+            newMap.set("music", newArr);
+            newMap.set("total_duration",`${menit} minute ${detik} second`)
         }
     }
-    // let remaining = playlist.slice(playlist.length-remainTime, playlist.length);
-    // for(let b=0;b<remaining.length;b++){
-    //     let [h, m, s] = remaining[b].duration.split(':');
-    //     if(parseInt(m) < remainMin){
-    //         detik += parseInt(s);
-    //         console.log('Recommended: ',remaining[b]);
-    //     }
-    // }
+    
+    return Object.fromEntries(newMap)
 }
 
 module.exports = {GroupSongArtist,GroupSongGenre,LessThanHour};

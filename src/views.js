@@ -44,8 +44,15 @@ api.get('/GroupSongGenre/:genre', authorization, async(req, res) => {
 })
 
 api.get('/lessThanHour', authorization, async(req, res) => {
-    const data = await LessThanHour();
-    res.send(data)
+    try{
+        const data = await LessThanHour();
+        res.status(200).send(data)
+    }catch(e){
+        res.status(400).send({
+            status: 400,
+            message: "The playlist doesn't played yet"
+        })
+    }
 })
 
 module.exports = api;

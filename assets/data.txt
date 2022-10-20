@@ -4,7 +4,7 @@
             "title": "Say You Won't Let Go",
             "duration": "00:03:30",
             "artist": "James-Arthur",
-            "genre": "Pop rock"
+            "genre": "Pop-rock"
         },
         {
             "title": "We Don't Talk Anymore (feat. Selena Gomez)",
@@ -40,10 +40,10 @@
             "title": "Impossible",
             "duration": "00:04:13",
             "artist": "James-Arthur",
-            "genre": "Pop rock"
+            "genre": "Pop-rock"
         },
         {
-            "title": "You'rethe reason",
+            "title": "You're the reason",
             "duration": "00:03:24",
             "artist": "Calum-Scott",
             "genre": "Pop"
@@ -91,9 +91,15 @@
             "genre": "Pop"
         },
         {
-            "title": "In The End ",
-            "duration": "00:01:45",
+            "title": "In The End",
+            "duration": "00:03:45",
             "artist": "Linkin-Park",
+            "genre": "Pop"
+        },
+        {
+            "title": "Aku yang Salah",
+            "duration": "00:04:11",
+            "artist": "Mahalini-Nuca",
             "genre": "Pop"
         }
     ]
