@@ -24,6 +24,69 @@ let splitterString = (discount, tax, additional, price) => {
 //     return arr; // for testing
 // };
 
+//function purchases is practise in mongodb
+let purchases = async(termOfCredit, stockBook, purchase, discount, taxAmnesty, additionalPrice, title) => {
+    try{
+        let sets = new Set(title);
+        let maps = new Map();
+        let text={};let arr1 =[];let arr2=[];
+
+        const [monthOfCredit, stock, remain] = await calculateCredit(termOfCredit, stockBook, purchase);
+
+        let myobj = await PromiseAwaitCall();
+        let bookList = new Set(myobj);
+        const [...data] = bookList;
+
+        let books = data.map(e => {
+            const [disc, tax, additional, getPrice] = splitterString(discount, taxAmnesty, additionalPrice, e.price)
+
+            e.tax = taxAmnesty;
+            e.discount = discount;
+            let AfterDiscount = getPrice - disc;
+            let AfterTax = AfterDiscount + tax;
+            let adminPayment = AfterTax + additional;
+            e.afterDiscount = `Rp ${AfterDiscount.toFixed(3)}`;
+            e.AfterTax = `Rp ${AfterTax.toFixed(3)}`;
+            e.adminPayment = additionalPrice
+            e.total = `Rp ${adminPayment.toFixed(3)}`;
+            e.stock = stockBook;
+            if(sets.has(e.title)){
+                monthOfCredit.map(val => {
+                    maps.set(val, adminPayment/termOfCredit)
+                })
+                //['january', 'feb', 'march']
+
+                maps.forEach((v, k) => {
+                    text[k] = `Rp ${v.toFixed(3)}`;
+                })
+
+                e.purchase = purchase;
+                e.remain = remain;
+                e.stock = stock;
+                e.termOfCredit = `${termOfCredit} months`
+                e.monthly = monthOfCredit;   
+                e.monthPaid = text;
+            }
+            return e
+        })
+
+        for(const [i, v] of books.entries()){
+            let objLength = Object.keys(books[i]).length
+            if(objLength > 14){
+                arr1.push(books[i]);
+            }else if(objLength < 15){
+                arr2.push(books[i]);
+            }
+        }
+        
+        let newMaps = new Map([['billing', arr1], ['book_order', arr2]]);
+
+        return Object.fromEntries(newMaps).billing;
+    }catch(e){
+        return e.message
+    }
+}
+
 let purchasingBooks = async(termOfCredit, stockBook, purchase, title, discount, taxAmnesty) => {
     try{
         let getPrice; let AfterDiscount;let AfterTax;
@@ -177,4 +240,4 @@ let PromiseAwaitCall = async() => {
     }
 }
 
-module.exports = {purchasingBook, purchasingBooks,PromiseUnAwait, PromiseAwaitCall};
+module.exports = {purchasingBook, purchasingBooks,PromiseUnAwait, PromiseAwaitCall, purchases};

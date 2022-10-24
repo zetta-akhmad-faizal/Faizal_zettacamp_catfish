@@ -1,10 +1,10 @@
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
-const {users} = require('../assets/user.json');
+const {users} = require('../model/index');
 dotenv.config();
 
 let dataUser = async (usr, autho) => {
-    let data = usr.find(({id}) => id === autho._id);
+    let data = await usr.findOne({_id: autho._id});
     return data
 }
 
@@ -18,7 +18,7 @@ const authorization = async(req, res, next) => {
             })
         }
         const token = header.replace('Bearer ', '');
-        const authUser = jwt.verify(token, process.env.SECRET_TOKEN);
+        const authUser = jwt.verify(token, process.env.TOKEN_SECRET);
         const user = await dataUser(users, authUser);
        
         req.user = user;
