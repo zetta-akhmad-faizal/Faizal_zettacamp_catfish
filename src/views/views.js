@@ -1,9 +1,9 @@
 const exp = require('express');
 const jwt = require('jsonwebtoken');
-const authorization = require('./auth');
-const {userPromiseCall} = require('./another');
+const authorization = require('../utils/auth');
+const {userPromiseCall} = require('../another');
 const dotenv = require('dotenv');
-const {GroupSongArtist,GroupSongGenre,LessThanHour} = require('./app');
+const {GroupSongArtist,GroupSongGenre,LessThanHour} = require('../app');
 dotenv.config()
 
 const api = exp.Router();

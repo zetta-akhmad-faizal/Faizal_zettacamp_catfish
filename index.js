@@ -1,5 +1,5 @@
-const app = require('./src/index');
-const api = require('./src/views');
+const app = require('./src/views/index');
+const api = require('./src/views/views');
 
 app.use(api)
 app.use((req, res, next) => {

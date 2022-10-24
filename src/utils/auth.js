@@ -1,6 +1,6 @@
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
-const {userPromiseCall} = require('./another')
+const {userPromiseCall} = require('../another')
 dotenv.config()
 
 let userFind = async(auth) => {
