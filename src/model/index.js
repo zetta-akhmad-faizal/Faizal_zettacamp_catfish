@@ -4,16 +4,7 @@ const validator = require('validator')
 mongoose.connect("mongodb://127.0.0.1:27017/zettacampDB").then(() => console.log('connect')).catch((err) => console.log(err))
 
 const userSchema = new Schema({
-    email: {
-        type: String, 
-        required: true,
-        trim:true,
-        validate:{
-            validator: (v) => {
-                return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(v)
-            }
-        }
-    },
+    email: {type: String, required: true,},
     password: {type: String, required: true,trim:true, minlength: 8},
 })
 
@@ -26,11 +17,13 @@ const bookSchema = new Schema({
     url: {type:String},
     slug: {type:String},
     discount: {type:String},
+    tax: {type: String},
     afterDiscount: {type:String},
     afterTax: {type:String},
     adminPayment: {type:String},
+    additional: {type:String},
     total: {type:String},
-    stock: {type:Number},
+    stock: {type:String},
     purchase: {type:Number},
     remain: {type:Number},
     termOfCredit: {type:String},

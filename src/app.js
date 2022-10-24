@@ -40,16 +40,9 @@ let purchases = async(termOfCredit, stockBook, purchase, discount, taxAmnesty, a
         let books = data.map(e => {
             const [disc, tax, additional, getPrice] = splitterString(discount, taxAmnesty, additionalPrice, e.price)
 
-            e.tax = taxAmnesty;
-            e.discount = discount;
             let AfterDiscount = getPrice - disc;
             let AfterTax = AfterDiscount + tax;
             let adminPayment = AfterTax + additional;
-            e.afterDiscount = `Rp ${AfterDiscount.toFixed(3)}`;
-            e.AfterTax = `Rp ${AfterTax.toFixed(3)}`;
-            e.adminPayment = additionalPrice
-            e.total = `Rp ${adminPayment.toFixed(3)}`;
-            e.stock = stockBook;
             if(sets.has(e.title)){
                 monthOfCredit.map(val => {
                     maps.set(val, adminPayment/termOfCredit)
@@ -59,6 +52,14 @@ let purchases = async(termOfCredit, stockBook, purchase, discount, taxAmnesty, a
                 maps.forEach((v, k) => {
                     text[k] = `Rp ${v.toFixed(3)}`;
                 })
+                e.tax = taxAmnesty;
+                e.discount = discount;
+
+                e.afterDiscount = `Rp ${AfterDiscount.toFixed(3)}`;
+                e.afterTax = `Rp ${AfterTax.toFixed(3)}`;
+                e.adminPayment = additionalPrice
+                e.total = `Rp ${adminPayment.toFixed(3)}`;
+                e.stock = stockBook;
 
                 e.purchase = purchase;
                 e.remain = remain;
