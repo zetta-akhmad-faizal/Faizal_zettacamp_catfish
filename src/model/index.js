@@ -28,26 +28,36 @@ const bookSchema = new Schema({
     remain: {type:Number},
     termOfCredit: {type:String},
     monthly: [{type:String}],
-    monthPaid: {
-        'january': {type:String},
-        'febuary': {type:String},
-        'march':{type:String},
-        'april':{type:String},
-        'may':{type:String},
-        'june':{type:String},
-        'july':{type:String},
-        'august':{type:String},
-        'september':{type:String},
-        'october':{type:String},
-        'november':{type:String},
-        'desember':{type:String},
-    },
+    monthPaid: [{type:String}],
     user_id: {type:mongoose.Schema.Types.ObjectId, required:true, trim:true, ref:'users'},
     createdAt: Date,
     updateAt: Date
 });
 
-bookSchema.set("timestamps", true)
+const bookSelf = new Schema({
+    image: {type:String},
+    title: {type:String},
+    author: {type:String},
+    price: {type:String},
+    original_url: {type:String},
+    url: {type:String},
+    slug: {type:String},
+    createdAt: Date,
+    updateAt: Date
+});
+
+const bookFav = new Schema({
+    type: [{
+        levels: {type: String},
+        reason: {type: String}
+    }],
+    user_id: {type:mongoose.Schema.Types.ObjectId, required:true, trim:true, ref:'users'},
+    bookFav: [{type: mongoose.Schema.Types.ObjectId}]
+})
+
+bookSchema.set("timestamps", true);
+bookSelf.set('timestamps', true);
+bookFav.set('timestamps', true);
 
 userSchema.virtual('booklist', {
     ref: 'booklist',
@@ -55,7 +65,15 @@ userSchema.virtual('booklist', {
     foreignField: 'user_id'
 })
 
+userSchema.virtual('fav_books', {
+    ref:'fav_books',
+    localField: '_id',
+    foreignField: 'user_id'
+})
+
 const users = mongoose.model('users', userSchema);
 const mybooks = mongoose.model('booklist', bookSchema);
+const bookself = mongoose.model('bookself', bookSelf);
+const myfavbooks = mongoose.model('fav_books', bookFav);
 
-module.exports = {users, mybooks};
+module.exports = {users, mybooks, bookself, myfavbooks};

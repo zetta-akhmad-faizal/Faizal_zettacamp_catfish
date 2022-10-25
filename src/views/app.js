@@ -1,6 +1,6 @@
 const {purchasingBook, PromiseUnAwait, PromiseAwait, PromiseAwaitCall, purchasingBooks, purchases} = require('../app');
 const jwt = require('jsonwebtoken');
-const {users, mybooks} = require('../model/index');
+const {users, mybooks, bookself, myfavbooks} = require('../model/index');
 const authorization = require('../utils/auth');
 const exp = require('express');
 const dotenv = require('dotenv');
@@ -9,6 +9,178 @@ dotenv.config();
 
 const api = exp.Router();
 
+//mongodb day 3
+//create with utill map
+api.post('/fav', authorization, async(req, res) => {
+    const {price} = req.body;
+    let selectMyBooks = await bookself.find({price:price})
+    if(!selectMyBooks===null){
+        res.status(404).send({
+            status:404,
+            message: 'Data not found'
+        })
+    }else{
+        let levels;let reason
+        const selectMyIdBooks = selectMyBooks.map(val => {
+            return val._id;
+        })
+        if(selectMyIdBooks.length > 10){
+            levels = 'Cheap';
+            reason = 'Because many peopele are interested'
+        }else{
+            levels = 'Expensive'
+            reason = 'Because a little people are interested'
+        }
+        const obj = new myfavbooks({
+            type: {
+                levels, reason
+            },
+            user_id: req.user,
+            bookFav: selectMyIdBooks
+        })
+        obj.save()
+        res.status(201).send({
+            status:201,
+            message: `Data is inserted`
+        })
+    }
+})
+
+//get based on id with iterator in
+api.get('/fav/:id', authorization, async(req, res) => {
+    const {params} = req;
+    const book_id = mongoose.Types.ObjectId(params.id);
+    const mapData = new Map();
+
+    let MyBookList = await bookself.findOne({_id: book_id});
+
+    if(MyBookList === null){
+        res.status(404).send({
+            status:404,
+            message: 'Data not found'
+        })
+    }else{
+        let myFavQuery = await myfavbooks.find({
+            bookFav: {
+                $in: [book_id]
+            }
+        }).populate('user_id')
+
+        mapData.set('myFavCollection', myFavQuery);
+        mapData.set('bookInCollection', MyBookList);
+
+        res.status(200).send({
+            status:200,
+            message: Object.fromEntries(mapData)
+        })
+    }
+})
+
+//get data with iterator match
+api.get('/favByUser/:user', authorization, async(req,res) => {
+    const {params} = req;
+    let data = await myfavbooks.aggregate([
+        {$lookup: {
+                from: 'users',
+                localField: 'user_id',
+                foreignField: '_id',
+                as: 'myrelate'
+            }
+        },
+        {$unwind: '$myrelate'},
+        {$match: {
+            'myrelate.email': params.user
+            }
+                
+        }
+    ])
+    if(data === null){
+        res.status(404).send({
+            status:404,
+            message: 'Data not found'
+        })
+    }else{
+        res.status(200).send({
+            status: 200,
+            message: data
+        })
+    }
+})
+
+//update
+api.put('/fav/:id', authorization, async(req, res) => {
+    const {params} = req;
+    const book_id = mongoose.Types.ObjectId(params.id);
+    const selectVar = await myfavbooks.find({
+        bookFav: {
+            $in: [book_id]
+        }
+    })
+    if(selectVar === null){
+        res.status(404).send({
+            status:404,
+            message: 'Data not found'
+        })
+    }else{
+        const updateVar = await myfavbooks.updateOne({
+                bookFav: {
+                    $in: [book_id]
+                }
+            }, {
+                $set: {
+                    'type.0.reason': 'The book only a little people that interested'
+                }
+            }
+        )
+        res.status(201).send({
+            status:201,
+            message: 'Data is updated',
+            desc: updateVar
+        })
+    }
+})
+
+//delete
+api.delete('/favByUser/:user', authorization, async(req,res) => {
+    const {params} = req;
+    const dataUser = await users.findOne({email: params.user});
+    if(dataUser===null){
+        res.status(404).send({
+            status:404,
+            message: 'Data not found'
+        })
+    }else{
+        const deleteVar = await myfavbooks.deleteMany({user_id: dataUser._id});
+        res.status(201).send({
+            status:201,
+            message: 'Data is deleted',
+            desc: deleteVar
+        })
+    }
+})
+
+//filter with elemMatch
+api.get('/favByUser', authorization, async(req, res) =>{
+    const data = await myfavbooks.find({
+        type: {
+            $elemMatch: {levels: req.body.levels}
+        }
+    })
+    if(data === null){
+        res.status(404).send({
+            status:404,
+            message: 'Data not found'
+        })
+    }else{
+        res.status(200).send({
+            status:200,
+            message: data
+        })
+    }
+})
+
+
+//mongodb day 2
 //use mongo db as data storage
 api.post('/login', async(req, res) => {
     const {email,password} = req.body;
@@ -31,6 +203,19 @@ api.post('/login', async(req, res) => {
             message: auth
         })
     }
+})
+
+api.post('/move', async(req, res) => {
+    const data = await PromiseAwaitCall();
+    data.map(val => {
+        let obj = new bookself(val);
+        obj.save();
+        return obj;
+    })
+    res.status(201).send({
+        status:201,
+        message: "OK"
+    })
 })
 
 api.get('/purchases', authorization, async(req, res) => {
@@ -81,16 +266,17 @@ api.put('/purchases/:id', authorization, async(req, res) => {
         const afterTax = afterDiscount + taxAmnesty;
         const total = admin + afterTax;
 
-        const update = await mybooks.updateOne({_id: book_id},{
+        const update = await mybooks.updateOne({_id: book_id},{"$set":{
             discount: `${discount}`, 
             tax: `${tax}`, 
             afterDiscount: `Rp ${afterDiscount.toFixed(3)}`,
             afterTax: `Rp ${afterTax.toFixed(3)}`,
             total: `Rp ${total.toFixed(3)}`
-        });
+        }});
+
         res.status(201).send({
             status: 201,
-            message: update
+            message: `Data ObjectID ${book_id} is updated`
         })
     }
 })
@@ -109,7 +295,7 @@ api.delete('/purchases/:id', authorization, async(req, res) => {
         const deleteOne = await mybooks.deleteOne({_id: book_id});
         res.status(201).send({
             status: 201,
-            message: deleteOne
+            message: `Object ${book_id} is deleted`
         })
     }
 })
