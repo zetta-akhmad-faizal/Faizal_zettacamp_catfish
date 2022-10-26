@@ -1,4 +1,4 @@
-const {purchasingBook, PromiseUnAwait, PromiseAwait, PromiseAwaitCall, purchasingBooks, purchases} = require('../app');
+const {purchasingBook, PromiseUnAwait, PromiseAwait, capitalize,PromiseAwaitCall, purchasingBooks, purchases} = require('../app');
 const jwt = require('jsonwebtoken');
 const {users, mybooks, bookself, myfavbooks} = require('../model/index');
 const authorization = require('../utils/auth');
@@ -9,41 +9,92 @@ dotenv.config();
 
 const api = exp.Router();
 
-//mongodb day 3
+//mongodb day 3 & 4
 //create with utill map
 api.post('/fav', authorization, async(req, res) => {
-    const {price} = req.body;
-    let selectMyBooks = await bookself.find({price:price})
-    if(!selectMyBooks===null){
+    let {themeBook, bookName} = req.body;
+    let themeBookCapitalized = capitalize(themeBook);
+
+    const dateObj = new Date();
+
+    let inputMyFavBook = await bookself.findOne({title:bookName});
+
+    if(inputMyFavBook===null){
         res.status(404).send({
             status:404,
             message: 'Data not found'
         })
     }else{
-        let levels;let reason
-        const selectMyIdBooks = selectMyBooks.map(val => {
-            return val._id;
-        })
-        if(selectMyIdBooks.length > 10){
-            levels = 'Cheap';
-            reason = 'Because many peopele are interested'
-        }else{
-            levels = 'Expensive'
-            reason = 'Because a little people are interested'
+        const mapMyBooks = {
+            name: themeBookCapitalized,
+            user_id: mongoose.Types.ObjectId(req.user._id),
+            bookFav: [
+                {
+                    book_id: inputMyFavBook._id,
+                    added: {
+                        date: dateObj.getDate().toString(),
+                        time: `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`,
+                        stock: inputMyFavBook.stock
+                    }
+                }
+            ],
+            date_input: [
+                {date: dateObj.getDate().toString()},
+                {time: `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`}
+            ]
         }
-        const obj = new myfavbooks({
-            type: {
-                levels, reason
-            },
-            user_id: req.user,
-            bookFav: selectMyIdBooks
-        })
-        obj.save()
+        const obj = new myfavbooks(mapMyBooks)
+        await obj.save()
         res.status(201).send({
             status:201,
             message: `Data is inserted`
         })
     }
+})
+
+api.put('/fav-update', authorization, async(req, res) => {
+    let {themeBook, bookName} = req.body;
+    let themeBookCapitalized = capitalize(themeBook);
+
+    let dateUpdate = new Date();
+
+    //checking in bookselves collection, what is there the book with title that i called
+    let getMyBookList = await bookself.findOne({title:bookName});
+
+    //check in fav_books collection, what is there the name of book's theme that i called
+    let getMyFavBook = await myfavbooks.findOne({name: themeBookCapitalized});
+
+    if(getMyFavBook===null || getMyBookList===null){
+        res.status(404).send({
+            status:404,
+            message: 'Data not found'
+        })
+    }else{
+        //for take ID in bookselves through fav_books collection
+        let getMyIdFavBook = await bookself.findById(getMyFavBook.bookFav[0].book_id);
+        let queryUpdate = await myfavbooks.updateOne(
+            { name: themeBookCapitalized },
+            { 
+                $set: { 
+                    "bookFav.$[element]": {
+                        book_id: getMyBookList._id,
+                        added: {
+                            date: dateUpdate.getDate().toString(),
+                            time: `${dateUpdate.getHours()}:${dateUpdate.getMinutes()}:${dateUpdate.getSeconds()}`,
+                            stock: getMyFavBook.bookFav[0].added.stock
+                        }
+                    }
+                } 
+            },
+            { arrayFilters: [ { "element.book_id": getMyIdFavBook._id } ], upsert: true }
+        )
+        res.status(201).send({
+            status:201,
+            message: 'Data is updated',
+            desc: queryUpdate
+        })
+    }
+
 })
 
 //get based on id with iterator in
@@ -94,7 +145,7 @@ api.get('/favByUser/:user', authorization, async(req,res) => {
                 
         }
     ])
-    if(data === null){
+    if(data.length === 0){
         res.status(404).send({
             status:404,
             message: 'Data not found'
@@ -116,7 +167,7 @@ api.put('/fav/:id', authorization, async(req, res) => {
             $in: [book_id]
         }
     })
-    if(selectVar === null){
+    if(selectVar.length === 0){
         res.status(404).send({
             status:404,
             message: 'Data not found'
@@ -144,7 +195,7 @@ api.put('/fav/:id', authorization, async(req, res) => {
 api.delete('/favByUser/:user', authorization, async(req,res) => {
     const {params} = req;
     const dataUser = await users.findOne({email: params.user});
-    if(dataUser===null){
+    if(dataUser === null){
         res.status(404).send({
             status:404,
             message: 'Data not found'
@@ -166,6 +217,26 @@ api.get('/favByUser', authorization, async(req, res) =>{
             $elemMatch: {levels: req.body.levels}
         }
     })
+    if(data.length === 0){
+        res.status(404).send({
+            status:404,
+            message: 'Data not found'
+        })
+    }else{
+        res.status(200).send({
+            status:200,
+            message: data
+        })
+    }
+})
+
+//additional
+api.get('/additional/:id', authorization, async(req, res) => {
+    const {params} = req;
+    const book_id = mongoose.Types.ObjectId(params.id);
+
+    const data = await myfavbooks.findById(book_id);
+
     if(data === null){
         res.status(404).send({
             status:404,

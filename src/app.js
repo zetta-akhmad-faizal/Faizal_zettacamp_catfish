@@ -13,6 +13,15 @@ let splitterString = (discount, tax, additional, price) => {
     return [disc, taxAmnesty, additionalPrice, priceOrigin]
 }
 
+let capitalize =(value) =>{
+    var textArray = value.split(' ')
+    var capitalizedText = ''
+    for (var i = 0; i < textArray.length; i++) {
+      capitalizedText += textArray[i].charAt(0).toUpperCase() + textArray[i].slice(1) + ' '
+    }
+    return capitalizedText
+  }
+
 // let array_move = (arr, old_index, new_index) => {
 //     if (new_index >= arr.length) {
 //         var k = new_index - arr.length + 1;
@@ -236,4 +245,4 @@ let PromiseAwaitCall = async() => {
     }
 }
 
-module.exports = {purchasingBook, purchasingBooks,PromiseUnAwait, PromiseAwaitCall, purchases};
+module.exports = {purchasingBook, purchasingBooks,PromiseUnAwait, PromiseAwaitCall, purchases, capitalize};
