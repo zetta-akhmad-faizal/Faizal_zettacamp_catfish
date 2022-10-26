@@ -60,10 +60,8 @@ const bookFav = new Schema({
     }],
     date_input: [
         {
-            date: {type:String}
-        },
-        {
-            time: {type:String}
+            dates: {type:String},
+            times: {type:String}
         }
     ]
 })

@@ -5,24 +5,47 @@ const authorization = require('../utils/auth');
 const exp = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const e = require('express');
 dotenv.config();
 
 const api = exp.Router();
 
 //mongodb day 3 & 4
-//create with utill map
+//create with utill map, update with push, and inserted data
 api.post('/fav', authorization, async(req, res) => {
-    let {themeBook, bookName} = req.body;
+    let {themeBook, bookName, stock} = req.body;
     let themeBookCapitalized = capitalize(themeBook);
 
     const dateObj = new Date();
 
     let inputMyFavBook = await bookself.findOne({title:bookName});
+    let checkMyFavBook = await myfavbooks.findOne({name: themeBookCapitalized})
 
-    if(inputMyFavBook===null){
+    if(inputMyFavBook === null){
         res.status(404).send({
             status:404,
             message: 'Data not found'
+        })
+    }
+    if(checkMyFavBook !== null){
+        const updateVar = await myfavbooks.updateOne(
+            {name: themeBookCapitalized},{
+                $push: {
+                    bookFav: {
+                        book_id: inputMyFavBook._id,
+                        added: {
+                            date: dateObj.getDate().toString(),
+                            time: `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`,
+                            stock
+                        }
+                    }
+                }
+            }
+        )
+        res.status(201).send({
+            status: 201, 
+            message: 'Data is updated',
+            desc: updateVar
         })
     }else{
         const mapMyBooks = {
@@ -39,12 +62,16 @@ api.post('/fav', authorization, async(req, res) => {
                 }
             ],
             date_input: [
-                {date: dateObj.getDate().toString()},
-                {time: `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`}
+                {
+                    dates: dateObj.getDate().toString(),
+                    times: `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`
+                }
             ]
         }
+
         const obj = new myfavbooks(mapMyBooks)
         await obj.save()
+
         res.status(201).send({
             status:201,
             message: `Data is inserted`
@@ -52,49 +79,122 @@ api.post('/fav', authorization, async(req, res) => {
     }
 })
 
+//array filter in bookFav
 api.put('/fav-update', authorization, async(req, res) => {
-    let {themeBook, bookName} = req.body;
+    let {themeBook, oldBookName, newBookName} = req.body;
     let themeBookCapitalized = capitalize(themeBook);
 
     let dateUpdate = new Date();
 
     //checking in bookselves collection, what is there the book with title that i called
-    let getMyBookList = await bookself.findOne({title:bookName});
+    let getMyOldBookList = await bookself.findOne({title:oldBookName});
+    let getMyNewBookList = await bookself.findOne({title: newBookName});
 
     //check in fav_books collection, what is there the name of book's theme that i called
     let getMyFavBook = await myfavbooks.findOne({name: themeBookCapitalized});
 
-    if(getMyFavBook===null || getMyBookList===null){
+    if(getMyFavBook===null || getMyOldBookList===null){
         res.status(404).send({
             status:404,
             message: 'Data not found'
         })
     }else{
         //for take ID in bookselves through fav_books collection
-        let getMyIdFavBook = await bookself.findById(getMyFavBook.bookFav[0].book_id);
-        let queryUpdate = await myfavbooks.updateOne(
-            { name: themeBookCapitalized },
+        let findIdOldBook = getMyFavBook.bookFav.find(val => val.book_id === getMyOldBookList._id)
+        if(findIdOldBook !== null){
+            let queryUpdate = await myfavbooks.updateOne(
+                { name: themeBookCapitalized },
+                { 
+                    $set: { 
+                        "bookFav.$[element]": {
+                            book_id: getMyNewBookList._id,
+                            added: {
+                                date: dateUpdate.getDate().toString(),
+                                time: `${dateUpdate.getHours()}:${dateUpdate.getMinutes()}:${dateUpdate.getSeconds()}`,
+                                stock: getMyNewBookList.stock
+                            }
+                        }
+                    } 
+                },
+                { arrayFilters: [ { "element.book_id": getMyOldBookList._id } ], upsert: true }
+            )
+            res.status(201).send({
+                status:201,
+                message: 'Data is updated',
+                desc: queryUpdate
+            })
+        }else{
+            res.status(201).send({
+                status:201,
+                message: "Update failed"
+            })
+        }
+        
+    }
+})
+
+//array filter in date_input
+api.put('/fav-update/:id', authorization, async(req, res) => {
+    const {params:id, body} = req;
+    const getIdofMyFavBook = mongoose.Types.ObjectId(id);
+
+    const dateObj = new Date();
+
+    let data = await myfavbooks.findById(getIdofMyFavBook);
+    if(!data){
+        res.status(404).send({
+            status:404,
+            message: 'Data not found'
+        })
+    }else{
+        let updateVar = await myfavbooks.updateOne(
+            { name: data.name  },
             { 
                 $set: { 
-                    "bookFav.$[element]": {
-                        book_id: getMyBookList._id,
-                        added: {
-                            date: dateUpdate.getDate().toString(),
-                            time: `${dateUpdate.getHours()}:${dateUpdate.getMinutes()}:${dateUpdate.getSeconds()}`,
-                            stock: getMyFavBook.bookFav[0].added.stock
-                        }
-                    }
-                } 
+                    name: body.themeBook,
+                    "date_input.$[element]":{
+                          dates: dateObj.getDate().toString(),
+                          times:`${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`
+                      }
+                  } 
             },
-            { arrayFilters: [ { "element.book_id": getMyIdFavBook._id } ], upsert: true }
+            { arrayFilters: [ { "element.dates": {$eq: data.date_input[0].dates} } ], upsert: true }
         )
         res.status(201).send({
             status:201,
             message: 'Data is updated',
-            desc: queryUpdate
+            desc: updateVar
         })
     }
+})
 
+//filter data using elemMatch
+api.get('/fav', authorization, async(req, res) =>{
+    const {bookName} = req.body;
+
+    let getDataBookList = await bookself.findOne({title: bookName});
+
+    if(!getDataBookList){
+        res.status(404).send({
+            status:404,
+            message: 'Data not found'
+        })
+    }else{
+        const queryGet = await myfavbooks.find(
+            {
+                bookFav: {
+                    $elemMatch: {
+                        "book_id": getDataBookList._id
+                    }
+                }
+            }
+        ).populate('user_id')
+
+        res.status(200).send({
+            status: 201,
+            message: queryGet
+        })
+    }
 })
 
 //get based on id with iterator in
