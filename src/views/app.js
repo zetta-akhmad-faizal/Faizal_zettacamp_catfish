@@ -10,7 +10,7 @@ dotenv.config();
 
 const api = exp.Router();
 
-//mongodb day 3 & 4
+//mongodb day 3 & 4 & 5
 //create with utill map, update with push, and inserted data
 api.post('/fav', authorization, async(req, res) => {
     let {themeBook, bookName, stock} = req.body;
@@ -20,7 +20,7 @@ api.post('/fav', authorization, async(req, res) => {
 
     let inputMyFavBook = await bookself.findOne({title:bookName});
     let checkMyFavBook = await myfavbooks.findOne({name: themeBookCapitalized})
-
+    // console.log(checkMyFavBook)
     if(inputMyFavBook === null){
         res.status(404).send({
             status:404,
@@ -28,6 +28,15 @@ api.post('/fav', authorization, async(req, res) => {
         })
     }
     if(checkMyFavBook !== null){
+        let arr = []
+        if(checkMyFavBook.bookFav.length >= 0){
+            for(let indexOf = 0; indexOf<checkMyFavBook.bookFav.length;indexOf++){
+                let parser = parseFloat(checkMyFavBook.bookFav[indexOf].added.price.replace("Rp ", ""));
+                arr.push(parser)
+            }
+        }
+        console.log(arr)
+        console.log(arr.reduce((accumVariable, curValue) => accumVariable+curValue))
         const updateVar = await myfavbooks.updateOne(
             {name: themeBookCapitalized},{
                 $push: {
@@ -36,9 +45,13 @@ api.post('/fav', authorization, async(req, res) => {
                         added: {
                             date: dateObj.getDate().toString(),
                             time: `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`,
-                            stock
+                            stock,
+                            price: inputMyFavBook.price
                         }
                     }
+                },
+                $set: {
+                    priceConvert: arr.reduce((accumVariable, curValue) => accumVariable+curValue)
                 }
             }
         )
@@ -57,10 +70,12 @@ api.post('/fav', authorization, async(req, res) => {
                     added: {
                         date: dateObj.getDate().toString(),
                         time: `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`,
-                        stock: inputMyFavBook.stock
+                        stock,
+                        price: inputMyFavBook.price
                     }
                 }
             ],
+            priceConvert: parseInt(inputMyFavBook.price.replace("Rp ", "")),
             date_input: [
                 {
                     dates: dateObj.getDate().toString(),
@@ -76,6 +91,53 @@ api.post('/fav', authorization, async(req, res) => {
             status:201,
             message: `Data is inserted`
         })
+    }
+})
+
+api.put('/addField', authorization, async(req, res) =>{
+    const {themeBook, stock} = req.body;
+    let themeBookCapitalized = capitalize(themeBook);
+    console.log(stock)
+    if(themeBook === undefined|| stock === undefined){
+        res.status(400).send({
+            status:400,
+            message: "Body request still empty"
+        })
+    }else{
+        let checkMyFavBook = await myfavbooks.findOne({name: themeBookCapitalized});
+
+        if(checkMyFavBook !== null){
+            let addFieldOperation = await myfavbooks.aggregate([
+                {
+                    $addFields: {
+                        priceBenefit: {
+                            $multiply: ["$priceConvert", stock]
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        name: 1,
+                        "bookFav.book_id": 1,
+                        "bookFav.added.price":1,
+                        priceConvert: 1,
+                        priceBenefit: 1
+                    }
+                }
+            ])
+            
+            const [...arrAddField] = addFieldOperation
+            res.status(200).send({
+                status: 200,
+                message: [...addFieldOperation, {stock}]
+            })
+        }else{
+            res.status(404).send({
+                status:404,
+                message: 'Data is not found'
+            })
+        }
     }
 })
 
@@ -118,6 +180,7 @@ api.put('/fav-update', authorization, async(req, res) => {
                 },
                 { arrayFilters: [ { "element.book_id": getMyOldBookList._id } ], upsert: true }
             )
+
             res.status(201).send({
                 status:201,
                 message: 'Data is updated',

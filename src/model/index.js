@@ -42,7 +42,6 @@ const bookSelf = new Schema({
     original_url: {type:String},
     url: {type:String},
     slug: {type:String},
-    stock: {type: Number},
     createdAt: Date,
     updateAt: Date
 });
@@ -55,9 +54,12 @@ const bookFav = new Schema({
         added: {
             date: {type:String},
             time: {type:String},
-            stock: {type: Number}
+            stock: {type: Number},
+            price: {type:String},
         }
     }],
+    priceConvert: {type: Number},
+    priceBenefit: {type:Number},
     date_input: [
         {
             dates: {type:String},
