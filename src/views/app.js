@@ -126,8 +126,7 @@ api.put('/addField', authorization, async(req, res) =>{
                     }
                 }
             ])
-            
-            const [...arrAddField] = addFieldOperation
+
             res.status(200).send({
                 status: 200,
                 message: [...addFieldOperation, {stock}]
@@ -139,6 +138,41 @@ api.put('/addField', authorization, async(req, res) =>{
             })
         }
     }
+})
+
+api.get('/unwind', authorization, async(req, res) => {
+    const data = await myfavbooks.aggregate([
+        {
+            $unwind: "$bookFav"
+        },
+        {
+            $lookup: {
+                from: "bookselves",
+                localField: "bookFav.book_id",
+                foreignField: "_id",
+                as: "book_collection"
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "user_id",
+                foreignField: "_id",
+                as: "users"
+            }
+        },
+        {
+            $project: {
+                user_id: 0,
+                "bookFav.book_id": 0
+            }
+        }
+    ])
+
+    res.status(200).send({
+        status:200,
+        message: data
+    })
 })
 
 //array filter in bookFav
