@@ -10,6 +10,70 @@ dotenv.config();
 
 const api = exp.Router();
 
+//mongodb day 6
+api.get('/sortAndLookup', authorization, async(req, res) => {
+    const dataMyFavBooks = await myfavbooks.aggregate([
+        {
+            $lookup: {
+                from: "users",
+                localField: "user_id",
+                foreignField: "_id",
+                as: "user_admin"
+            }
+        },
+        {
+            $lookup: {
+                from: "bookselves",
+                localField: "bookFav.book_id",
+                foreignField: "_id",
+                as: "book_collections"
+            }
+        },
+        {
+            $sort: {
+                priceConvert: 1
+            }
+        }
+    ])
+    
+    res.status(200).send({
+        status: 200,
+        message: dataMyFavBooks
+    })
+})
+
+api.get('/matchAndConcat', authorization, async(req, res) => {
+    const {bookName} = req.body;
+
+    const data = await bookself.findOne({title:bookName});
+    if(!data){
+        res.status(404).send({
+            status:404,
+            message: 'Data not found'
+        })
+    }else{
+        const matchAndConcatVar = await myfavbooks.aggregate([
+            {
+                $match: {"bookFav.book_id":data._id}
+            },
+            {
+                $project: {
+                    bookFav: 1,
+                    priceConvert: 1,
+                    priceTotal: {
+                        $concat: ["Rp ", {$toString: "$priceConvert"}, ".", "000"]
+                    }
+                }
+            }
+        ])
+
+        res.status(200).send({
+            status:200,
+            message: matchAndConcatVar
+        })
+    }
+})
+
 //mongodb day 3 & 4 & 5
 //create with utill map, update with push, and inserted data
 api.post('/fav', authorization, async(req, res) => {
@@ -29,11 +93,9 @@ api.post('/fav', authorization, async(req, res) => {
     }
     if(checkMyFavBook !== null){
         let arr = []
-        if(checkMyFavBook.bookFav.length >= 0){
-            for(let indexOf = 0; indexOf<checkMyFavBook.bookFav.length;indexOf++){
-                let parser = parseFloat(checkMyFavBook.bookFav[indexOf].added.price.replace("Rp ", ""));
-                arr.push(parser)
-            }
+        for(let indexOf = 0; indexOf<checkMyFavBook.bookFav.length;indexOf++){
+            let parser = parseFloat(checkMyFavBook.bookFav[indexOf].added.price.replace("Rp ", ""));
+            arr.push(parser)
         }
         console.log(arr)
         console.log(arr.reduce((accumVariable, curValue) => accumVariable+curValue))
@@ -207,7 +269,6 @@ api.put('/fav-update', authorization, async(req, res) => {
                             added: {
                                 date: dateUpdate.getDate().toString(),
                                 time: `${dateUpdate.getHours()}:${dateUpdate.getMinutes()}:${dateUpdate.getSeconds()}`,
-                                stock: getMyNewBookList.stock
                             }
                         }
                     } 
