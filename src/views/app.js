@@ -31,7 +31,7 @@ api.get('/sortAndLookup', authorization, async(req, res) => {
         },
         {
             $sort: {
-                priceConvert: 1
+                priceConvert: -1
             }
         }
     ])
@@ -207,28 +207,28 @@ api.get('/unwind', authorization, async(req, res) => {
         {
             $unwind: "$bookFav"
         },
-        {
-            $lookup: {
-                from: "bookselves",
-                localField: "bookFav.book_id",
-                foreignField: "_id",
-                as: "book_collection"
-            }
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "user_id",
-                foreignField: "_id",
-                as: "users"
-            }
-        },
-        {
-            $project: {
-                user_id: 0,
-                "bookFav.book_id": 0
-            }
-        }
+        // {
+        //     $lookup: {
+        //         from: "bookselves",
+        //         localField: "bookFav.book_id",
+        //         foreignField: "_id",
+        //         as: "book_collection"
+        //     }
+        // },
+        // {
+        //     $lookup: {
+        //         from: "users",
+        //         localField: "user_id",
+        //         foreignField: "_id",
+        //         as: "users"
+        //     }
+        // },
+        // {
+        //     $project: {
+        //         user_id: 0,
+        //         "bookFav.book_id": 0
+        //     }
+        // }
     ])
 
     res.status(200).send({
