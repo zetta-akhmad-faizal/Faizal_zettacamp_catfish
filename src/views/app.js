@@ -19,22 +19,21 @@ api.get('/skipAndLimit', authorization, async(req, res) => {
 
     let skip = page > 0 ? ((page - 1) * limit) : 0;
 
-    const dbs = await bookself.find({});
-    let totalPages = dbs.length < limit ? 1 : Math.ceil(dbs.length/limit);
     let offset = (page - 1) * limit + 1
     
     const data = await bookself.aggregate([
         {
-            $skip: skip
+          $facet: {
+            book_collections: [
+              { $sort: { title: 1} },
+              { $skip: skip },
+              { $limit: limit },
+            ],
+            info_page: [
+              { $group: { _id: null, count: { $sum: 1 }} },
+            ],
+          },
         },
-        {
-            $limit: limit
-        },
-        {
-            $sort: {
-                "title": 1
-            }
-        }
     ])
 
     if(data.length < 1){
@@ -45,10 +44,7 @@ api.get('/skipAndLimit', authorization, async(req, res) => {
     }else{
         res.status(200).send({
             status: 200,
-            message: {
-                totalOfDocument: `${offset} - ${skip+data.length} pages of ${dbs.length}`,
-                totalPages
-            },
+            message: `${offset} - ${skip+data[0].book_collections.length} datas of ${data[0].info_page[0].count}`,
             data,
         })
     }
