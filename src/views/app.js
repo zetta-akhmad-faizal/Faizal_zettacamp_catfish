@@ -14,27 +14,42 @@ const api = exp.Router();
 //skip & limit + challenge about length document
 api.get('/skipAndLimit', authorization, async(req, res) => {
     let {limit, page} = req.query;
+    let skip; let offset; let message;let data;
+
     limit = parseInt(limit);
     page = parseInt(page);
 
-    let skip = page > 0 ? ((page - 1) * limit) : 0;
+    let queryAggregation = [];
 
-    let offset = (page - 1) * limit + 1
-    
-    const data = await bookself.aggregate([
-        {
-          $facet: {
-            book_collections: [
-              { $sort: { title: 1} },
-              { $skip: skip },
-              { $limit: limit },
-            ],
-            info_page: [
-              { $group: { _id: null, count: { $sum: 1 }} },
-            ],
-          },
-        },
-    ])
+    if(limit || page || limit === 0){
+        skip = page > 0 ? ((page - 1) * limit) : 0;
+
+        offset = (page - 1) * limit + 1;
+
+        queryAggregation.push(
+            {
+                $facet: {
+                  book_collections: [
+                    { $sort: { title: 1} },
+                    { $skip: skip },
+                    { $limit: limit },
+                  ],
+                  info_page: [
+                    { $group: { _id: null, count: { $sum: 1 }} },
+                  ],
+                },
+              }
+        )
+
+        data = await bookself.aggregate(queryAggregation);
+        message = `${offset} - ${skip+data[0].book_collections.length} datas of ${data[0].info_page[0].count}`;
+
+    }else{
+        queryAggregation.push({$sort: { title: 1 }});
+
+        data = await bookself.aggregate(queryAggregation)
+        message = `Data book collections ${data.length}`;
+    }
 
     if(data.length < 1){
         res.status(400).send({
@@ -44,7 +59,7 @@ api.get('/skipAndLimit', authorization, async(req, res) => {
     }else{
         res.status(200).send({
             status: 200,
-            message: `${offset} - ${skip+data[0].book_collections.length} datas of ${data[0].info_page[0].count}`,
+            message,
             data,
         })
     }
