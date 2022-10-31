@@ -10,6 +10,104 @@ dotenv.config();
 
 const api = exp.Router();
 
+//mongodb day 7
+//skip & limit + challenge about length document
+api.get('/skipAndLimit', authorization, async(req, res) => {
+    let {limit, page} = req.query;
+    limit = parseInt(limit);
+    page = parseInt(page);
+
+    let skip = page > 0 ? ((page - 1) * limit) : 0;
+
+    const dbs = await bookself.find({});
+    let totalPages = dbs.length < limit ? 1 : Math.ceil(dbs.length/limit);
+    let offset = (page - 1) * limit + 1
+    
+    const data = await bookself.aggregate([
+        {
+            $skip: skip
+        },
+        {
+            $limit: limit
+        },
+        {
+            $sort: {
+                "title": 1
+            }
+        }
+    ])
+
+    if(data.length < 1){
+        res.status(400).send({
+            status:400,
+            message: "No data show"
+        })
+    }else{
+        res.status(200).send({
+            status: 200,
+            message: {
+                totalOfDocument: `${offset} - ${skip+data.length} pages of ${dbs.length}`,
+                totalPages
+            },
+            data,
+        })
+    }
+})
+
+api.get("/groupAggregation", authorization, async(req, res) => {
+    const data = await bookself.aggregate([
+        {
+            $group: {
+                _id: {author_name: "$author"},
+                total_book: {
+                    $sum: 1
+                }
+            }
+        },
+        {
+            $sort: {
+                total_book: -1,
+                "_id.author_name": 1
+            }
+        }
+    ])
+
+    res.status(200).send({
+        status: 200,
+        message: data
+    })
+})
+
+api.get('/facet', authorization, async(req, res) => {
+    const data = await myfavbooks.aggregate([
+        {
+          $lookup: {
+              from: "bookselves",
+              localField: "bookFav.book_id",
+              foreignField: "_id",
+              as: "book_collections"
+          }  
+        },
+        {
+            $facet: {
+                "categorizedByBookFav": [
+                    {
+                        $unwind: "$bookFav"
+                    },
+                    {
+                        $sortByCount: "$bookFav.added.price"
+                    }
+                ]
+            }
+        }
+    ])
+
+    res.status(200).send({
+        status: 200,
+        message: data
+    })
+})
+
 //mongodb day 6
 api.get('/sortAndLookup', authorization, async(req, res) => {
     const dataMyFavBooks = await myfavbooks.aggregate([
