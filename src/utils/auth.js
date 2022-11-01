@@ -1,34 +1,32 @@
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
-const {userPromiseCall} = require('../another')
+const {userModel} = require('../models/index');
 dotenv.config()
 
-let userFind = async(auth) => {
-    let data = await userPromiseCall();
-    let users = data.find(({id}) => id === auth._id);
+let userFind = async(usr, auth) => {
+    let users = await usr.findOne({_id: auth._id})
     return users
 }
 
 let authorization = async(req, res, next) => {
     try{
-        let header = req.header('Authorization');
-        if(header === undefined){
+        let header = req.header('Authorization')
+        if(req.header('Authorization') === undefined){
             res.status(401).send({
                 status:401,
                 message:"Token Bearer unreadable"
             })
         }
         const token = header.replace('Bearer ', '');
-        const auth = jwt.verify(token, process.env.SECRET_TOKEN);
-        const user = await userFind(auth);
-        
+        const authUser = jwt.verify(token, process.env.TOKEN_SECRET);
+        const user = await userFind(userModel, authUser);
+       
         req.user = user;
-        next();
-
+        next()
     }catch(e){
         res.status(400).send({
-            status:400,
-            message: "Token is expires or Token problem"
+            status:401,
+            message: "User UnAuthorized"
         })
     }
 }

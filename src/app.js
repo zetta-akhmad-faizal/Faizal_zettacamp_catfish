@@ -1,34 +1,5 @@
 const {playlistPromiseCall} = require('./another');
-
-let GroupSongArtist = async(vocalist) => {
-    let data = await playlistPromiseCall();
-    let getArtist = data.filter(({artist}) => artist.toUpperCase() === vocalist.toUpperCase());
-    if(getArtist.length === 0){
-        return {
-            status: 404,
-            message: `${vocalist} is not found`
-        };
-    }
-    return {
-        status: 200,
-        message: getArtist
-    };
-}
-
-let GroupSongGenre = async(genres) => {
-    let data = await playlistPromiseCall();
-    let getGenre = data.filter(({genre}) => genre.toUpperCase() === genres.toUpperCase());
-    if(getGenre.length === 0){
-        return {
-            status: 404,
-            message: `${genres} is not found`
-        };
-    }
-    return {
-        status: 200,
-        message: getGenre
-    };
-}
+const {songModel} = require("./models/index")
 
 let randomArray = (arrays) => {
     let arrSet = new Set(arrays);
@@ -47,9 +18,16 @@ let LessThanHour = async() => {
     let index = 0;
     let jam=0;let menit=0;let detik=0;
     let newMap = new Map();
-    let newArr = [];
+    let newArr = [];arrMenit=[]; arrDetik=[]; arrJam=[]
 
-    let playlist = await playlistPromiseCall(); 
+    let playlist = await songModel.aggregate([
+        {
+            $project: {
+                _id: 1,
+                duration: 1
+            }
+        }
+    ]); 
     playlist = randomArray(playlist)
 
     if(playlist.length < 1){
@@ -91,13 +69,21 @@ let LessThanHour = async() => {
         }
 
         if(jam < 1){
+            arrJam.push(jam)
+            arrMenit.push(menit);
+            arrDetik.push(detik)
             newArr.push(playlist[index]);
-            newMap.set("music", newArr);
-            newMap.set("total_duration",`${menit} minute ${detik} second`)
         }
     }
     
-    return Object.fromEntries(newMap)
+
+    newArr.map((val) => {
+        val.song_id = val._id;
+        delete val._id
+    })
+    newMap.set("music", newArr);
+
+    return [Object.fromEntries(newMap), arrJam, arrMenit, arrDetik]
 }
 
-module.exports = {GroupSongArtist,GroupSongGenre,LessThanHour};
+module.exports = {LessThanHour, playlistPromiseCall};
