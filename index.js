@@ -1,5 +1,15 @@
-const app = require('./config');
+const {ApolloServer} = require('apollo-server-express');
+const {resolvers, typeDefs} = require('./src/views/index');
+const authorization = require('./src/utils/auth');
 const api = require('./src/views/app');
+const app = require('./config');
+
+const server = new ApolloServer({typeDefs, resolvers, 
+    context: ({req}) => {
+        const auth = authorization(req);
+        return auth
+    }
+})
 
 app.use(api)
 app.use((req, res, next) => {
@@ -14,4 +24,9 @@ app.use((req, res, next) => {
     next();
 });
 
-app.listen(8000)
+server.start().then(res => {
+    server.applyMiddleware({ app, path: '/' });
+    app.listen({ port:8000 }, () => 
+        console.log(`🚀 Server ready at http://localhost:8000${server.graphqlPath}`)
+    );  
+});

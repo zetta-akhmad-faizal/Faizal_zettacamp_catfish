@@ -8,26 +8,23 @@ let dataUser = async (usr, autho) => {
     return data
 }
 
-const authorization = async(req, res, next) => {
+const authorization = async(req) => {
     try{
         let header = req.header('Authorization')
         if(req.header('Authorization') === undefined){
-            res.status(401).send({
-                status:401,
+            return{
+                user: [],
                 message:"Token Bearer unreadable"
-            })
+            }
         }
         const token = header.replace('Bearer ', '');
         const authUser = jwt.verify(token, process.env.TOKEN_SECRET);
         const user = await dataUser(users, authUser);
-       
-        req.user = user;
-        next()
+        // req.user = user;
+
+        return {message:"Authorization success", user}
     }catch(e){
-        res.status(400).send({
-            status:401,
-            message: "User UnAuthorized"
-        })
+        return { message: "User unAuthorized", user: []}
     }
 }
 

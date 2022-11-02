@@ -5,7 +5,6 @@ const authorization = require('../utils/auth');
 const exp = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const e = require('express');
 dotenv.config();
 
 const api = exp.Router();
@@ -206,8 +205,7 @@ api.post('/fav', authorization, async(req, res) => {
             let parser = parseFloat(checkMyFavBook.bookFav[indexOf].added.price.replace("Rp ", ""));
             arr.push(parser)
         }
-        console.log(arr)
-        console.log(arr.reduce((accumVariable, curValue) => accumVariable+curValue))
+
         const updateVar = await myfavbooks.updateOne(
             {name: themeBookCapitalized},{
                 $push: {
@@ -455,7 +453,7 @@ api.get('/fav', authorization, async(req, res) =>{
                     }
                 }
             }
-        ).populate('user_id')
+        )
 
         res.status(200).send({
             status: 201,
