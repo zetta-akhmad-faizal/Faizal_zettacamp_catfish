@@ -72,7 +72,29 @@ api.get('/GroupSongArtist/:artist', authorization, async(req, res) => {
     }
 })
 
-api.get('/GroupSongGenre/:genre', authorization, async(req, res) => {
+api.get('/Group', authorization, async(req, res) => {
+    const data = await songModel.aggregate([
+        {
+            $group: {
+                _id: {artist_name:"$artist"},
+                count: {$sum: 1}
+            }
+        },
+        {
+          $sort: {
+            count: -1
+          }  
+        }
+    ])
+
+    res.status(200).send({
+        status:200,
+        message: "Data will displayed",
+        data
+    })
+})
+
+api.get('/song/:genre', authorization, async(req, res) => {
     const {genre} = req.params;
     const queries = await songModel.aggregate([
         {
@@ -185,8 +207,12 @@ api.put('/song/:id', authorization, async(req, res) => {
         {_id: converterID},
         {
             $set: { title }
+        },
+        {
+            new: true
         }
     )
+    //new knowledge
 
     if(queries === null){
         res.status(404).send({
