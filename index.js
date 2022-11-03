@@ -8,10 +8,9 @@ const server = new ApolloServer({typeDefs, resolvers,
     context: ({req}) => {
         const auth = authorization(req);
         return auth
-    }
-})
+    }});
 
-app.use(api)
+app.use(api);
 app.use((req, res, next) => {
     const allowedOrigins = ['http://localhost:3000', 'http://localhost:4000'];
     const origin = req.headers.origin;

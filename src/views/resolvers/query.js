@@ -1,55 +1,24 @@
-const {users, bookself, myfavbooks} = require('../../model/index');
+const {users, bookself, myfavbooks, mybooks} = require('../../model/index');
+const {ApolloError} = require('apollo-server-express')
 
 const Query = {
     hello: () => 'halloworld',
-    bookPurchasedDisplay: async(parent, {data: {page, limit}} , ctx) =>{
+    GetbookPurchased: async(parent, {data: {page, limit, title}} , ctx) =>{
         let message;
         if(ctx.user.length === 0){
-            message = "User unAuthorized"
-            return {
-                message
-            }
+            throw new ApolloError('UnAuthorized')
         }
-        let arr = []
+        let arr = [];
+        let skip = page > 0 ? ((page - 1) * limit) : 0;
 
-        if(page === undefined || limit === undefined){
-            arr.push(
-                {
-                    $sort: {
-                        title: 1
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'bookselves',
-                        localField:'bookFav.book_id',
-                        foreignField: '_id',
-                        as: 'book_collections'
-                    }
-                },
-                {
-                    $facet: {
-                        book_purchased: [
-                            {$sort: { createdAt: -1 }}
-                        ],
-                        info_page: [
-                            {
-                                $group: {_id: null, count: {$sum: 1}}
-                            }
-                        ]
-                    }
-                }
-            )
-            message = "Data displayed without pagination"
-        }else{
-            let skip = page > 0 ? ((page - 1) * limit) : 0;
+        if(limit && page && !title){
             arr.push(
                 {
                     $lookup: {
-                        from: 'bookselves',
-                        localField:'bookFav.book_id',
+                        from: 'users',
+                        localField:'user_id',
                         foreignField: '_id',
-                        as: 'book_collections'
+                        as: 'users'
                     }
                 },
                 {
@@ -67,20 +36,81 @@ const Query = {
                     }
                 }
             )
+            console.log('limit and page')
             message = "Data display with pagination"
+        }else if(title && limit && page){
+            arr.push(
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField:'user_id',
+                        foreignField: '_id',
+                        as: 'users'
+                    }
+                },
+                {
+                    $match: {
+                        title
+                    }
+                },
+                {
+                    $facet: {
+                        book_purchased: [
+                            {$sort: { createdAt: -1 }},
+                            {$skip: skip},
+                            {$limit: limit}
+                        ],
+                        info_page: [
+                            {
+                                $group: {_id: null, count: {$sum: 1}}
+                            }
+                        ]
+                    }
+                }
+            )
+            console.log('limit, page and title');
+            message = `Data display with title ${title}`
+        }else{
+            arr.push(
+                {
+                    $sort: {
+                        title: 1
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField:'user_id',
+                        foreignField: '_id',
+                        as: 'users'
+                    }
+                },
+                {
+                    $facet: {
+                        book_purchased: [
+                            {$sort: { createdAt: -1 }}
+                        ],
+                        info_page: [
+                            {
+                                $group: {_id: null, count: {$sum: 1}}
+                            }
+                        ]
+                    }
+                }
+            )
+            message = "Data displayed without pagination"
         }
 
-        let getDataBookList = await myfavbooks.aggregate(arr)
-        console.log(getDataBookList)
+        let getDataBookList = await mybooks.aggregate(arr)
 
-        if(getDataBookList[0].book_purchased.length === 0){
+        if(getDataBookList.length === 0){
             return{
-                book_data: [],
+                data_book_purchased: [],
                 message: "No data show"
             }
         }else{
             return{
-                book_data: getDataBookList[0],
+                data_book_purchased: getDataBookList,
                 message
             }
         }

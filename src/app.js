@@ -1,4 +1,5 @@
 let fs = require('fs');
+const {bookself} = require('./model/index')
 
 let month = {
     'january': 1, 'febuary': 2, 'march':3, 'april':4, 'may':5, 'june':6, 
@@ -37,16 +38,21 @@ let capitalize =(value) =>{
 let purchases = async(termOfCredit, stockBook, purchase, discount, taxAmnesty, additionalPrice, title) => {
     try{
         let sets = new Set(title);
-        let maps = new Map();
-        let text={};let arr1 =[];let arr2=[];
+        let arr1 =[];let arr2=[];
 
         const [monthOfCredit, stock, remain] = await calculateCredit(termOfCredit, stockBook, purchase);
 
-        let myobj = await PromiseAwaitCall();
-        let bookList = new Set(myobj);
-        const [...data] = bookList;
+        let myobj = await bookself.aggregate([
+            {
+                $match:{
+                    title: {
+                        $in: title
+                    }
+                }
+            }
+        ]);
 
-        let books = data.map(e => {
+        let books = myobj.map(e => {
             const [disc, tax, additional, getPrice] = splitterString(discount, taxAmnesty, additionalPrice, e.price)
             let AfterDiscount = getPrice - disc;
             let AfterTax = AfterDiscount + tax;
@@ -85,7 +91,7 @@ let purchases = async(termOfCredit, stockBook, purchase, discount, taxAmnesty, a
         }
         
         let newMaps = new Map([['billing', arr1], ['book_order', arr2]]);
-
+        console.log(Object.fromEntries(newMaps).book_order[0])
         return Object.fromEntries(newMaps).billing;
     }catch(e){
         return e.message

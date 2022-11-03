@@ -1,6 +1,6 @@
-const {users, bookself, myfavbooks} = require('../../model/index');
-const { capitalize } = require('../../app');
-const {GraphQLError} = require('graphql');
+const {users, mybooks} = require('../../model/index');
+const { purchases } = require('../../app');
+const {ApolloError} = require('apollo-server-express')
 const {mongoose} = require('mongoose');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
@@ -25,89 +25,78 @@ const Mutation = {
             }
         }
     },
-    postBookPurchased: async(parent, {data:{themeBook, bookName, stock}}, ctx) => {
-        console.log(themeBook)
+    postBookPurchased: async(parent, {data:{termOfCredit, stock, purchase, title, discount, tax, additional}}, ctx) => {
         if (ctx.user.length === 0){
             return {
                 message: "User unAuthorized"
             }
         }
 
-        let themeBookCapitalized = capitalize(themeBook);
-    
-        const dateObj = new Date();
-    
-        let inputMyFavBook = await bookself.findOne({title:bookName});
-        let checkMyFavBook = await myfavbooks.findOne({name: themeBookCapitalized})
-        // console.log(checkMyFavBook)
-        if(inputMyFavBook === null){
-            return{
-                message: 'Data not found'
-            }
-        }
-        if(checkMyFavBook !== null){
-            let arr = []
-            for(let indexOf = 0; indexOf<checkMyFavBook.bookFav.length;indexOf++){
-                let parser = parseFloat(checkMyFavBook.bookFav[indexOf].added.price.replace("Rp ", ""));
-                arr.push(parser)
-            }
-            
-            const updateVar = await myfavbooks.findOneAndUpdate(
-                {name: themeBookCapitalized},{
-                    $push: {
-                        bookFav: {
-                            book_id: inputMyFavBook._id,
-                            added: {
-                                date: dateObj.getDate().toString(),
-                                time: `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`,
-                                stock,
-                                price: inputMyFavBook.price
-                            }
-                        }
-                    },
-                    $set: {
-                        priceConvert: arr.reduce((accumVariable, curValue) => accumVariable+curValue)
-                    }
-                },
-                {new: true}
-            )
-            return {
-                message: 'Data is updated',
-                book_data: updateVar
-            }
+        try{
+            const obj = await purchases(termOfCredit, stock, purchase, discount, tax, additional, title)
+            const queries = obj.map(val => {
+                let {...data} = val
+                const insertVar = new mybooks({...data, user_id:ctx.user._id})
+                insertVar.save()
+                return insertVar
+            })
+        if(queries.length === 0){
+            return {message: "Data isn't inserted", data_book_purchased: queries}
         }else{
-            const mapMyBooks = {
-                name: themeBookCapitalized,
-                user_id: mongoose.Types.ObjectId(ctx._id),
-                bookFav: [
-                    {
-                        book_id: inputMyFavBook._id,
-                        added: {
-                            date: dateObj.getDate().toString(),
-                            time: `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`,
-                            stock,
-                            price: inputMyFavBook.price
-                        }
-                    }
-                ],
-                priceConvert: parseInt(inputMyFavBook.price.replace("Rp ", "")),
-                date_input: [
-                    {
-                        dates: dateObj.getDate().toString(),
-                        times: `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`
-                    }
-                ]
-            }
-    
-            const obj = new myfavbooks(mapMyBooks)
-            await obj.save()
-    
-            return{
-                message: `Data is inserted`,
-                book_data: obj
-            }
+            return {message: "Data is inserted", data_book_purchased: queries}
+        }
+        }catch(err){
+            throw new ApolloError(`Field isn't complex`)
         }
     },
+    putBookPurchased: async(parent, {data: {id, discount, tax}}, ctx) => {
+        if (ctx.user.length === 0){
+            return {
+                message: "User unAuthorized"
+            }
+        }
+
+
+        const book_id = mongoose.Types.ObjectId(id);
+
+        const bookCollection = await mybooks.findById(book_id)
+
+        let disc = parseFloat(discount.replace('Rp ', ''));
+        let taxAmnesty = parseFloat(tax.replace('Rp ', ''));
+        const price = parseFloat(bookCollection.price.replace('Rp ', ''));
+        const admin = parseFloat(bookCollection.adminPayment.replace('Rp ', ''));
+        const afterDiscount = price - disc;
+        const afterTax = afterDiscount + taxAmnesty;
+        const total = admin + afterTax;
+
+        const queries = await mybooks.findOneAndUpdate(
+            {_id: book_id},
+            {
+                $set :{
+                    discount: `${discount}`, 
+                    tax: `${tax}`, 
+                    afterDiscount: `Rp ${afterDiscount.toFixed(3)}`,
+                    afterTax: `Rp ${afterTax.toFixed(3)}`,
+                    total: `Rp ${total.toFixed(3)}`
+                }
+            },
+            {
+                new: true
+            }
+        );
+
+        if(!queries){
+            return {
+                message: "Data isn't found and there's no update",
+                data_book_purchased: queries
+            }
+        }else{
+            return {
+                data_book_purchased: queries,
+                message: "Data is updated"
+            }
+        }
+    }   
 }
 
 module.exports = Mutation;

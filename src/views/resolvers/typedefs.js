@@ -1,51 +1,11 @@
 const {gql} = require('apollo-server-express');
 
 const typeDefs = gql`
+    scalar Date
+
     input User{
         email: String,
         password: String
-    }
-
-    input bodyBookPurchased{
-        themeBook:String, 
-        bookName: String, 
-        stock: Int
-    }
-
-    type responseLogin{
-        message: String
-    }
-
-    type responsePostBookPurchased{
-        message: String,
-        book_data: favBooksSchema
-    }
-
-    type addedField{
-        date: String,
-        time: String,
-        stock: Int,
-        price: String,
-    }
-
-    type bookFavSchema{
-        book_id: ID,
-        added: addedField
-    }
-    type dateInputField{
-        dates: String,
-        times: String
-    }
-
-    type favBooksSchema{
-        _id: ID
-        name: String,
-        user_id: ID,
-        bookFav: [bookFavSchema],
-        priceConvert: Int,
-        priceBenefit: Int,
-        date_input: [dateInputField]
-        book_collections: [titleFieldProjection]
     }
 
     type authorization{
@@ -54,41 +14,89 @@ const typeDefs = gql`
         password: String
     }
 
-    type priceFieldProjection{
-        price:String
-    }
-    type addedFieldprojection{
-        added:priceFieldProjection
-    }
-    type titleFieldProjection{
-        title: String
-    }
-    input getBooksInput{
-        page: Int,
-        limit: Int,
+    type responseLogin{
+        message: String
     }
 
-    type infoPage{
-        _id:ID,
-        count: Int
+    type UserSchema{
+        _id: ID
+        email: String
     }
-    type bookPurchasedPagination{
-        book_purchased: [favBooksSchema],
-        info_page: [infoPage]
+
+    input bodyBookPurchased{
+        termOfCredit: Int, 
+        stock: Int, 
+        purchase: Int, 
+        title: [String], 
+        discount: String, 
+        tax: String, 
+        additional: String,
+        id: ID
     }
 
     type responseGetBookPurchased{
         message: String,
-        book_data: bookPurchasedPagination
+        data_book_purchased: [bookPurchasedAfterFacet]
+    }
+    type responsePostBookPurchased{
+        message: String,
+        data_book_purchased: [bookPurchasedDisplay]
+    }
+
+    type responseunArrayBookPurchased{
+        message: String,
+        data_book_purchased: bookPurchasedDisplay
+    }
+
+    type infoPage{
+        count: Int
+    }
+
+    type bookPurchasedAfterFacet{
+        book_purchased: [bookPurchasedDisplay],
+        info_page: [infoPage]
+    }
+
+    type bookPurchasedDisplay{
+        image: String,
+        title: String,
+        author: String,
+        price: String,
+        original_url: String,
+        url: String,
+        slug: String,
+        discount: String,
+        tax: String,
+        afterDiscount: String,
+        afterTax: String,
+        adminPayment: String,
+        total: String,
+        stock: Int,
+        purchase: Int,
+        remain: Int,
+        termOfCredit: String,
+        monthly: [String],
+        monthPaid: [String],
+        user_id: UserSchema,
+        createdAt: Date,
+        _id: ID,
+        updatedAt: Date,
+    }
+
+    input bookPurchasedPagination{
+        page: Int,
+        limit: Int,
+        title: String,
     }
 
     type Query {
         hello: String,
-        bookPurchasedDisplay(data: getBooksInput): responseGetBookPurchased
+        GetbookPurchased(data: bookPurchasedPagination): responseGetBookPurchased
     }
     type Mutation{
         login(data: User): responseLogin,
         postBookPurchased(data: bodyBookPurchased): responsePostBookPurchased,
+        putBookPurchased(data: bodyBookPurchased): responseunArrayBookPurchased
     }
 `
 
