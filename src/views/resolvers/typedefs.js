@@ -77,7 +77,7 @@ const typeDefs = gql`
         termOfCredit: String,
         monthly: [String],
         monthPaid: [String],
-        user_id: UserSchema,
+        users: [UserSchema],
         createdAt: Date,
         _id: ID,
         updatedAt: Date,
@@ -96,7 +96,8 @@ const typeDefs = gql`
     type Mutation{
         login(data: User): responseLogin,
         postBookPurchased(data: bodyBookPurchased): responsePostBookPurchased,
-        putBookPurchased(data: bodyBookPurchased): responseunArrayBookPurchased
+        putBookPurchased(data: bodyBookPurchased): responseunArrayBookPurchased,
+        delBookPurchased(data: bodyBookPurchased): responseunArrayBookPurchased,
     }
 `
 

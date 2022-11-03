@@ -4,6 +4,7 @@ const {ApolloError} = require('apollo-server-express')
 const {mongoose} = require('mongoose');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const e = require('express');
 dotenv.config();
 
 const Mutation = {
@@ -26,10 +27,8 @@ const Mutation = {
         }
     },
     postBookPurchased: async(parent, {data:{termOfCredit, stock, purchase, title, discount, tax, additional}}, ctx) => {
-        if (ctx.user.length === 0){
-            return {
-                message: "User unAuthorized"
-            }
+        if(ctx.user.length === 0){
+            throw new ApolloError('UnAuthorized')
         }
 
         try{
@@ -50,12 +49,15 @@ const Mutation = {
         }
     },
     putBookPurchased: async(parent, {data: {id, discount, tax}}, ctx) => {
-        if (ctx.user.length === 0){
-            return {
-                message: "User unAuthorized"
-            }
+        if(ctx.user.length === 0){
+            throw new ApolloError('UnAuthorized')
         }
 
+        if(!discount || !tax || !id){
+            return {
+                message: "Field isn't complex"
+            }
+        }
 
         const book_id = mongoose.Types.ObjectId(id);
 
@@ -87,13 +89,39 @@ const Mutation = {
 
         if(!queries){
             return {
-                message: "Data isn't found and there's no update",
+                message: "Data isn't updated because the data's not found",
                 data_book_purchased: queries
             }
         }else{
             return {
                 data_book_purchased: queries,
                 message: "Data is updated"
+            }
+        }
+    },
+    delBookPurchased: async(parent, {data: {id}}, ctx) => {
+        if(ctx.user.length === 0){
+            throw new ApolloError('UnAuthorized')
+        }
+
+        if(!id){
+            return {
+                message: "Field isn't complex"
+            }
+        }
+
+        const book_id = mongoose.Types.ObjectId(id);
+        const queries = await mybooks.findOneAndDelete(book_id);
+
+        if(!queries){
+            return {
+                message: "Data isn't deleted because the data's not found",
+                data_book_purchased: queries
+            }
+        }else{
+            return {
+                message: "Data is deleted",
+                data_book_purchased: queries
             }
         }
     }   

@@ -4,10 +4,10 @@ const {ApolloError} = require('apollo-server-express')
 const Query = {
     hello: () => 'halloworld',
     GetbookPurchased: async(parent, {data: {page, limit, title}} , ctx) =>{
-        let message;
         if(ctx.user.length === 0){
             throw new ApolloError('UnAuthorized')
         }
+        let message;
         let arr = [];
         let skip = page > 0 ? ((page - 1) * limit) : 0;
 
@@ -73,11 +73,6 @@ const Query = {
         }else{
             arr.push(
                 {
-                    $sort: {
-                        title: 1
-                    }
-                },
-                {
                     $lookup: {
                         from: 'users',
                         localField:'user_id',
@@ -102,7 +97,7 @@ const Query = {
         }
 
         let getDataBookList = await mybooks.aggregate(arr)
-
+        // console.log(getDataBookList[0].book_purchased.users)
         if(getDataBookList.length === 0){
             return{
                 data_book_purchased: [],
