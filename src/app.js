@@ -38,7 +38,6 @@ let capitalize =(value) =>{
 let purchases = async(termOfCredit, stockBook, purchase, discount, taxAmnesty, additionalPrice, title) => {
     try{
         let sets = new Set(title);
-        let arr1 =[];let arr2=[];
 
         const [monthOfCredit, stock, remain] = await calculateCredit(termOfCredit, stockBook, purchase);
 
@@ -49,7 +48,12 @@ let purchases = async(termOfCredit, stockBook, purchase, discount, taxAmnesty, a
                         $in: title
                     }
                 }
-            }
+            },
+            {$project: {
+                _id:1,
+                price:1,
+                title:1,
+            }}
         ]);
 
         let books = myobj.map(e => {
@@ -69,8 +73,7 @@ let purchases = async(termOfCredit, stockBook, purchase, discount, taxAmnesty, a
             e.stock = stockBook;
             
             if(sets.has(e.title)){
-                //['january', 'feb', 'march']
-
+                e.book_id = e._id
                 e.purchase = purchase;
                 e.remain = remain;
                 e.stock = stock;
@@ -78,21 +81,12 @@ let purchases = async(termOfCredit, stockBook, purchase, discount, taxAmnesty, a
                 e.monthly = monthOfCredit;  
                 e.monthPaid =  xin
             }
+
+            delete e._id
             return e
         })
-
-        for(const [i, v] of books.entries()){
-            let objLength = Object.keys(books[i]).length
-            if(objLength > 14){
-                arr1.push(books[i]);
-            }else if(objLength < 15){
-                arr2.push(books[i]);
-            }
-        }
-        
-        let newMaps = new Map([['billing', arr1], ['book_order', arr2]]);
-        console.log(Object.fromEntries(newMaps).book_order[0])
-        return Object.fromEntries(newMaps).billing;
+        console.log(books)
+        return books;
     }catch(e){
         return e.message
     }

@@ -1,5 +1,24 @@
 const {Query, typeDefs, Mutation} = require('./resolvers/index');
-const {GraphQLScalarType, Kind} = require('graphql')
+const {GraphQLScalarType, Kind} = require('graphql');
+
+const getBookCollection = async(parent, args, ctx) => {
+    // console.log(parent.book_collections)
+    // const test = await ctx.bookCollectionLoader.load(parent.book_collections);
+    const dataId = parent.book_collections.map((val) => val._id)
+    // console.log(await ctx.bookCollectionLoader._batchLoadFn(parent.book_collections))
+    if(parent.book_collections){
+        return await ctx.bookCollectionLoader.load(dataId)
+    }
+}
+
+const getUserID = async(parent, args, ctx) => {
+    const dataId = parent.users.map((val) => val._id)
+    // console.log(dataId)
+    console.log(await ctx.userCollectionLoader.load(dataId))
+    if(parent.book_collections){
+        return await ctx.userCollectionLoader.load(parent.users)
+    }
+}
 
 const resolvers = {
     Date: new GraphQLScalarType({
@@ -18,7 +37,14 @@ const resolvers = {
         return null;
         },
     }),
-    Query, Mutation
+    Query, 
+    Mutation,
+    bookPurchasedRelation:{
+        book_collections: getBookCollection
+    },
+    testField: {
+        users: [getUserID]
+    }
 }
 
 module.exports = {resolvers, typeDefs}

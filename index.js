@@ -1,4 +1,5 @@
 const {ApolloServer} = require('apollo-server-express');
+const {bookCollectionLoader, userCollectionLoader} = require('./src/utils/dataLoaders');
 const {resolvers, typeDefs} = require('./src/views/index');
 const authorization = require('./src/utils/auth');
 const api = require('./src/views/app');
@@ -7,7 +8,9 @@ const app = require('./config');
 const server = new ApolloServer({typeDefs, resolvers, 
     context: ({req}) => {
         const auth = authorization(req);
-        return auth
+        return {
+            auth, bookCollectionLoader, userCollectionLoader
+        }
     }});
 
 app.use(api);

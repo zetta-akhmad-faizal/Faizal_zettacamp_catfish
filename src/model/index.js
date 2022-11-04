@@ -9,13 +9,7 @@ const userSchema = new Schema({
 })
 
 const bookSchema = new Schema({
-    image: {type:String},
-    title: {type:String},
-    author: {type:String},
-    price: {type:String},
-    original_url: {type:String},
-    url: {type:String},
-    slug: {type:String},
+    book_id: {type:mongoose.Schema.Types.ObjectId, ref:'bookselves'},
     discount: {type:String},
     tax: {type: String},
     afterDiscount: {type:String},
@@ -50,7 +44,7 @@ const bookFav = new Schema({
     name: {type: String},
     user_id: {type:mongoose.Schema.Types.ObjectId, required:true, trim:true, ref:'users'},
     bookFav: [{
-        book_id: {type: mongoose.Schema.Types.ObjectId},
+        book_id: {type: mongoose.Schema.Types.ObjectId, ref:'bookselves'},
         added: {
             date: {type:String},
             time: {type:String},
@@ -82,6 +76,18 @@ userSchema.virtual('fav_books', {
     ref:'fav_books',
     localField: '_id',
     foreignField: 'user_id'
+})
+
+bookSelf.virtual('fav_books', {
+    ref:'fav_books',
+    localField: '_id',
+    foreignField: 'book_id'
+})
+
+bookSelf.virtual('booklists', {
+    ref: 'booklists',
+    localField: '_id',
+    foreignField: 'book_id'
 })
 
 const users = mongoose.model('users', userSchema);
