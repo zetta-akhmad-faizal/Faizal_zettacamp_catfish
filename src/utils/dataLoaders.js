@@ -26,7 +26,7 @@ let userCollection = async(userId) => {
     user.forEach((val) => {
         obj[val._id] = val;
     })
-    return userId.map((_id) => obj[_id]);
+    return userId.map((id) => obj[id]);
 }
 
 const bookCollectionLoader = new DataLoader(bookCollection);

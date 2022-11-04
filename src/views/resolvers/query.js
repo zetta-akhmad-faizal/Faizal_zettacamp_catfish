@@ -5,14 +5,14 @@ const Query = {
     hello: () => 'halloworld',
     test: async(parent, {name}, ctx) => {
         const data = await myfavbooks.aggregate([
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'user_id',
-                    foreignField: '_id',
-                    as: 'users'
-                }
-            },
+            // {
+            //     $lookup: {
+            //         from: 'users',
+            //         localField: 'user_id',
+            //         foreignField: '_id',
+            //         as: 'users'
+            //     }
+            // },
             {
                 $match: {
                     name
@@ -21,11 +21,12 @@ const Query = {
             {
                 $project: {
                     name:1,
+                    user_id:1,
                     users:1
                 }
             }
         ])
-        // console.log(ctx)
+        // console.log(data)
         return data
     },
     GetbookPurchased: async(parent, {data: {page, limit, title}} , ctx) =>{

@@ -12,11 +12,8 @@ const getBookCollection = async(parent, args, ctx) => {
 }
 
 const getUserID = async(parent, args, ctx) => {
-    const dataId = parent.users.map((val) => val._id)
-    // console.log(dataId)
-    console.log(await ctx.userCollectionLoader.load(dataId))
-    if(parent.book_collections){
-        return await ctx.userCollectionLoader.load(parent.users)
+    if(parent.user_id !== null){
+        return await ctx.userCollectionLoader.load([parent.user_id])
     }
 }
 
@@ -43,7 +40,7 @@ const resolvers = {
         book_collections: getBookCollection
     },
     testField: {
-        users: [getUserID]
+        user_id: getUserID
     }
 }
 

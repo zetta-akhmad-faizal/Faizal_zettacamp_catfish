@@ -16,7 +16,7 @@ const typeDefs = gql`
     type testField{
         _id: String,
         name: String,
-        users: [UserType]
+        user_id: UserType
     }
 
     type authorization{
