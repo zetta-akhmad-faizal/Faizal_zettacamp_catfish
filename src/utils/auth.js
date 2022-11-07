@@ -1,34 +1,34 @@
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const {userModel} = require('../models/index');
+const {GraphQLError} = require('graphql')
 dotenv.config()
 
-let userFind = async(usr, auth) => {
-    let users = await usr.findOne({_id: auth._id})
-    return users
-}
-
-let authorization = async(req, res, next) => {
-    try{
-        let header = req.header('Authorization')
-        if(req.header('Authorization') === undefined){
-            res.status(401).send({
-                status:401,
-                message:"Token Bearer unreadable"
-            })
-        }
-        const token = header.replace('Bearer ', '');
-        const authUser = jwt.verify(token, process.env.TOKEN_SECRET);
-        const user = await userFind(userModel, authUser);
-       
-        req.user = user;
-        next()
-    }catch(e){
-        res.status(400).send({
-            status:401,
-            message: "User UnAuthorized"
-        })
+let authorization = async(resolver, parent, args, context) => {
+    let token = context.req.get("Authorization")
+    if(!token){
+        throw new GraphQLError("Token is required");
+    }else{
+        const decode = jwt.verify(token, process.env.TOKEN_SECRET);
+        const getUser = await userModel.findOne({_id: decode});
+        context.user = getUser;
+        context.token = token 
     }
+    return resolver();
 }
 
-module.exports = authorization;
+module.exports = {
+    Query: {
+        getAllSong: authorization,
+        getAllPlaylist: authorization,
+    },
+    Mutation: {
+        insertSong: authorization,
+        updateSong: authorization,
+        deleteSong: authorization,
+        insertPlaylist: authorization,
+        updatePlaylist: authorization,
+        deletePlaylist: authorization,
+        updateUser: authorization
+    }
+};
