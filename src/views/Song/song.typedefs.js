@@ -6,7 +6,7 @@ const typeDefs = gql`
         duration: String,
         artist: String,
         genre: String,
-        user_id: ID,
+        user_id: userType,
     }
     input songParams{
         _id: ID,
@@ -15,7 +15,8 @@ const typeDefs = gql`
         artist: String,
         genre: String,
         limit: Int,
-        page: Int
+        page: Int,
+        name: String
     }
     type responseAtSong{
         message:String,

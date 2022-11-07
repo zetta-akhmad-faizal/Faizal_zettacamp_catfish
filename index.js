@@ -4,7 +4,9 @@ const {makeExecutableSchema} = require('@graphql-tools/schema');
 const {merge} = require('lodash');
 const userAuth = require('./src/utils/auth');
 const app = require('./src/views/index');
-const userLoader = require('./src/views/User/user.loader')
+
+const userLoader = require('./src/views/User/user.loader');
+const songLoader = require('./src/views/Song/song.loader');
 
 const {songResolver, songTypeDefs}= require('./src/views/Song/song.index');
 const {playlistResolver, playlistTypeDefs} = require('./src/views/Playlist/playlist.index');
@@ -58,7 +60,8 @@ const server = new ApolloServer({
         req
         return {
             req,
-            userLoader
+            userLoader,
+            songLoader
         }
     }
 })

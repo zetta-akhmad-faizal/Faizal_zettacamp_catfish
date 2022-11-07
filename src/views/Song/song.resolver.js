@@ -90,12 +90,6 @@ const insertSong = async(parent, {data: {title, duration, artist,genre}}, ctx) =
     }
 }
 
-const getUserLoaderAtSong = async(parent, args, ctx) => {
-    if(parent){
-        return await ctx.userLoader.load(parent.user_id)
-    }
-}
-
 const updateSong = async(parent, {data: {_id, title, duration, artist}}, ctx) => {
     if(duration){
         const songId = mongoose.Types.ObjectId(_id);
@@ -130,6 +124,12 @@ const deleteSong = async(parent, {data:{_id}}, ctx) => {
     }
 }
 
+const getUserLoaderAtSong = async(parent, args, ctx) => {
+    if(parent){
+        return await ctx.userLoader.load(parent.user_id)
+    }
+}
+
 module.exports = {
     Query: {
         getAllSong
@@ -141,5 +141,8 @@ module.exports = {
     },
     paginationOfSongField:{
         user_id: getUserLoaderAtSong
-    }
+    },
+    songScheme: {
+        user_id: getUserLoaderAtSong
+    } 
 }

@@ -1,8 +1,17 @@
 const { ApolloServer, gql } = require('apollo-server-express');
 
 const typeDefs = gql`
+    enum choice{
+        playlists
+        song
+    }
+    input playlistParams{
+        delete_choice: choice,
+        playlistId: ID,
+        songId: ID
+    }
     type playlistField{
-        song_id: ID,
+        song_id: songScheme,
         duration: String
     }
     type totalDurationField{
@@ -11,9 +20,9 @@ const typeDefs = gql`
         seconds: String
     }
     type playlistsSchema{
+        name: String,
         playlist: [playlistField],
         total_duration: totalDurationField,
-        user_id: userType,
         createdAt: String,
         updatedAt: String
     }
@@ -32,10 +41,13 @@ const typeDefs = gql`
         message: String,
         data: [playlistPaginationSchema]
     }
+    input nameFieldParams{
+        name: String
+    }
     type Mutation{
-        insertPlaylist:responseAtPlaylist,
-        updatePlaylist:responseAtPlaylist,
-        deletePlaylist:responseAtPlaylist,
+        insertPlaylist(data: nameFieldParams):responseAtPlaylist,
+        updatePlaylist(data: songParams):responseAtPlaylist,
+        deletePlaylist(data: playlistParams): responseAtPlaylist,
     }
     type Query{
         getAllPlaylist(data: songParams): responseAtPaginationPlaylists
