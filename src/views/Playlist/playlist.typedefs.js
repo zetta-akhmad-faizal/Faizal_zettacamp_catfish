@@ -6,17 +6,31 @@ const typeDefs = gql`
         duration: String
     }
     type totalDurationField{
-        hours: {type: Number},
-        minutes: {type:Number},
-        seconds: {type:Number}
+        hours: String,
+        minutes: String,
+        seconds: String
     }
     type playlistsSchema{
         playlist: [playlistField],
-        total_duration: total_duration
+        total_duration: totalDurationField,
+        user_id: userType,
+        createdAt: String,
+        updatedAt: String
+    }
+    type playlistCount{
+        count:Int
+    }
+    type playlistPaginationSchema{
+        paginationOfPlaylists: [playlistsSchema],
+        totalOfPlaylists: [playlistCount]
     }
     type responseAtPlaylist{
         message:String,
         data: playlistsSchema
+    }
+    type responseAtPaginationPlaylists{
+        message: String,
+        data: [playlistPaginationSchema]
     }
     type Mutation{
         insertPlaylist:responseAtPlaylist,
@@ -24,7 +38,7 @@ const typeDefs = gql`
         deletePlaylist:responseAtPlaylist,
     }
     type Query{
-        getAllPlaylist: responseAtPlaylist
+        getAllPlaylist(data: songParams): responseAtPaginationPlaylists
     }
 `
 

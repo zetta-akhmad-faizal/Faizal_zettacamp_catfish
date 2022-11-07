@@ -9,18 +9,41 @@ const typeDefs = gql`
         user_id: ID,
     }
     input songParams{
+        _id: ID,
         title: String,
         duration: String,
         artist: String,
         genre: String,
-        user_id: ID,
+        limit: Int,
+        page: Int
     }
     type responseAtSong{
         message:String,
         data: songScheme
     }
+    type paginationOfSongField{
+        _id:ID,
+        title: String,
+        duration:String,
+        artist:String,
+        genre:String,
+        user_id: userType,
+        createdAt:String,
+        updatedAt: String,
+    }
+    type totalOfSongField{
+        count: Int
+    }
+    type paginationScheme{
+        paginationOfSong: [paginationOfSongField],
+        totalOfSong: [totalOfSongField]
+    }
+    type responseAtPagination{
+        message: String,
+        data: [paginationScheme]
+    }
     type Query{
-        getAllSong: responseAtSong
+        getAllSong(data:songParams): responseAtPagination
     }
     type Mutation{
         insertSong(data: songParams):responseAtSong,

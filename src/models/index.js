@@ -26,11 +26,13 @@ const playlistSchema = new Schema({
         hours: {type: Number},
         minutes: {type:Number},
         seconds: {type:Number}
-    }
+    },
+    user_id: {type:mongoose.Schema.Types.ObjectId, required:true, trim:true, ref:'users'},
 })
 
 playlistSchema.set('timestamps', true);
 songSchema.set("timestamps", true);
+userSchema.set("timestamps", true)
 
 let songModel = mongoose.model('songs', songSchema);
 let userModel = mongoose.model('users', userSchema);
@@ -41,11 +43,16 @@ userSchema.virtual('songs', {
     localField: '_id',
     foreignField: 'user_id'
 })
+userSchema.virtual('playlists', {
+    ref: 'playlists',
+    localField: '_id',
+    foreignField: 'user_id'
+})
 
 songSchema.virtual('playlists', {
     ref: 'playlists',
     localField: '_id',
-    foreignField: 'playlists.song_id'
+    foreignField: 'playlist.song_id'
 })
 
 module.exports = {userModel, songModel, playlistModel}
