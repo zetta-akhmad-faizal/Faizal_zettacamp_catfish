@@ -1,5 +1,6 @@
 const {userModel} = require('../../models/index');
-const {hash, compare} = require('bcrypt')
+const {hash, compare} = require('bcrypt');
+const {mongoose} = require('mongoose');
 const jwt = require('jsonwebtoken');
 
 const loginResolver = async(parent, {data:{email, password}}) => {
@@ -34,6 +35,20 @@ const getListUser=async(parent,args)=>{
     return {message:"Users is listed", data:queriesGetAll}
 }
 
+const getUserByid = async(parent, {data:{_id}}) => {
+    if(_id){
+        converterUserId = mongoose.Types.ObjectId(_id);
+        const queriesById = await userModel.findById(converterUserId);
+        if(queriesById){
+            return {message: "Data is found", data: queriesById}
+        }else{
+            return {message: "Data isn't found"}
+        }
+    }else{
+        return {message: "_id isn't defined"}
+    }
+}
+
 const updateUser=async(parent, args)=>{}
 
 const insertUser = async(parent, {data: {email, password}}, ctx) => {
@@ -53,7 +68,8 @@ const insertUser = async(parent, {data: {email, password}}, ctx) => {
 
 module.exports = {
     Query:{
-        getListUser
+        getListUser,
+        getUserByid
     },
     Mutation: {
         loginResolver,

@@ -26,6 +26,7 @@ module.exports = {
     Query: {
         getAllSong: authorization,
         getAllPlaylist: authorization,
+        getPlaylistById: authorization
     },
     Mutation: {
         insertSong: authorization,

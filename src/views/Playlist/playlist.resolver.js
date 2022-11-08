@@ -130,6 +130,7 @@ let updatePlaylist = async(parent, {data:{_id, title}}, ctx) => {
         return {message: "_id or title field must be completed"}
     }
 }
+
 let deletePlaylist = async(parent, {data: {delete_choice, playlistId, songId}}, ctx) => {
     let converterSongId; let converterPlaylistId;
     if(playlistId){
@@ -170,6 +171,20 @@ let deletePlaylist = async(parent, {data: {delete_choice, playlistId, songId}}, 
     }
 }
 
+let getPlaylistById = async(parent, {data: {playlistId}}, ctx) => {
+    if(playlistId){
+        converterUserId = mongoose.Types.ObjectId(playlistId);
+        const queriesById = await playlistModel.findById(converterUserId);
+        if(queriesById){
+            return {message: "Data is found", data: queriesById}
+        }else{
+            return {message: "Data isn't found"}
+        }
+    }else{
+        return {message: "_id isn't defined"}
+    }
+}
+
 let songLoaderAtPlaylist = async(parent, args, ctx) => {
     // console.log(parent)
     if(parent){
@@ -178,7 +193,8 @@ let songLoaderAtPlaylist = async(parent, args, ctx) => {
 }
 module.exports = {
     Query: {
-        getAllPlaylist
+        getAllPlaylist,
+        getPlaylistById
     },
     Mutation: {
         insertPlaylist,

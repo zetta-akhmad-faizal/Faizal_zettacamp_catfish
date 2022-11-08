@@ -50,7 +50,8 @@ const typeDefs = gql`
         deletePlaylist(data: playlistParams): responseAtPlaylist,
     }
     type Query{
-        getAllPlaylist(data: songParams): responseAtPaginationPlaylists
+        getAllPlaylist(data: songParams): responseAtPaginationPlaylists,
+        getPlaylistById(data: playlistParams): responseAtPlaylist
     }
 `
 

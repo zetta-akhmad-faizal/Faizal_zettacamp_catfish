@@ -11,7 +11,7 @@ let userCallBack = async(userId) => {
     user.forEach(val => {
         objVar[val._id] = val;
     })
-    // console.log(user)
+    console.log('userid',userId)
     return userId.map((id) => objVar[id]);
 }
 
