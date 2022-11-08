@@ -5,42 +5,48 @@ let userTypeDefs = gql`
         customer
         employer
     }
+    enum statusUser{
+        Active,
+        Deleted
+    }
     input userParams{
-        _id:ID,
-        first_name:String,
-        last_name: String,
-        email: String,
-        password: String,
-        status: String,
-        role: roleUser,
+        _id:ID
+        first_name:String
+        last_name: String
+        email: String
+        password: String
+        status: statusUser
+        role: roleUser
     }
     type userScheme{
-        _id: ID,
-        first_name:String,
-        last_name: String,
-        email: String,
-        password: String,
-        status: String,
+        _id: ID
+        first_name:String
+        last_name: String
+        email: String
+        password: String
+        status: String
         role: roleUser
     }
     type responseAtUser{
-        message: String,
+        message: String
         data: userScheme
     }
     type responseAtUserList{
-        message: String,
+        message: String
         data: [userScheme]
     }
     type responseAtlogin{
-        message: String,
+        message: String
         token: String
     }
     type Mutation{
-        insertUsers(data:userParams): responseAtUser,
-        userLogin(data:userParams): responseAtlogin
+        CreateUser(data:userParams): responseAtUser
+        Login(data:userParams): responseAtlogin
+        UpdateUser(data: userParams): responseAtUser,
+        DeleteUser(data: userParams): responseAtUser
     }
     type Query{
-        getAllUsers(data:userParams): responseAtUserList,
+        getAllUsers(data:userParams): responseAtUserList
         getOneUser(data: userParams): responseAtUser
     }
 `

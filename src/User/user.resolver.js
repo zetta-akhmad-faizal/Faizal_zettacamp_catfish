@@ -4,11 +4,15 @@ const {hash, compare} = require('bcrypt');
 const {mongoose} = require('mongoose');
 const jwt = require('jsonwebtoken')
 
-const insertUsers = async(parent, {data:{first_name, last_name, email, password, role}}, ctx) => {
+const CreateUser = async(parent, {data:{first_name, last_name, email, password, role, status}}, ctx) => {
     try{
+        let queryGetUser = await userModel.findOne({email})
+        if(queryGetUser){
+            return {message: "Email has been used"}
+        }
         password = await hash(password, 10)
         let insertQueries = new userModel({
-            first_name, last_name, email, password, role
+            first_name, last_name, email, password, role, status
         })
         let validator = insertQueries.validateSync();
         if(validator){
@@ -18,17 +22,21 @@ const insertUsers = async(parent, {data:{first_name, last_name, email, password,
             return {message: "Data is saved", data: insertQueries}
         }
     }catch(e){
-        throw new GraphQLError("insertUser function is error")
+        throw new GraphQLError(e.message)
     }
 }
 
 const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) => {
-    let arr = []
+    let firstNameRegex;let lastNameRegex; let emailRegex;
+
+    let arr = [];
+
     if(first_name && !last_name && !email){
+        firstNameRegex = new RegExp(first_name, 'i');
         arr.push(
             {
                 $match: {
-                    first_name
+                    first_name: firstNameRegex
                 }
             },
             {
@@ -38,10 +46,11 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
             }
         )
     }else if(last_name && !email && !first_name){
+        lastNameRegex = new RegExp(last_name, 'i');
         arr.push(
             {
                 $match: {
-                    last_name
+                    last_name: lastNameRegex
                 }
             },
             {
@@ -51,10 +60,11 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
             }
         )
     }else if(email && !first_name && !last_name){
+        emailRegex = new RegExp(email, 'i');
         arr.push(
             {
                 $match: {
-                    email
+                    email: emailRegex
                 }
             },
             {
@@ -64,15 +74,17 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
             }
         )
     }else if(email && last_name && !first_name){
+        emailRegex = new RegExp(email, 'i');
+        lastNameRegex = new RegExp(last_name, 'i');
         arr.push(
             {
                 $match: {
-                    last_name
+                    last_name: lastNameRegex
                 }
             },
             {
                 $match: {
-                    email
+                    email: emailRegex
                 }
             },
             {
@@ -82,15 +94,17 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
             }
         )
     }else if(email && first_name && !last_name){
+        firstNameRegex = new RegExp(first_name, 'i');
+        emailRegex = new RegExp(email, 'i');
         arr.push(
             {
                 $match: {
-                    first_name
+                    first_name: firstNameRegex
                 }
             },
             {
                 $match: {
-                    email
+                    email: emailRegex
                 }
             },
             {
@@ -100,15 +114,17 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
             }
         )
     }else if(first_name && last_name && !email){
+        firstNameRegex = new RegExp(first_name, 'i');
+        lastNameRegex = new RegExp(last_name, 'i');
         arr.push(
             {
                 $match: {
-                    first_name,
+                    first_name: firstNameRegex,
                 }
             },
             {
                 $match:{
-                    last_name
+                    last_name: lastNameRegex
                 }
             },
             {
@@ -118,20 +134,23 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
             }
         )
     }else if(email && last_name && first_name){
+        firstNameRegex = new RegExp(first_name, 'i');
+        lastNameRegex = new RegExp(last_name, 'i');
+        emailRegex = new RegExp(email, 'i');
         arr.push(
             {
                 $match: {
-                    first_name,
+                    first_name: firstNameRegex,
                 }
             },
             {
                 $match: {
-                    last_name,
+                    last_name: lastNameRegex,
                 }
             },
             {
                 $match: {
-                    email
+                    email:emailRegex
                 }
             },
             {
@@ -153,11 +172,8 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
     return {message: "Data is displayed", data: queryGetUser}
 }
 
-const userLogin = async(parent, {data:{email, password}}, ctx) => {
-    let queries = await userModel.findOne({email});
-    if(queries.status === 'deleted'){
-        return {message: "User has been deleted"}
-    }
+const Login = async(parent, {data:{email, password}}, ctx) => {
+    let queries = await userModel.findOne({email, status: 'Active'});
     if (!queries) {
         return {
             message: "User not found"
@@ -203,10 +219,67 @@ const getOneUser = async(parent, {data:{_id, email}}, ctx) => {
     }
 }
 
+const UpdateUser = async(parent, {data:{_id, email, first_name, last_name, password}}, ctx) => {
+    if(!_id){
+        return {message: "_id is null"}
+    }
+    
+    let emailReg = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+    if(email){
+        let queryGetUser = await userModel.findOne({email});
+        console.log(queryGetUser)
+        if(queryGetUser){
+            return {message: "Email has been used"}
+        }
+        if(!email.match(emailReg)){
+            return {message: "Email incorrect"}
+        }
+    }
+    if(password){
+        password = await hash(password, 10);
+    }
+    let converterId = mongoose.Types.ObjectId(_id)
+    let updateQueries = await userModel.findOneAndUpdate(
+        {_id: converterId},
+        {
+            $set: {
+                email,
+                first_name,
+                last_name,
+                password
+            }
+        },
+        {new: true}
+    )
+    return {message: "Data is updated", data: updateQueries}
+}
+
+const DeleteUser = async(parent, {data: {_id}}, ctx) => {
+    if(_id){
+        let converterId = mongoose.Types.ObjectId(_id);
+        const deleteQueries = await userModel.findOneAndUpdate(
+            {_id: converterId},
+            {
+                $set: {
+                    status: "Deleted"
+                }
+            },
+            {new:true}
+        )
+        if(!deleteQueries){
+            return {message: "Data isn't found"}
+        }
+        return {message: "Data is deleted", data:deleteQueries}
+    }
+}
+
 module.exports = {
     Mutation: {
-        insertUsers,
-        userLogin
+        CreateUser,
+        Login,
+        UpdateUser,
+        DeleteUser
     }, 
     Query: {
         getAllUsers,

@@ -31,6 +31,12 @@ const Authorization = async(resolver, parent, args, ctx) => {
 module.exports = {
     Query: {
         getAllUsers: Authorization,
-        getOneUser: Authorization
+        getOneUser: Authorization,
+        GetAllIngredients: Authorization
+    },
+    Mutation: {
+        UpdateUser: Authorization,
+        DeleteUser: Authorization,
+        CreateIngredient: Authorization
     }
 }

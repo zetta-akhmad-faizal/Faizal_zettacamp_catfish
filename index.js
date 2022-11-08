@@ -17,6 +17,9 @@ auth = merge(Authorization)
 //user folder
 const {userResolve, userTypeDefs} = require('./src/User/user.index')
 
+//ingredient folder
+const {ingredientTypeDefs, ingredientResolve} = require('./src/Ingredients/ingredient.index')
+
 //express
 const app = exp()
 app.use((req, res, next) => {
@@ -41,14 +44,16 @@ const typeDef = gql`
 `
 const typeDefs = [
     typeDef,
-    userTypeDefs
+    userTypeDefs,
+    ingredientTypeDefs
 ]
 
 //resolver
 let resolvers = {};
 resolvers = merge(
     resolvers,
-    userResolve
+    userResolve,
+    ingredientResolve
 )
 
 //middleware
