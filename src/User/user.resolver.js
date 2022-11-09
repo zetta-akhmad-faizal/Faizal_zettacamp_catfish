@@ -6,30 +6,42 @@ const jwt = require('jsonwebtoken')
 
 const CreateUser = async(parent, {data:{first_name, last_name, email, password, role, status}}, ctx) => {
     try{
-        let queryGetUser = await userModel.findOne({email})
-        if(queryGetUser){
-            return {message: "Email has been used"}
+        if(password){
+            password = await hash(password, 10)
+        }else{
+            return {message: "Password must be filled"}
         }
-        password = await hash(password, 10)
+
         let insertQueries = new userModel({
             first_name, last_name, email, password, role, status
         })
+
         let validator = insertQueries.validateSync();
+
         if(validator){
             return {message: validator.errors['email'].message}
-        }else{
-            insertQueries.save()
-            return {message: "Data is saved", data: insertQueries}
         }
+
+        await insertQueries.save()
+        return {message: "Data is saved", data: insertQueries}
     }catch(e){
-        throw new GraphQLError(e.message)
+        throw new GraphQLError("Email has been used")
     }
 }
 
-const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) => {
+const getAllUsers = async(parent, {data: {email, last_name, first_name, page, limit}}, ctx) => {
     let firstNameRegex;let lastNameRegex; let emailRegex;
 
     let arr = [];
+    let skip = page > 0 ? ((page -1 ) * limit) : 0;
+    // console.log(ctx.user)
+    if(ctx.user.role === 'customer'){
+        return {message: "You dont have access to getAllUsers function"}
+    }
+
+    if(!page && !limit){
+        return {message: "Page and Limit must be filled"}
+    }
 
     if(first_name && !last_name && !email){
         firstNameRegex = new RegExp(first_name, 'i');
@@ -38,6 +50,12 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
                 $match: {
                     first_name: firstNameRegex
                 }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
             },
             {
                 $sort: {
@@ -54,6 +72,12 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
                 }
             },
             {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {
                 $sort: {
                     createdAt: -1
                 }
@@ -66,6 +90,12 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
                 $match: {
                     email: emailRegex
                 }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
             },
             {
                 $sort: {
@@ -88,6 +118,12 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
                 }
             },
             {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {
                 $sort: {
                     createdAt: -1
                 }
@@ -108,6 +144,12 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
                 }
             },
             {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {
                 $sort: {
                     createdAt: -1
                 }
@@ -126,6 +168,12 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
                 $match:{
                     last_name: lastNameRegex
                 }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
             },
             {
                 $sort: {
@@ -154,17 +202,31 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name}}, ctx) =
                 }
             },
             {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {
                 $sort: {
                     createdAt: -1
                 }
             }
         )
     }else{
-        arr.push({
-            $sort: {
-                createdAt: -1
+        arr.push(
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {
+                $sort: {
+                    createdAt: -1
+                }
             }
-        })
+        )
     }
 
     const queryGetUser = await userModel.aggregate(arr);
@@ -200,6 +262,10 @@ const Login = async(parent, {data:{email, password}}, ctx) => {
 
 const getOneUser = async(parent, {data:{_id, email}}, ctx) => {
     let queries;
+    if(ctx.user.role === 'customer'){
+        return {message: "You dont have access to getOneUser function"}
+    }
+
     if(_id){
         let converterId = mongoose.Types.ObjectId(_id);
         queries = await userModel.findById(converterId);
@@ -252,10 +318,17 @@ const UpdateUser = async(parent, {data:{_id, email, first_name, last_name, passw
         },
         {new: true}
     )
-    return {message: "Data is updated", data: updateQueries}
+    if(!updateQueries){
+        return {message: "User isn't updated"}
+    }
+    return {message: "User is updated", data: updateQueries}
 }
 
 const DeleteUser = async(parent, {data: {_id}}, ctx) => {
+    if(ctx.user.role === 'customer'){
+        return {message: "You dont have access to DeleteUser function"}
+    }
+
     if(_id){
         let converterId = mongoose.Types.ObjectId(_id);
         const deleteQueries = await userModel.findOneAndUpdate(
@@ -268,9 +341,9 @@ const DeleteUser = async(parent, {data: {_id}}, ctx) => {
             {new:true}
         )
         if(!deleteQueries){
-            return {message: "Data isn't found"}
+            return {message: "User isn't found"}
         }
-        return {message: "Data is deleted", data:deleteQueries}
+        return {message: "User is deleted", data:deleteQueries}
     }
 }
 

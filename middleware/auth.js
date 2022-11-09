@@ -32,11 +32,14 @@ module.exports = {
     Query: {
         getAllUsers: Authorization,
         getOneUser: Authorization,
-        GetAllIngredients: Authorization
+        GetAllIngredients: Authorization,
+        GetOneIngredient: Authorization
     },
     Mutation: {
         UpdateUser: Authorization,
         DeleteUser: Authorization,
-        CreateIngredient: Authorization
+        CreateIngredient: Authorization,
+        UpdateIngredient: Authorization,
+        DeleteIngredient: Authorization
     }
 }

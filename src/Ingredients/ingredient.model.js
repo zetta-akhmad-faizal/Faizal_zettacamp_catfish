@@ -1,7 +1,7 @@
 const {Schema, mongoose} = require('mongoose');
 
 const ingredientSchema = new Schema({
-    name: {type: String},
+    name: {type: String, unique: true},
     stock: {type: Number},
     status: {type: String, default: "Active"}
 })

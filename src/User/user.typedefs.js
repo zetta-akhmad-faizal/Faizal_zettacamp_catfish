@@ -17,6 +17,8 @@ let userTypeDefs = gql`
         password: String
         status: statusUser
         role: roleUser
+        page: Int 
+        limit: Int
     }
     type userScheme{
         _id: ID

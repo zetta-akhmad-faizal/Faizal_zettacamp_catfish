@@ -6,6 +6,9 @@ const ingredientTypeDefs = gql`
         Deleted
     }
     input ingredientParams{
+        _id: ID
+        page: Int
+        limit: Int
         name: String
         stock: Int
         status: statusIngredient
@@ -27,9 +30,12 @@ const ingredientTypeDefs = gql`
     }
     type Query{
         GetAllIngredients(data: ingredientParams): responseIngredientAll
+        GetOneIngredient(data: ingredientParams): responseIngredient
     }
     type Mutation{
         CreateIngredient(data: ingredientParams): responseIngredient
+        UpdateIngredient(data: ingredientParams): responseIngredient
+        DeleteIngredient(data: ingredientParams): responseIngredient
     }
 `
 
