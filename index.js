@@ -9,16 +9,19 @@ const dotenv = require('dotenv');
 dotenv.config()
 
 //auth
-const Authorization = require('./middleware/auth')
+const Authorization = require('./middleware/auth');
 
 let auth = {}
 auth = merge(Authorization)
 
 //user folder
-const {userResolve, userTypeDefs} = require('./src/User/user.index')
+const {userResolve, userTypeDefs} = require('./src/User/user.index');
 
 //ingredient folder
-const {ingredientTypeDefs, ingredientResolve} = require('./src/Ingredients/ingredient.index')
+const {ingredientTypeDefs, ingredientResolve, ingredientLoader} = require('./src/Ingredients/ingredient.index');
+
+//recipe folder
+const {recipeTypeDefs, recipeResolver} = require('./src/Receipe/recipe.index')
 
 //express
 const app = exp()
@@ -45,7 +48,8 @@ const typeDef = gql`
 const typeDefs = [
     typeDef,
     userTypeDefs,
-    ingredientTypeDefs
+    ingredientTypeDefs,
+    recipeTypeDefs
 ]
 
 //resolver
@@ -53,7 +57,8 @@ let resolvers = {};
 resolvers = merge(
     resolvers,
     userResolve,
-    ingredientResolve
+    ingredientResolve,
+    recipeResolver
 )
 
 //middleware
@@ -70,7 +75,8 @@ const server = new ApolloServer({
     }) {
         req
         return {
-            req
+            req,
+            ingredientLoader
         }
     }
 })

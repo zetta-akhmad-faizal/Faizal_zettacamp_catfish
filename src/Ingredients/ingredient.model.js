@@ -8,6 +8,12 @@ const ingredientSchema = new Schema({
 
 ingredientSchema.set("timestamps", true);
 
+ingredientSchema.virtual('recipes', {
+    ref: 'recipes',
+    localField: '_id',
+    foreignField: 'ingredients.ingredient_id'
+})
+
 const ingredientModel = mongoose.model("ingredients", ingredientSchema)
 
 module.exports = {ingredientModel}

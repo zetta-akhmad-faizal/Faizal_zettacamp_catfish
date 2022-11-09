@@ -14,6 +14,7 @@ const ingredientTypeDefs = gql`
         status: statusIngredient
     }
     type ingredientScheme{
+        _id: ID
         name: String
         stock: Int
         status: statusIngredient

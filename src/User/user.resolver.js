@@ -23,7 +23,7 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
         }
 
         await insertQueries.save()
-        return {message: "Data is saved", data: insertQueries}
+        return {message: "User is saved", data: insertQueries}
     }catch(e){
         throw new GraphQLError("Email has been used")
     }
@@ -38,12 +38,21 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
     if(ctx.user.role === 'customer'){
         return {message: "You dont have access to getAllUsers function"}
     }
-
-    if(!page && !limit){
-        return {message: "Page and Limit must be filled"}
-    }
-
-    if(first_name && !last_name && !email){
+    if(page && limit && !last_name && !email && !first_name){
+        arr.push(
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            }
+        )
+    }else if(page && limit && first_name && !last_name && !email){
         firstNameRegex = new RegExp(first_name, 'i');
         arr.push(
             {
@@ -63,7 +72,7 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
                 }
             }
         )
-    }else if(last_name && !email && !first_name){
+    }else if(page && limit && last_name && !email && !first_name){
         lastNameRegex = new RegExp(last_name, 'i');
         arr.push(
             {
@@ -83,7 +92,7 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
                 }
             }
         )
-    }else if(email && !first_name && !last_name){
+    }else if(page && limit && email && !first_name && !last_name){
         emailRegex = new RegExp(email, 'i');
         arr.push(
             {
@@ -103,7 +112,7 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
                 }
             }
         )
-    }else if(email && last_name && !first_name){
+    }else if(page && limit && email && last_name && !first_name){
         emailRegex = new RegExp(email, 'i');
         lastNameRegex = new RegExp(last_name, 'i');
         arr.push(
@@ -129,7 +138,7 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
                 }
             }
         )
-    }else if(email && first_name && !last_name){
+    }else if(page && limit && email && first_name && !last_name){
         firstNameRegex = new RegExp(first_name, 'i');
         emailRegex = new RegExp(email, 'i');
         arr.push(
@@ -155,7 +164,7 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
                 }
             }
         )
-    }else if(first_name && last_name && !email){
+    }else if(page && limit && first_name && last_name && !email){
         firstNameRegex = new RegExp(first_name, 'i');
         lastNameRegex = new RegExp(last_name, 'i');
         arr.push(
@@ -181,7 +190,7 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
                 }
             }
         )
-    }else if(email && last_name && first_name){
+    }else if(page && limit && email && last_name && first_name){
         firstNameRegex = new RegExp(first_name, 'i');
         lastNameRegex = new RegExp(last_name, 'i');
         emailRegex = new RegExp(email, 'i');
@@ -215,12 +224,6 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
         )
     }else{
         arr.push(
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            },
             {
                 $sort: {
                     createdAt: -1

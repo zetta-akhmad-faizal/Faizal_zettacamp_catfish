@@ -11,15 +11,25 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
         return {message: "You dont have access to getOneUser function"}
     }
 
-    if(!page && !limit){
-        return {message: "Page and Limit must be filled"}
-    }
-
     if(stock < 0){
         return {message: "Stock must be grather than 0"}
     }
 
-    if(name && !stock){
+    if(limit && page && !name && !stock){
+        arr.push(
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            }
+        )
+    }else if(limit && page && name && !stock){
         nameRegex = new RegExp(name, 'i');
         arr.push(
             {
@@ -39,7 +49,7 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
                 }
             }
         )
-    }else if(stock && !name){
+    }else if(limit && page && stock && !name){
         arr.push(
             {
                 $match: {
@@ -58,7 +68,7 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
                 }
             }
         )
-    }else if(name && stock){
+    }else if(limit && page && name && stock){
         nameRegex = new RegExp(name, 'i');
         arr.push(
             {
@@ -83,14 +93,8 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
                 }
             }
         )
-    }else if(!name && !stock){
+    }else{
         arr.push(
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            },
             {
                 $sort: {
                     createdAt: -1
@@ -123,7 +127,7 @@ const CreateIngredient = async(parent, {data: {name, stock}}, ctx) => {
         const queriesInsert = new ingredientModel({name, stock});
 
         await queriesInsert.save()
-        return {message: "Data is saved", data: queriesInsert}
+        return {message: "Ingredient is saved", data: queriesInsert}
     }catch(e){
         throw new GraphQLError("Ingredient is available")
     }
@@ -194,6 +198,12 @@ const DeleteIngredient = async(parent, {data: {_id}}, ctx) => {
     return {message: "Ingredient is deleted", data: queriesDelete}
 }
 
+const loaderOfingredient = async(parent, args, ctx) => {
+    if(parent){
+        return await ctx.ingredientLoader.load(parent.ingredient_id);
+    }
+}
+
 module.exports = {
     Mutation: {
         CreateIngredient,
@@ -203,5 +213,8 @@ module.exports = {
     Query: {
         GetAllIngredients,
         GetOneIngredient
+    },
+    recipeIngredientsField: {
+        ingredient_id: loaderOfingredient
     }
 }
