@@ -22,16 +22,17 @@ let recipeTypeDefs = gql`
         Deleted
     }
     type recipeScheme{
-        recipe_name: String,
-        ingredients: [recipeIngredientsField],
+        _id: ID
+        recipe_name: String
+        ingredients: [recipeIngredientsField]
         status: String
     }
     type responseAtRecipeAll{
-        message:String,
+        message:String
         data: [recipeScheme]
     }
     type responseAtRecipe{
-        message:String,
+        message:String
         data: recipeScheme
     }
     type Query{

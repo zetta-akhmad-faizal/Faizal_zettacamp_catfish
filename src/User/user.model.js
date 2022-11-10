@@ -20,6 +20,12 @@ const userSchema = new Schema({
 
 userSchema.set('timestamps', true);
 
+userSchema.virtual('transactions', {
+    ref: 'transactions',
+    localField: '_id',
+    foreignField: 'user_id'
+})
+
 const userModel = mongoose.model('users', userSchema);
 
 module.exports = {userModel}

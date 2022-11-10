@@ -15,13 +15,16 @@ let auth = {}
 auth = merge(Authorization)
 
 //user folder
-const {userResolve, userTypeDefs} = require('./src/User/user.index');
+const {userResolve, userTypeDefs, userLoader} = require('./src/User/user.index');
 
 //ingredient folder
 const {ingredientTypeDefs, ingredientResolve, ingredientLoader} = require('./src/Ingredients/ingredient.index');
 
 //recipe folder
-const {recipeTypeDefs, recipeResolver} = require('./src/Receipe/recipe.index')
+const {recipeTypeDefs, recipeResolver, recipeLoader} = require('./src/Receipe/recipe.index');
+
+//transaction folder
+const {transactionResolver, transactionTypeDefs} = require('./src/Transaction/transaction.index');
 
 //express
 const app = exp()
@@ -49,7 +52,8 @@ const typeDefs = [
     typeDef,
     userTypeDefs,
     ingredientTypeDefs,
-    recipeTypeDefs
+    recipeTypeDefs,
+    transactionTypeDefs
 ]
 
 //resolver
@@ -58,7 +62,8 @@ resolvers = merge(
     resolvers,
     userResolve,
     ingredientResolve,
-    recipeResolver
+    recipeResolver,
+    transactionResolver
 )
 
 //middleware
@@ -76,7 +81,9 @@ const server = new ApolloServer({
         req
         return {
             req,
-            ingredientLoader
+            ingredientLoader,
+            userLoader,
+            recipeLoader
         }
     }
 })

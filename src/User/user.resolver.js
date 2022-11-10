@@ -41,6 +41,11 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
     if(page && limit && !last_name && !email && !first_name){
         arr.push(
             {
+                $match: {
+                    status: "Active"
+                }
+            },
+            {
                 $skip: skip
             },
             {
@@ -57,7 +62,8 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
         arr.push(
             {
                 $match: {
-                    first_name: firstNameRegex
+                    first_name: firstNameRegex,
+                    status: "Active"
                 }
             },
             {
@@ -77,7 +83,9 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
         arr.push(
             {
                 $match: {
-                    last_name: lastNameRegex
+                    last_name: lastNameRegex,
+                    status: "Active"
+                    
                 }
             },
             {
@@ -97,7 +105,8 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
         arr.push(
             {
                 $match: {
-                    email: emailRegex
+                    email: emailRegex,
+                    status: "Active"
                 }
             },
             {
@@ -118,12 +127,9 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
         arr.push(
             {
                 $match: {
-                    last_name: lastNameRegex
-                }
-            },
-            {
-                $match: {
-                    email: emailRegex
+                    last_name: lastNameRegex,
+                    email: emailRegex,
+                    status: "Active"
                 }
             },
             {
@@ -144,12 +150,9 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
         arr.push(
             {
                 $match: {
-                    first_name: firstNameRegex
-                }
-            },
-            {
-                $match: {
-                    email: emailRegex
+                    first_name: firstNameRegex,
+                    email: emailRegex,
+                    status: "Active"
                 }
             },
             {
@@ -171,11 +174,8 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
             {
                 $match: {
                     first_name: firstNameRegex,
-                }
-            },
-            {
-                $match:{
-                    last_name: lastNameRegex
+                    last_name: lastNameRegex,
+                    status: "Active"
                 }
             },
             {
@@ -198,16 +198,9 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
             {
                 $match: {
                     first_name: firstNameRegex,
-                }
-            },
-            {
-                $match: {
                     last_name: lastNameRegex,
-                }
-            },
-            {
-                $match: {
-                    email:emailRegex
+                    email:emailRegex,
+                    status: "Active"
                 }
             },
             {
@@ -224,6 +217,11 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
         )
     }else{
         arr.push(
+            {
+                $match: {
+                    status: "Active"
+                }
+            },
             {
                 $sort: {
                     createdAt: -1
@@ -271,15 +269,15 @@ const getOneUser = async(parent, {data:{_id, email}}, ctx) => {
 
     if(_id){
         let converterId = mongoose.Types.ObjectId(_id);
-        queries = await userModel.findById(converterId);
+        queries = await userModel.findOne({_id:converterId, status:"Active"});
         if(!queries){
             return {message: `User ${_id} isn't fetched`}
         }
         return {message: `User ${_id} is fetched`, data: queries}
     }else if(email){
-        queries = await userModel.findOne({email});
+        queries = await userModel.findOne({email, status: "Active"});
         if(!queries){
-            return {message: `User ${email} isn't fetched`}
+            return {message: `User ${email} isn't fetched`, data: queries}
         }
         return {message: `User ${email} is fetched`, data: queries}
     }
@@ -322,7 +320,7 @@ const UpdateUser = async(parent, {data:{_id, email, first_name, last_name, passw
         {new: true}
     )
     if(!updateQueries){
-        return {message: "User isn't updated"}
+        return {message: "User isn't updated", data: updateQueries}
     }
     return {message: "User is updated", data: updateQueries}
 }
@@ -335,7 +333,7 @@ const DeleteUser = async(parent, {data: {_id}}, ctx) => {
     if(_id){
         let converterId = mongoose.Types.ObjectId(_id);
         const deleteQueries = await userModel.findOneAndUpdate(
-            {_id: converterId},
+            {_id: converterId, status: "Active"},
             {
                 $set: {
                     status: "Deleted"
@@ -344,9 +342,15 @@ const DeleteUser = async(parent, {data: {_id}}, ctx) => {
             {new:true}
         )
         if(!deleteQueries){
-            return {message: "User isn't found"}
+            return {message: "User isn't found", data: deleteQueries}
         }
         return {message: "User is deleted", data:deleteQueries}
+    }
+}
+
+const userLoaders = async(parent, args, ctx) => {
+    if(parent){
+        return await ctx.userLoader.load(parent.user_id);
     }
 }
 
@@ -360,5 +364,8 @@ module.exports = {
     Query: {
         getAllUsers,
         getOneUser
+    },
+    transactionScheme: {
+        user_id: userLoaders
     }
 }

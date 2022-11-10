@@ -18,6 +18,11 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
     if(limit && page && !name && !stock){
         arr.push(
             {
+                $match: {
+                    status: "Active"
+                }
+            },
+            {
                 $skip: skip
             },
             {
@@ -34,7 +39,8 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
         arr.push(
             {
                 $match: {
-                    name: nameRegex
+                    name: nameRegex,
+                    status: "Active"
                 }
             },
             {
@@ -53,7 +59,8 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
         arr.push(
             {
                 $match: {
-                    stock
+                    stock,
+                    status: "Active"
                 }
             },
             {
@@ -73,12 +80,9 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
         arr.push(
             {
                 $match: {
-                    name: nameRegex
-                }
-            },
-            {
-                $match: {
-                    stock
+                    name: nameRegex,
+                    stock,
+                    status: "Active"
                 }
             },
             {
@@ -95,6 +99,11 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
         )
     }else{
         arr.push(
+            {
+                $match: {
+                    status: "Active"
+                }
+            },
             {
                 $sort: {
                     createdAt: -1
@@ -141,12 +150,12 @@ const GetOneIngredient = async(parent, {data:{_id}}, ctx) => {
         return {message: "_id is null"}
     }
     const converterId = mongoose.Types.ObjectId(_id)
-    const queriesGetOne = await ingredientModel.findOne({_id: converterId});
+    const queriesGetOne = await ingredientModel.findOne({_id: converterId, status:Active});
 
     if(queriesGetOne){
         return {message: `Ingredients ${_id} is found`, data: queriesGetOne}
     }else{
-        return {message: `Ingredients ${_id} isn't found`}
+        return {message: `Ingredients ${_id} isn't found`, data: queriesGetOne}
     }
 }
 
@@ -169,7 +178,7 @@ const UpdateIngredient = async(parent, {data:{_id, stock}}, ctx) => {
         {new:true}
     )
     if(!queriesUpdate){
-        return {message: "Ingredient isn't updated"}
+        return {message: "Ingredient isn't updated", data:queriesUpdate}
     }
     return {message: "Ingredient is updated", data: queriesUpdate}
 }
@@ -184,7 +193,7 @@ const DeleteIngredient = async(parent, {data: {_id}}, ctx) => {
     }
 
     const queriesDelete = await ingredientModel.findOneAndUpdate(
-        {_id: mongoose.Types.ObjectId(_id)},
+        {_id: mongoose.Types.ObjectId(_id), status: "Active"},
         {
             $set: {
                 status: "Deleted"
@@ -192,7 +201,7 @@ const DeleteIngredient = async(parent, {data: {_id}}, ctx) => {
         }
     )
     if(!queriesDelete){
-        return {message: "Ingredient isn't deleted"}
+        return {message: "Ingredient isn't deleted", data: queriesDelete}
     }
 
     return {message: "Ingredient is deleted", data: queriesDelete}

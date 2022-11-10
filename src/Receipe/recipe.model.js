@@ -13,6 +13,12 @@ let recipeScheme = new Schema({
 
 recipeScheme.set("timestamps", true);
 
+recipeScheme.virtual('transactions', {
+    ref: 'transactions',
+    localField: '_id',
+    foreignField: 'menu.recipe_id'
+})
+
 const recipeModel = mongoose.model('recipes', recipeScheme);
 
 module.exports = {recipeModel}

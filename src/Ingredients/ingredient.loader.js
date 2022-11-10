@@ -7,7 +7,6 @@ let ingredientCall = async(ingredientIds) => {
             $in: ingredientIds
         }
     })
-    console.log(queri)
     const obj = {};
     queri.forEach(val => {
         obj[val._id]=val
