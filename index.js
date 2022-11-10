@@ -15,16 +15,16 @@ let auth = {}
 auth = merge(Authorization)
 
 //user folder
-const {userResolve, userTypeDefs, userLoader} = require('./src/User/user.index');
+const {userResolve, userTypeDefs, userLoader, userModel} = require('./src/User/user.index');
 
 //ingredient folder
-const {ingredientTypeDefs, ingredientResolve, ingredientLoader} = require('./src/Ingredients/ingredient.index');
+const {ingredientTypeDefs, ingredientResolve, ingredientLoader, ingredientModel} = require('./src/Ingredients/ingredient.index');
 
 //recipe folder
-const {recipeTypeDefs, recipeResolver, recipeLoader} = require('./src/Receipe/recipe.index');
+const {recipeTypeDefs, recipeResolver, recipeLoader, recipeModel} = require('./src/Receipe/recipe.index');
 
 //transaction folder
-const {transactionResolver, transactionTypeDefs} = require('./src/Transaction/transaction.index');
+const {transactionResolver, transactionTypeDefs, transactionModel} = require('./src/Transaction/transaction.index');
 
 //express
 const app = exp()
@@ -88,7 +88,7 @@ const server = new ApolloServer({
     }
 })
 
-//server start
+// server start
 let port = process.env.PORT
 server.start().then(res => {
     server.applyMiddleware({app})
@@ -96,3 +96,5 @@ server.start().then(res => {
         console.log(`App running on ${port}`)
     })
 })
+
+//test

@@ -47,6 +47,7 @@ module.exports = {
         DeleteIngredient: Authorization,
         CreateRecipe: Authorization,
         UpdateRecipe: Authorization,
-        DeleteRecipe: Authorization
+        DeleteRecipe: Authorization,
+        CreateTransaction: Authorization
     }
 }

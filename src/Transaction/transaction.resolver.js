@@ -1,5 +1,6 @@
 const { mongoose } = require('mongoose');
-const {transactionModel} = require('./transaction.model')
+const {transactionModel} = require('./transaction.model');
+const {validateStockIngredient} = require('./transaction.app')
 
 //employer side
 const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date}}, ctx) => {
@@ -210,12 +211,45 @@ const testM = async(parent, args, ctx) => {
     return 'mutation'
 }
 
+const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
+    if(!menu){
+        return {message: "Transaction isn't created"}
+    }
+    
+    let obj = {
+        user_id: ctx.user._id,
+        menu,
+        order_date: new Date(),
+    }
+
+    let arr = []
+    for(let indexOfMenu of menu){
+        let validateStock = await validateStockIngredient(indexOfMenu.recipe_id, indexOfMenu.amount)
+        //get value from function validate
+        arr.push(validateStock);
+    }
+    //validate 
+    let validateValue = arr.includes(true)
+    if(validateValue === false){
+        obj['order_status'] = 'Success'
+        let queriesInsert = new transactionModel(obj);
+        await queriesInsert.save();
+        return {message: "Transaction success", data: obj}
+    }else{
+        obj['order_status'] = 'Failed'
+        let queriesInsert = new transactionModel(obj);
+        await queriesInsert.save();
+        return {message: "Transaction success", data: obj}
+    }
+}
+
 module.exports = {
     Query:{
         GetAllTransaction,
-        GetOneTransaction
+        GetOneTransaction,
     },
     Mutation: {
-        testM
+        testM,
+        CreateTransaction
     }
 }

@@ -7,6 +7,7 @@ let transactionTypeDefs = gql`
         note: String
     }
     input transactionParams{
+        amount: Int
         _id: ID
         user_id: ID
         menu: [menuFieldsParams]
@@ -51,7 +52,8 @@ let transactionTypeDefs = gql`
         GetOneTransaction(data: transactionParams): responseAtTransaction
     }
     type Mutation{
-        testM: String
+        testM: String,
+        CreateTransaction(data: transactionParams): responseAtTransaction
     }
 `
 
