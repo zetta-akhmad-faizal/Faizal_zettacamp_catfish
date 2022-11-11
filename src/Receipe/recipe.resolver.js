@@ -113,7 +113,7 @@ const ingredientsLooping = async( ingredients, _id ) => {
     let arr = [];
     for(let indexOfIngredient of ingredients){
         let queriesUpdate = await recipeModel.findOneAndUpdate(
-            {_id: mongoose.Types.ObjectId(_id)},
+            {_id: mongoose.Types.ObjectId(_id), status: "Active"},
             {
                 $push: {
                     ingredients: indexOfIngredient
@@ -131,7 +131,7 @@ const ingredientsLooping = async( ingredients, _id ) => {
 const recipeNameFunction = async (_id, recipe_name) => {
     let arr = []
     let queries = await recipeModel.findOneAndUpdate(
-        {_id: mongoose.Types.ObjectId(_id)}, 
+        {_id: mongoose.Types.ObjectId(_id), status: "Active"}, 
         {
             $set: {
                 recipe_name

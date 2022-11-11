@@ -1,49 +1,59 @@
-const {transactionModel} = require('./transaction.model');
-const {recipeModel }= require('../Receipe/recipe.index');
+const {recipeModel}= require('../Receipe/recipe.index');
 const {ingredientModel} = require('../Ingredients/ingredient.index')
-const {mongoose} = require('mongoose')
+const {mongoose} = require('mongoose');
 
-let validateStockIngredient = async(_id,amount) => {
+let validateStockIngredient = async(menu) => {
     let arr = [];
-    let arrIngredientId = [];
     let obj = {};
-    //get data by id in recipe model. _id = ids from mutation
-    let recipeQueries = await recipeModel.findById(mongoose.Types.ObjectId(_id))
-    //looping ingredients field from recipe collections
-    for(let indexOfRecipeIngredients of recipeQueries.ingredients){
-        let objIngredient = {};
-        //in ingredient model find one data according on _id 
-        let ingredientQueries = await ingredientModel.findOne({_id: indexOfRecipeIngredients.ingredient_id})
-        //in recipe => ingredients there're some value about stock used and multiply with amount order, it will compare with ingredient
-        let stock_used = indexOfRecipeIngredients.stock_used * amount
-        //save ingredient
-        objIngredient['ingredient_id'] = indexOfRecipeIngredients.ingredient_id;
-        objIngredient['stock_used_total'] = stock_used;
-        arrIngredientId.push(objIngredient);
-        //logical
-        console.log(`stock ingredient before updated: ${ingredientQueries.stock}`, `stock used ingredient ${stock_used}`, `ingredient name: ${ingredientQueries.name}`)
-        ingredientQueries.stock <= stock_used ? arr.push('Failed') : arr.push('Success')
-    } 
-    obj['ingredientIds'] = arrIngredientId
-    obj['recipeIngredient'] = arr.includes("Failed") 
-    //validate ingredients < recipe. What are there failed value in arrays? if ya it will true and vice versa (false)
-    return obj;
-}
+    let arrIngredient = [];
 
-let reduceIngredientStock = async(ids, amount) => {
-    let queriesUpdate = await ingredientModel.findOneAndUpdate(
-        {
-            _id:mongoose.Types.ObjectId(ids),
-            status: 'Active'
-        },
-        {
-            $inc: {
-                stock: -amount
+    for(let arraysRecipe of menu){
+        let recipeQueries = await recipeModel.findOne({
+            _id: mongoose.Types.ObjectId(arraysRecipe.recipe_id)
+        })
+        for(let arraysIngredient of recipeQueries.ingredients){
+            let objIngredient = {}
+            let stock_used = arraysIngredient.stock_used;
+            let ingredientQueries = await ingredientModel.findOne({_id: arraysIngredient.ingredient_id});
+            console.log(`stock ingredient before updated: ${ingredientQueries.stock}`, `stock used ingredient ${stock_used}`, `ingredient name: ${ingredientQueries.name}`)
+            if(stock_used <= ingredientQueries.stock){
+                objIngredient['ingredient_id'] = ingredientQueries._id;
+                objIngredient['stock_used'] = stock_used;
+
+                arrIngredient.push(objIngredient);
+                arr.push(true);
+            }else{
+                arr.push(false)
             }
         }
-    )
-    // console.log(queriesUpdate)
-    return queriesUpdate
+    }
+
+    if(arr.includes(false) === false){
+        obj['order_status'] = 'Success';
+        await reduceIngredientStock(arrIngredient)
+    }else{
+        obj['order_status'] = 'Failed'
+    }
+    return obj
 }
 
-module.exports = {validateStockIngredient, reduceIngredientStock}
+let reduceIngredientStock = async(arrs) => {
+    let data;
+    for(let arrays of arrs){
+        data = await ingredientModel.findOneAndUpdate(
+            {
+                _id:arrays.ingredient_id,
+                status: 'Active'
+            },
+            {
+                $inc: {
+                    stock: -arrays.stock_used
+                }
+            }
+        )
+    }
+    console.log('check', data)
+    return data
+}
+
+module.exports = {validateStockIngredient}

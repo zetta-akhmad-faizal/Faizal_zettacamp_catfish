@@ -169,7 +169,7 @@ const UpdateIngredient = async(parent, {data:{_id, stock}}, ctx) => {
     }
 
     const queriesUpdate = await ingredientModel.findOneAndUpdate(
-        {_id: mongoose.Types.ObjectId(_id)},
+        {_id: mongoose.Types.ObjectId(_id), status: "Active"},
         {
             $set: {
                 stock

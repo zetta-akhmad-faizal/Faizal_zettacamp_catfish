@@ -52,8 +52,8 @@ let transactionTypeDefs = gql`
         GetOneTransaction(data: transactionParams): responseAtTransaction
     }
     type Mutation{
-        testM: String,
-        CreateTransaction(data: transactionParams): responseAtTransaction
+        CreateTransaction(data: transactionParams): responseAtTransaction,
+        DeleteTransaction(data: transactionParams): responseAtTransaction
     }
 `
 

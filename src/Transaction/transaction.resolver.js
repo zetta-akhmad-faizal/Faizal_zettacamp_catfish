@@ -1,11 +1,11 @@
 const { mongoose } = require('mongoose');
-const moment = require('moment')
 const {transactionModel} = require('./transaction.model');
-const {validateStockIngredient, reduceIngredientStock} = require('./transaction.app')
+const {validateStockIngredient} = require('./transaction.app')
 
 //employer side
 const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date}}, ctx) => {
     let arr = [];
+    let endDate; let startDate;
     if(last_name_user){
         last_name_user = new RegExp(last_name_user, 'i');
     }
@@ -19,6 +19,11 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
         recipe_name = new RegExp(recipe_name, 'i');
     }
 
+    if(order_date){
+        let splitter = order_date.split("/")
+        startDate = new Date(order_date);
+        endDate = startDate.setDate(parseInt(splitter[1]))
+    }
     let usersLookup = {
         $lookup: {
             from: 'users',
@@ -212,49 +217,49 @@ const GetOneTransaction = async(parent, {data: {_id}}, ctx) => {
     return {message: "Transaction is available", data: querieGetOne}
 }
 
-const testM = async(parent, args, ctx) => {
-    return 'mutation'
-}
-
 const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
     if(!menu){
         return {message: "You must choice menu"}
     }
+
+    let validate = await validateStockIngredient(menu)
     
-    let obj = {
-        user_id: ctx.user._id,
+    let queriesInsert = new transactionModel({
+        ...validate,
         menu,
-        order_date: new Date(),
+        user_id: ctx.user._id,
+        order_date: new Date()
+    })
+    await queriesInsert.save();
+    return {message: `Transaction insert ${validate['order_status']}`, data: queriesInsert}
+    
+}
+
+const DeleteTransaction = async(parent, {data:{_id}}, ctx) => {
+    if(!_id){
+        return {message: "_id is null"}
     }
 
-    let arrOfRecipeIngredient = [];
-    let arrofIngredients = [];
-    for(let indexOfMenu of menu){
-        let validateStock = await validateStockIngredient(indexOfMenu.recipe_id, indexOfMenu.amount)
-        //get value from function validate
-        arrofIngredients.push(validateStock.ingredientIds)
-        arrOfRecipeIngredient.push(validateStock.recipeIngredient);
+    if(ctx.user.role==='customer'){
+        return {message: "You dont have access to DeleteTransaction function"}
     }
-    //validate 
-    let validateValue = arrOfRecipeIngredient.includes(true)
-    if(validateValue === false){
-        for(let arrays of arrofIngredients){
-            for(let array of arrays){
-                await reduceIngredientStock(array.ingredient_id, array.stock_used_total)
+
+    let queriesDelete = await transactionModel.findOneAndUpdate(
+        {_id: mongoose.Types.ObjectId(_id), status: "Active"},
+        {
+            $set: {
+                status: "Deleted"
             }
+        },
+        {
+            new: true
         }
-        //save
-        obj['order_status'] = 'Success'
-        let queriesInsert = new transactionModel(obj);
-        await queriesInsert.save();
-        return {message: "Transaction success", data: queriesInsert}
-    }else{
-        //save
-        obj['order_status'] = 'Failed'
-        let queriesInsert = new transactionModel(obj);
-        await queriesInsert.save();
-        return {message: `Transaction ${obj['order_status']}`, data:queriesInsert}
+    )
+    if(!queriesDelete){
+        return {message: "Transaction isn't deleted", data: queriesDelete}
     }
+
+    return {message: "Transaction is deleted", data: queriesDelete}
 }
 
 module.exports = {
@@ -263,7 +268,7 @@ module.exports = {
         GetOneTransaction,
     },
     Mutation: {
-        testM,
-        CreateTransaction
+        CreateTransaction,
+        DeleteTransaction
     }
 }

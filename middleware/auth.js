@@ -2,7 +2,6 @@ const {userModel} = require("../src/User/user.model");
 const {GraphQLError} = require('graphql');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const e = require("express");
 
 dotenv.config()
 
@@ -48,6 +47,7 @@ module.exports = {
         CreateRecipe: Authorization,
         UpdateRecipe: Authorization,
         DeleteRecipe: Authorization,
-        CreateTransaction: Authorization
+        CreateTransaction: Authorization,
+        DeleteTransaction: Authorization
     }
 }
