@@ -1,6 +1,7 @@
 const { mongoose } = require('mongoose');
+const moment = require('moment')
 const {transactionModel} = require('./transaction.model');
-const {validateStockIngredient} = require('./transaction.app')
+const {validateStockIngredient, reduceIngredientStock} = require('./transaction.app')
 
 //employer side
 const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date}}, ctx) => {
@@ -103,7 +104,9 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
             {
                 $match: {
                     status: "Active",
-                    order_date
+                    order_date: {
+                        $gte: new Date(order_date)
+                    }
                 }
             },
             {
@@ -160,7 +163,9 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
                     'users.last_name': last_name_user,
                     'recipes.recipe_name': recipe_name,
                     order_status,
-                    order_date
+                    order_date: {
+                        $gte: new Date(order_date)
+                    }
                 }
             },
             {
@@ -213,7 +218,7 @@ const testM = async(parent, args, ctx) => {
 
 const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
     if(!menu){
-        return {message: "Transaction isn't created"}
+        return {message: "You must choice menu"}
     }
     
     let obj = {
@@ -222,24 +227,33 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
         order_date: new Date(),
     }
 
-    let arr = []
+    let arrOfRecipeIngredient = [];
+    let arrofIngredients = [];
     for(let indexOfMenu of menu){
         let validateStock = await validateStockIngredient(indexOfMenu.recipe_id, indexOfMenu.amount)
         //get value from function validate
-        arr.push(validateStock);
+        arrofIngredients.push(validateStock.ingredientIds)
+        arrOfRecipeIngredient.push(validateStock.recipeIngredient);
     }
     //validate 
-    let validateValue = arr.includes(true)
+    let validateValue = arrOfRecipeIngredient.includes(true)
     if(validateValue === false){
+        for(let arrays of arrofIngredients){
+            for(let array of arrays){
+                await reduceIngredientStock(array.ingredient_id, array.stock_used_total)
+            }
+        }
+        //save
         obj['order_status'] = 'Success'
         let queriesInsert = new transactionModel(obj);
         await queriesInsert.save();
-        return {message: "Transaction success", data: obj}
+        return {message: "Transaction success", data: queriesInsert}
     }else{
+        //save
         obj['order_status'] = 'Failed'
         let queriesInsert = new transactionModel(obj);
         await queriesInsert.save();
-        return {message: "Transaction success", data: obj}
+        return {message: `Transaction ${obj['order_status']}`, data:queriesInsert}
     }
 }
 
