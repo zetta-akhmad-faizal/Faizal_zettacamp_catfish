@@ -1,18 +1,24 @@
 const {recipeModel} = require('./recipe.model');
 const {ingredientModel} = require('../Ingredients/ingredient.model');
 const {mongoose} = require('mongoose');
-const { GraphQLError } = require('graphql');
+const { GraphQLError} = require('graphql');
 
 const GetAllrecipes = async(parent, {data:{recipe_name, page, limit}}, ctx) => {
-    if(ctx.user.role==='customer'){
-        return {message: "You dont have access to GetAllrecipes function"}
-    }
-
     let arr = []
     let skip = page > 0 ? ((page - 1) * limit) : 0
 
+    let general = {
+        $lookup: {
+            from: 'ingredients',
+            localField: 'ingredients.ingredient_id',
+            foreignField: '_id',
+            as: 'ingredient_list'
+        }
+    }
+
     if(limit && page && !recipe_name){
         arr.push(
+            general,
             {
                 status: "Active"
             },
@@ -26,9 +32,11 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit}}, ctx) => {
         )
     }else if(limit && page && recipe_name){
         arr.push(
+            general,
             {
                 $match: {
                     recipe_name: new RegExp(recipe_name, 'i'),
+                    // 'ingredient_list.available': true,
                     status: "Active"
                 }
             },
@@ -42,6 +50,7 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit}}, ctx) => {
         )
     }else{
         arr.push(
+            general,
             {$match: {status: "Active"}},
             {$sort: {createdAt:-1}}
         )
@@ -51,11 +60,8 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit}}, ctx) => {
 }
 
 const CreateRecipe = async(parent, {data: {recipe_name, ingredients}}, ctx) => {
-    if(ctx.user.role === 'customer'){
-        return {message: "You dont have access to CreateRecipe function"}
-    }
     if(!recipe_name || !ingredients || ingredients.length === 0){
-        return {message: "Make a sure all fields are filled"}
+       throw new GraphQLError("Make a sure all fields are filled")
     }
 
     let container; let obj = {};
@@ -63,7 +69,7 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients}}, ctx) => {
     //get id in form input
     let ingredientId = ingredients.map(val => mongoose.Types.ObjectId(val.ingredient_id));
     //filter based on id form input which it has active status
-    let ingredientCheckStatus = await ingredientModel.find({_id: {$in:ingredientId}, status:"Active"});
+    let ingredientCheckStatus = await ingredientModel.find({_id: {$in:ingredientId}, status:"Active", available: true});
     
     //looping
     container = ingredientCheckStatus.map(val => val._id.toString());
@@ -76,23 +82,19 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients}}, ctx) => {
     const queriesInsert = new recipeModel(formInput);
     await queriesInsert.save();
 
-    return {message: "Recipe is saved", data: queriesInsert}
+    return {message: "Recipe is saved", data: queriesInsert, permit: ctx.user.usertype}
 }
 
 const GetOneRecipe = async(parent, {data:{_id}}, ctx) => {
-    if(ctx.user.role === 'customer'){
-        return {message: "You dont have access to GetOneRecipe function"}
-    }
-
     if(!_id){
-        return {message: "_id is null"}
+        throw new GraphQLError("_id is null")
     }
 
     const queries = await recipeModel.findOne({_id: mongoose.Types.ObjectId(_id), status: "Active"});
     if(!queries){
-        return {message: "Recipe isn't found", data: queries}
+        throw new GraphQLError("Recipe isn't found")
     }else{
-        return {message: "Recipe is found", data: queries}
+        return {message: "Recipe is found", data: queries, permit: ctx.user.usertype}
     }
 }
 
@@ -144,10 +146,6 @@ const recipeNameFunction = async (_id, recipe_name) => {
 }
 
 const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients}}, ctx) => {
-    if(ctx.user.role === 'customer'){
-        return {message: "You dont have access to CreateRecipe function"}
-    }
-
     let res;
     
     if(ingredients && !recipe_name){
@@ -158,16 +156,12 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients}}, ctx)
         throw new GraphQLError("Only can update once recipe_name or ingredients");
     }
     
-    return {message: "Recipe is updated", data: res}
+    return {message: "Recipe is updated", data: res, permit: ctx.user.usertype}
 }
 
 const DeleteRecipe = async(parent, {data: {_id}}, ctx) => {
-    if(ctx.user.role === 'customer'){
-        return {message: "You dont have access to DeleteRecipe function"}
-    }
-
     if(!_id){
-        return {message: "_id is null"}
+        throw new GraphQLError("_id is null")
     }
 
     let queriesDelete = await recipeModel.findOneAndUpdate(
@@ -180,10 +174,10 @@ const DeleteRecipe = async(parent, {data: {_id}}, ctx) => {
         {new: true}
     )
     if(!queriesDelete){
-        return {message: "Recipe isn't found", data: queriesDelete}
+        throw new GraphQLError("Recipe isn't found")
     }
 
-    return {message: "Recipe is found", data: queriesDelete}
+    return {message: "Recipe is found", data: queriesDelete, permit: ctx.user.usertype}
 }
 
 const recipeLoaders = async(parent, args, ctx) => {

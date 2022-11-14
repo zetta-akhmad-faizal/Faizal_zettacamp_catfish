@@ -1,6 +1,7 @@
 const { mongoose } = require('mongoose');
 const {transactionModel} = require('./transaction.model');
-const {validateStockIngredient} = require('./transaction.app')
+const {validateStockIngredient} = require('./transaction.app');
+const { GraphQLError } = require('graphql');
 
 //employer side
 const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date}}, ctx) => {
@@ -20,9 +21,11 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
     }
 
     if(order_date){
+        //format MM/DD/YYYY
         let splitter = order_date.split("/")
-        startDate = new Date(order_date);
-        endDate = startDate.setDate(parseInt(splitter[1]))
+        startDate = new Date(`${order_date}, 00:00:00.000Z`);
+        endDate = new Date(`${splitter[0]}/${parseInt(splitter[1])+1}/${splitter[2]}, 00:00:00.000Z`)
+        console.log(splitter)
     }
     let usersLookup = {
         $lookup: {
@@ -41,7 +44,6 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
             as: 'recipes'
         }
     }
-
     let skip = page > 0 ? ((page-1)*limit):0;
     if(limit && page && !last_name_user && !recipe_name && !order_status && !order_date){
         arr.push(
@@ -110,7 +112,8 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
                 $match: {
                     status: "Active",
                     order_date: {
-                        $gte: new Date(order_date)
+                        $gte: startDate,
+                        $lte: endDate,
                     }
                 }
             },
@@ -169,7 +172,8 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
                     'recipes.recipe_name': recipe_name,
                     order_status,
                     order_date: {
-                        $gte: new Date(order_date)
+                        $gte: startDate,
+                        $lte: endDate,
                     }
                 }
             },
@@ -197,29 +201,29 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
 
     let queriesGetAll = await transactionModel.aggregate(arr);
     if(!queriesGetAll){
-        return {message: "No transaction show"}
+        throw new GraphQLError("No transaction show")
     }
-
-    return {message: "Transaction is displayed", data: queriesGetAll}
+    console.log(startDate, endDate)
+    return {message: "Transaction is displayed", data: queriesGetAll, permit: ctx.user.usertype}
 }
 
 //employer side
 const GetOneTransaction = async(parent, {data: {_id}}, ctx) => {
     if(!_id){
-        return {message: "_id is null"}
+        throw new GraphQLError("_id is null")
     }
 
     const querieGetOne = await transactionModel.findOne({_id: mongoose.Types.ObjectId(_id), status: "Active"});
     if(!querieGetOne){
-        return {message: "No transaction show", data:querieGetOne}
+        throw new GraphQLError("No transaction show")
     }
 
-    return {message: "Transaction is available", data: querieGetOne}
+    return {message: "Transaction is available", data: querieGetOne, permit: ctx.user.usertype}
 }
 
 const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
     if(!menu){
-        return {message: "You must choice menu"}
+        throw new GraphQLError("You must choice menu")
     }
 
     let validate = await validateStockIngredient(menu)
@@ -231,17 +235,37 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
         order_date: new Date()
     })
     await queriesInsert.save();
-    return {message: `Transaction insert ${validate['order_status']}`, data: queriesInsert}
+    return {message: `Transaction insert ${validate['order_status']}`, data: queriesInsert, permit: ctx.user.usertype}
     
+}
+
+const UpdateTransaction = async(parent, {data: {menu, _id}}) => {
+    if(!menu){
+        throw new GraphQLError("You must choice menu");
+    }
+
+    let validate = await validateStockIngredient(menu);
+    if(validate['order_status'] === 'Success'){
+        let queriesUpdate = await transactionModel.findOneAndUpdate(
+            {_id: mongoose.Types.ObjectId(_id), status: "Active"},
+            {
+                $push:{
+                    menu
+                },
+                $set: {
+                    order_status: validate['order_status']
+                }
+            }
+        )
+        return {message: `Transaction ${validate['order_status']} updated`, data: queriesUpdate, permit: ctx.user.usertype}
+    }else{
+        throw new GraphQLError("Ingredient isn't enough, transaction isn't be able updated")
+    }
 }
 
 const DeleteTransaction = async(parent, {data:{_id}}, ctx) => {
     if(!_id){
-        return {message: "_id is null"}
-    }
-
-    if(ctx.user.role==='customer'){
-        return {message: "You dont have access to DeleteTransaction function"}
+        throw new GraphQLError("_id is null")
     }
 
     let queriesDelete = await transactionModel.findOneAndUpdate(
@@ -256,10 +280,10 @@ const DeleteTransaction = async(parent, {data:{_id}}, ctx) => {
         }
     )
     if(!queriesDelete){
-        return {message: "Transaction isn't deleted", data: queriesDelete}
+        throw new GraphQLError("Transaction isn't deleted")
     }
 
-    return {message: "Transaction is deleted", data: queriesDelete}
+    return {message: "Transaction is deleted", data: queriesDelete, permit: ctx.user.usertype}
 }
 
 module.exports = {
@@ -269,6 +293,7 @@ module.exports = {
     },
     Mutation: {
         CreateTransaction,
-        DeleteTransaction
+        DeleteTransaction,
+        UpdateTransaction
     }
 }

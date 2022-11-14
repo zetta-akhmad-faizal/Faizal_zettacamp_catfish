@@ -9,17 +9,57 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
         if(password){
             password = await hash(password, 10)
         }else{
-            return {message: "Password must be filled"}
+            throw new GraphQLError("Password must be filled")
+        }
+        let generalPermit = [
+            {
+                name: "Menu",
+                view: true
+            },
+            {
+                name: "Profile",
+                view: true
+            },
+            {
+                name: "Cart",
+                view: true
+            },
+        ]
+        let usertype = [];
+        if(role === 'Admin'){
+            usertype.push(
+                ...generalPermit,
+                {
+                    name: "Menu Management",
+                    view: true
+                },
+                {
+                    name: "Stock Management",
+                    view: true
+                }
+            )
+        }else if(role === 'User'){
+            usertype.push(
+                ...generalPermit,
+                {
+                    name: "Menu Management",
+                    view: false
+                },
+                {
+                    name: "Stock Management",
+                    view: false
+                }
+            )
         }
 
         let insertQueries = new userModel({
-            first_name, last_name, email, password, role, status
+            first_name, last_name, email, password, status, usertype
         })
 
         let validator = insertQueries.validateSync();
 
         if(validator){
-            return {message: validator.errors['email'].message}
+            throw new GraphQLError(validator.errors['email'].message)
         }
 
         await insertQueries.save()
@@ -35,9 +75,6 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
     let arr = [];
     let skip = page > 0 ? ((page -1 ) * limit) : 0;
     // console.log(ctx.user)
-    if(ctx.user.role === 'customer'){
-        return {message: "You dont have access to getAllUsers function"}
-    }
     if(page && limit && !last_name && !email && !first_name){
         arr.push(
             {
@@ -238,9 +275,7 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
 const Login = async(parent, {data:{email, password}}, ctx) => {
     let queries = await userModel.findOne({email, status: 'Active'});
     if (!queries) {
-        return {
-            message: "User not found"
-        }
+        throw new GraphQLError("User not found")
     }else{
         let token = jwt.sign({
             _id: queries._id
@@ -251,7 +286,7 @@ const Login = async(parent, {data:{email, password}}, ctx) => {
         let queriesHash = await compare(password, queries.password);
         
         if(!queriesHash){
-            return {message: "Password incorrect"}
+            throw new GraphQLError("Password incorrect")
         }else{
             return {
                 message: "You're authorized",
@@ -263,38 +298,35 @@ const Login = async(parent, {data:{email, password}}, ctx) => {
 
 const getOneUser = async(parent, {data:{_id, email}}, ctx) => {
     let queries;
-    if(ctx.user.role === 'customer'){
-        return {message: "You dont have access to getOneUser function"}
-    }
 
     if(_id){
         let converterId = mongoose.Types.ObjectId(_id);
         queries = await userModel.findOne({_id:converterId, status:"Active"});
         if(!queries){
-            return {message: `User ${_id} isn't fetched`}
+            throw new GraphQLError(`User ${_id} isn't fetched`)
         }
         return {message: `User ${_id} is fetched`, data: queries}
     }else if(email){
         queries = await userModel.findOne({email, status: "Active"});
         if(!queries){
-            return {message: `User ${email} isn't fetched`, data: queries}
+           throw new GraphQLError(`User ${email} isn't fetched`)
         }
         return {message: `User ${email} is fetched`, data: queries}
     }
     if(!email && !_id){
-        return {message: "This function filtering only"}
+       throw new GraphQLError("This function filtering only")
     }
 }
 
 const UpdateUser = async(parent, {data:{_id, email, first_name, last_name, password}}, ctx) => {
     if(!_id){
-        return {message: "_id is null"}
+        throw new GraphQLError("_id is null")
     }
     
     let emailReg = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 
     if(email){
-        let queryGetUser = await userModel.findOne({email});
+        let queryGetUser = await userModel.findOne({email, status: "Active"});
         console.log(queryGetUser)
         if(queryGetUser){
             return {message: "Email has been used"}
@@ -308,7 +340,7 @@ const UpdateUser = async(parent, {data:{_id, email, first_name, last_name, passw
     }
     let converterId = mongoose.Types.ObjectId(_id)
     let updateQueries = await userModel.findOneAndUpdate(
-        {_id: converterId},
+        {_id: converterId, status: "Active"},
         {
             $set: {
                 email,
@@ -320,16 +352,12 @@ const UpdateUser = async(parent, {data:{_id, email, first_name, last_name, passw
         {new: true}
     )
     if(!updateQueries){
-        return {message: "User isn't updated", data: updateQueries}
+        throw new GraphQLError("User isn't updated")
     }
     return {message: "User is updated", data: updateQueries}
 }
 
 const DeleteUser = async(parent, {data: {_id}}, ctx) => {
-    if(ctx.user.role === 'customer'){
-        return {message: "You dont have access to DeleteUser function"}
-    }
-
     if(_id){
         let converterId = mongoose.Types.ObjectId(_id);
         const deleteQueries = await userModel.findOneAndUpdate(
@@ -342,7 +370,7 @@ const DeleteUser = async(parent, {data: {_id}}, ctx) => {
             {new:true}
         )
         if(!deleteQueries){
-            return {message: "User isn't found", data: deleteQueries}
+            throw new GraphQLError("User isn't found")
         }
         return {message: "User is deleted", data:deleteQueries}
     }

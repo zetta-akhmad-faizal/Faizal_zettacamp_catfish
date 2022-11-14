@@ -29,11 +29,13 @@ let recipeTypeDefs = gql`
     }
     type responseAtRecipeAll{
         message:String
-        data: [recipeScheme]
+        data: [recipeScheme],
+        permit: [usertypeField]
     }
     type responseAtRecipe{
         message:String
-        data: recipeScheme
+        data: recipeScheme,
+        permit: [usertypeField]
     }
     type Query{
         GetAllrecipes(data: recipeParams): responseAtRecipeAll

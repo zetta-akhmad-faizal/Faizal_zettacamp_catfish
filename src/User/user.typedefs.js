@@ -2,8 +2,8 @@ let {gql} = require('apollo-server-express');
 
 let userTypeDefs = gql`
     enum roleUser{
-        customer
-        employer
+        User
+        Admin
     }
     enum statusUser{
         Active,
@@ -27,7 +27,11 @@ let userTypeDefs = gql`
         email: String
         password: String
         status: String
-        role: roleUser
+        usertype: [usertypeField]
+    }
+    type usertypeField{
+        name: String,
+        view:Boolean
     }
     type responseAtUser{
         message: String

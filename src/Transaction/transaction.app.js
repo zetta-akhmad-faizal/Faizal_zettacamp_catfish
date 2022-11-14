@@ -14,10 +14,11 @@ let validateStockIngredient = async(menu) => {
         for(let arraysIngredient of recipeQueries.ingredients){
             let objIngredient = {}
             let stock_used = arraysIngredient.stock_used;
-            let ingredientQueries = await ingredientModel.findOne({_id: arraysIngredient.ingredient_id});
+            let ingredientQueries = await ingredientModel.findOne({_id: arraysIngredient.ingredient_id, available:true});
             console.log(`stock ingredient before updated: ${ingredientQueries.stock}`, `stock used ingredient ${stock_used}`, `ingredient name: ${ingredientQueries.name}`)
             if(stock_used <= ingredientQueries.stock){
                 objIngredient['ingredient_id'] = ingredientQueries._id;
+                objIngredient['stock_remain'] = ingredientQueries.stock;
                 objIngredient['stock_used'] = stock_used;
 
                 arrIngredient.push(objIngredient);
@@ -43,11 +44,15 @@ let reduceIngredientStock = async(arrs) => {
         data = await ingredientModel.findOneAndUpdate(
             {
                 _id:arrays.ingredient_id,
-                status: 'Active'
+                status: 'Active',
+                available: true
             },
             {
                 $inc: {
                     stock: -arrays.stock_used
+                },
+                $set:{
+                    available: arrays.stock_remain > 0 ? true: false
                 }
             }
         )

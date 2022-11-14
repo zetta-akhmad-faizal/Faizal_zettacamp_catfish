@@ -41,11 +41,13 @@ let transactionTypeDefs = gql`
     }
     type responseAtTransactionAll{
         message: String,
-        data: [transactionScheme]
+        data: [transactionScheme],
+        permit: [usertypeField]
     }
     type responseAtTransaction{
         message: String,
-        data: transactionScheme
+        data: transactionScheme,
+        permit: [usertypeField]
     }
     type Query{
         GetAllTransaction(data: transactionParams): responseAtTransactionAll 
@@ -53,7 +55,8 @@ let transactionTypeDefs = gql`
     }
     type Mutation{
         CreateTransaction(data: transactionParams): responseAtTransaction,
-        DeleteTransaction(data: transactionParams): responseAtTransaction
+        DeleteTransaction(data: transactionParams): responseAtTransaction,
+        UpdateTransaction(data: transactionParams): responseAtTransaction
     }
 `
 

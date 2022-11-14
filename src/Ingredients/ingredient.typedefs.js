@@ -18,16 +18,19 @@ const ingredientTypeDefs = gql`
         name: String
         stock: Int
         status: statusIngredient
+        available: Boolean
         createdAt: String
         updatedAt: String
     }
     type responseIngredientAll{
         message: String,
-        data: [ingredientScheme]
+        data: [ingredientScheme],
+        permit: [usertypeField]
     }
     type responseIngredient{
         message: String,
-        data: ingredientScheme
+        data: ingredientScheme, 
+        permit: [usertypeField]
     }
     type Query{
         GetAllIngredients(data: ingredientParams): responseIngredientAll

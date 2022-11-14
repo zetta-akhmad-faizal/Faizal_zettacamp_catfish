@@ -15,7 +15,12 @@ const userSchema = new Schema({
     },
     password: {type:String, required:true},
     status: {type:String, default:"Active"},
-    role: {type:String, required:true}
+    usertype: [
+        {
+            name: {type:String},
+            view: {type:Boolean}
+        }
+    ]
 })
 
 userSchema.set('timestamps', true);

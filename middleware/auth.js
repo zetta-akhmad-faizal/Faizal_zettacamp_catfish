@@ -33,13 +33,11 @@ module.exports = {
         getOneUser: Authorization,
         GetAllIngredients: Authorization,
         GetOneIngredient: Authorization,
-        GetAllrecipes: Authorization,
         GetOneRecipe: Authorization,
         GetAllTransaction: Authorization,
         GetOneTransaction: Authorization
     },
     Mutation: {
-        UpdateUser: Authorization,
         DeleteUser: Authorization,
         CreateIngredient: Authorization,
         UpdateIngredient: Authorization,
@@ -48,6 +46,7 @@ module.exports = {
         UpdateRecipe: Authorization,
         DeleteRecipe: Authorization,
         CreateTransaction: Authorization,
-        DeleteTransaction: Authorization
+        DeleteTransaction: Authorization,
+        UpdateTransaction: Authorization
     }
 }
