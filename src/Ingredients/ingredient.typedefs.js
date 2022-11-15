@@ -25,12 +25,10 @@ const ingredientTypeDefs = gql`
     type responseIngredientAll{
         message: String,
         data: [ingredientScheme],
-        permit: [usertypeField]
     }
     type responseIngredient{
         message: String,
         data: ingredientScheme, 
-        permit: [usertypeField]
     }
     type Query{
         GetAllIngredients(data: ingredientParams): responseIngredientAll

@@ -3,6 +3,25 @@ const {ingredientModel} = require('../Ingredients/ingredient.model');
 const {mongoose} = require('mongoose');
 const { GraphQLError} = require('graphql');
 
+// const MenuRecipe = async(parent, args, ctx) => {
+//     let queriesGet = await recipeModel.aggregate([
+//         {
+//             $limit: 8
+//         },
+//         {
+//             $sort: {
+//                 createdAt: -1
+//             }
+//         }
+//     ])
+
+//     if(!queriesGet){
+//         throw new GraphQLError("Recipe isn't show")
+//     }else{
+//         return {message: "Recipe is show", data: queriesGet}
+//     }
+// }
+
 const GetAllrecipes = async(parent, {data:{recipe_name, page, limit}}, ctx) => {
     let arr = []
     let skip = page > 0 ? ((page - 1) * limit) : 0
@@ -59,7 +78,7 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit}}, ctx) => {
     return {message: "Recipes is listed", data: queriesGetAll}
 }
 
-const CreateRecipe = async(parent, {data: {recipe_name, ingredients}}, ctx) => {
+const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe, price}}, ctx) => {
     if(!recipe_name || !ingredients || ingredients.length === 0){
        throw new GraphQLError("Make a sure all fields are filled")
     }
@@ -78,11 +97,11 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients}}, ctx) => {
     })
     ingredients = container.map(id => obj[id])
     //save to db
-    let formInput = {recipe_name, ingredients};
+    let formInput = {recipe_name, ingredients, link_recipe, price};
     const queriesInsert = new recipeModel(formInput);
     await queriesInsert.save();
 
-    return {message: "Recipe is saved", data: queriesInsert, permit: ctx.user.usertype}
+    return {message: "Recipe is saved", data: queriesInsert}
 }
 
 const GetOneRecipe = async(parent, {data:{_id}}, ctx) => {
@@ -94,7 +113,7 @@ const GetOneRecipe = async(parent, {data:{_id}}, ctx) => {
     if(!queries){
         throw new GraphQLError("Recipe isn't found")
     }else{
-        return {message: "Recipe is found", data: queries, permit: ctx.user.usertype}
+        return {message: "Recipe is found", data: queries}
     }
 }
 
@@ -130,33 +149,56 @@ const ingredientsLooping = async( ingredients, _id ) => {
     return arr
 }
 
-const recipeNameFunction = async (_id, recipe_name) => {
-    let arr = []
-    let queries = await recipeModel.findOneAndUpdate(
-        {_id: mongoose.Types.ObjectId(_id), status: "Active"}, 
-        {
-            $set: {
-                recipe_name
-            }
-        },
-        {new: true}
-    )
-    arr.push(queries)
-    return arr
+const ingredientSet = async (ingredients) => {
+    let arr = [];
+    for(let ingredient of ingredients){
+        let queries = await recipeModel.findOne({"ingredients.ingredient_id":mongoose.Types.ObjectId(ingredient.ingredient_id)});
+        if(queries){
+            arr.push({
+                ingredient_id: ingredient.ingredient_id,
+                stock_used: ingredient.stock_used
+            })
+        }
+    }
+    return arr;
 }
 
-const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients}}, ctx) => {
-    let res;
-    
-    if(ingredients && !recipe_name){
-        res = await ingredientsLooping(ingredients, _id);
-    }else if(recipe_name && !ingredients){
-        res = await recipeNameFunction(_id, recipe_name);
-    }else{
-        throw new GraphQLError("Only can update once recipe_name or ingredients");
+const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price}}, ctx) => {
+    if(!_id){
+        throw new GraphQLError("_id is null");
     }
-    
-    return {message: "Recipe is updated", data: res, permit: ctx.user.usertype}
+
+    let container;
+    let containerParams3 = {new: true}
+    let containerParams2Set = {}
+
+    if(ingredients){
+        container = await ingredientSet(ingredients);
+        if(container.length !== 0){
+            let id = container.map(val => val.ingredient_id)
+            containerParams2Set["$set"] = {
+                "ingredients.$[elem]": container
+            }
+            containerParams3["arrayFilters"] = [
+                {"elem.ingredient_id": {$in: id}}
+            ]
+        }else{
+            containerParams2Set["$push"] = {ingredients:[...ingredients]}
+            containerParams2Set["$set"] = {
+                recipe_name,
+                price
+            }
+        }
+    }
+
+    let updateQueries = await recipeModel.findOneAndUpdate(
+        {_id: mongoose.Types.ObjectId(_id)},
+        containerParams2Set,
+        containerParams3
+    )
+    // let container = await ingredientSet(ingredients);
+    console.log(containerParams2Set, container)
+    return {message: "Recipe is updated", data:updateQueries}
 }
 
 const DeleteRecipe = async(parent, {data: {_id}}, ctx) => {
@@ -177,7 +219,7 @@ const DeleteRecipe = async(parent, {data: {_id}}, ctx) => {
         throw new GraphQLError("Recipe isn't found")
     }
 
-    return {message: "Recipe is found", data: queriesDelete, permit: ctx.user.usertype}
+    return {message: "Recipe is found", data: queriesDelete}
 }
 
 const recipeLoaders = async(parent, args, ctx) => {
@@ -189,7 +231,8 @@ const recipeLoaders = async(parent, args, ctx) => {
 module.exports = {
     Query:{
         GetAllrecipes,
-        GetOneRecipe
+        GetOneRecipe,
+        // MenuRecipe
     },
     Mutation:{
         CreateRecipe,

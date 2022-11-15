@@ -24,6 +24,10 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
                 name: "Cart",
                 view: true
             },
+            {
+                name: "Login",
+                view: false
+            }
         ]
         let usertype = [];
         if(role === 'Admin'){
@@ -36,7 +40,7 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
                 {
                     name: "Stock Management",
                     view: true
-                }
+                },
             )
         }else if(role === 'User'){
             usertype.push(
@@ -290,7 +294,8 @@ const Login = async(parent, {data:{email, password}}, ctx) => {
         }else{
             return {
                 message: "You're authorized",
-                token
+                token,
+                user: queries
             }
         }
     }

@@ -42,12 +42,10 @@ let transactionTypeDefs = gql`
     type responseAtTransactionAll{
         message: String,
         data: [transactionScheme],
-        permit: [usertypeField]
     }
     type responseAtTransaction{
         message: String,
         data: transactionScheme,
-        permit: [usertypeField]
     }
     type Query{
         GetAllTransaction(data: transactionParams): responseAtTransactionAll 

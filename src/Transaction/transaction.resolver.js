@@ -204,7 +204,7 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
         throw new GraphQLError("No transaction show")
     }
     console.log(startDate, endDate)
-    return {message: "Transaction is displayed", data: queriesGetAll, permit: ctx.user.usertype}
+    return {message: "Transaction is displayed", data: queriesGetAll}
 }
 
 //employer side
@@ -218,7 +218,7 @@ const GetOneTransaction = async(parent, {data: {_id}}, ctx) => {
         throw new GraphQLError("No transaction show")
     }
 
-    return {message: "Transaction is available", data: querieGetOne, permit: ctx.user.usertype}
+    return {message: "Transaction is available", data: querieGetOne}
 }
 
 const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
@@ -227,7 +227,6 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
     }
 
     let validate = await validateStockIngredient(menu)
-    
     let queriesInsert = new transactionModel({
         ...validate,
         menu,
@@ -235,7 +234,7 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
         order_date: new Date()
     })
     await queriesInsert.save();
-    return {message: `Transaction insert ${validate['order_status']}`, data: queriesInsert, permit: ctx.user.usertype}
+    return {message: `Transaction insert ${validate['order_status']}`, data: queriesInsert}
     
 }
 
@@ -257,7 +256,7 @@ const UpdateTransaction = async(parent, {data: {menu, _id}}) => {
                 }
             }
         )
-        return {message: `Transaction ${validate['order_status']} updated`, data: queriesUpdate, permit: ctx.user.usertype}
+        return {message: `Transaction ${validate['order_status']} updated`, data: queriesUpdate}
     }else{
         throw new GraphQLError("Ingredient isn't enough, transaction isn't be able updated")
     }
@@ -283,7 +282,7 @@ const DeleteTransaction = async(parent, {data:{_id}}, ctx) => {
         throw new GraphQLError("Transaction isn't deleted")
     }
 
-    return {message: "Transaction is deleted", data: queriesDelete, permit: ctx.user.usertype}
+    return {message: "Transaction is deleted", data: queriesDelete}
 }
 
 module.exports = {

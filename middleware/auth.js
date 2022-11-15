@@ -20,6 +20,8 @@ const Authorization = async(resolver, parent, args, ctx) => {
                 ctx.user = userQueries;
                 ctx.token = getToken
             }
+            // ctx.user = verifyJWT._id;
+            // ctx.token = getToken
         }
         return resolver()
     }catch(e){
@@ -35,7 +37,8 @@ module.exports = {
         GetOneIngredient: Authorization,
         GetOneRecipe: Authorization,
         GetAllTransaction: Authorization,
-        GetOneTransaction: Authorization
+        GetOneTransaction: Authorization,
+        // GetAllrecipes:Authorization
     },
     Mutation: {
         DeleteUser: Authorization,

@@ -27,9 +27,9 @@ let userTypeDefs = gql`
         email: String
         password: String
         status: String
-        usertype: [usertypeField]
+        usertype: [usertypes]
     }
-    type usertypeField{
+    type usertypes{
         name: String,
         view:Boolean
     }
@@ -43,7 +43,8 @@ let userTypeDefs = gql`
     }
     type responseAtlogin{
         message: String
-        token: String
+        token: String,
+        user: userScheme
     }
     type Mutation{
         CreateUser(data:userParams): responseAtUser

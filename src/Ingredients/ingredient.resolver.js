@@ -111,7 +111,7 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
     queriesGetAll = await ingredientModel.aggregate(arr)
 
     if(queriesGetAll){
-        return {message: "Ingredient is displayed", data: queriesGetAll, permit: ctx.user.usertype}
+        return {message: "Ingredient is displayed", data: queriesGetAll}
     }else{
         throw new GraphQLError("No ingredient show")
     }
@@ -128,7 +128,7 @@ const CreateIngredient = async(parent, {data: {name, stock}}, ctx) => {
         const queriesInsert = new ingredientModel({name, stock});
 
         await queriesInsert.save()
-        return {message: "Ingredient is saved", data: queriesInsert, permit: ctx.user.usertype}
+        return {message: "Ingredient is saved", data: queriesInsert}
     }catch(e){
         throw new GraphQLError("Ingredient is available")
     }
@@ -148,7 +148,7 @@ const GetOneIngredient = async(parent, {data:{_id}}, ctx) => {
     }
 }
 
-const UpdateIngredient = async(parent, {data:{_id, stock}}, ctx) => {
+const UpdateIngredient = async(parent, {data:{_id, name, stock}}, ctx) => {
     if(!_id){
         throw new GraphQLError("_id is null")
     }
@@ -157,7 +157,8 @@ const UpdateIngredient = async(parent, {data:{_id, stock}}, ctx) => {
         {_id: mongoose.Types.ObjectId(_id), status: "Active"},
         {
             $set: {
-                stock
+                stock,
+                name
             }
         },
         {new:true}
@@ -165,7 +166,7 @@ const UpdateIngredient = async(parent, {data:{_id, stock}}, ctx) => {
     if(!queriesUpdate){
         throw new GraphQLError("Ingredient isn't updated")
     }
-    return {message: "Ingredient is updated", data: queriesUpdate, permit: ctx.user.usertype}
+    return {message: "Ingredient is updated", data: queriesUpdate}
 }
 
 const DeleteIngredient = async(parent, {data: {_id}}, ctx) => {
@@ -185,7 +186,7 @@ const DeleteIngredient = async(parent, {data: {_id}}, ctx) => {
         throw new GraphQLError("Ingredient isn't deleted")
     }
 
-    return {message: "Ingredient is deleted", data: queriesDelete, permit: ctx.user.usertype}
+    return {message: "Ingredient is deleted", data: queriesDelete}
 }
 
 const loaderOfingredient = async(parent, args, ctx) => {

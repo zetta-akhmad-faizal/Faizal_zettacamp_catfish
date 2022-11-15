@@ -4,6 +4,7 @@ const {mongoose} = require('mongoose');
 
 let validateStockIngredient = async(menu) => {
     let arr = [];
+    let totalPrice = []
     let obj = {};
     let arrIngredient = [];
 
@@ -11,6 +12,7 @@ let validateStockIngredient = async(menu) => {
         let recipeQueries = await recipeModel.findOne({
             _id: mongoose.Types.ObjectId(arraysRecipe.recipe_id)
         })
+        totalPrice.push(arraysRecipe.amount * recipeQueries.price)
         for(let arraysIngredient of recipeQueries.ingredients){
             let objIngredient = {}
             let stock_used = arraysIngredient.stock_used;
@@ -35,6 +37,7 @@ let validateStockIngredient = async(menu) => {
     }else{
         obj['order_status'] = 'Failed'
     }
+    obj['total_price'] = totalPrice.reduce((accumVariable, curValue) => accumVariable + curValue);
     return obj
 }
 
@@ -57,7 +60,7 @@ let reduceIngredientStock = async(arrs) => {
             }
         )
     }
-    console.log('check', data)
+    // console.log('check', data)
     return data
 }
 
