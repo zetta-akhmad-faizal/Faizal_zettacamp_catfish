@@ -25,6 +25,7 @@ let transactionTypeDefs = gql`
         note: String
     }
     enum statusOrder{
+        Draft
         Success
         Failed
     }

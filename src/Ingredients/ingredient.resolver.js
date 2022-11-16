@@ -1,6 +1,7 @@
 const {ingredientModel} = require('./ingredient.model');
 const {GraphQLError} = require('graphql')
 const {mongoose} = require('mongoose');
+const { recipeModel } = require('../Receipe/recipe.index');
 
 const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx) => {
     let queriesGetAll; let arr = [];
@@ -108,27 +109,59 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
         )
     }
 
-    queriesGetAll = await ingredientModel.aggregate(arr)
-
-    if(queriesGetAll){
-        return {message: "Ingredient is displayed", data: queriesGetAll}
+    queriesGetAll = await ingredientModel.aggregate([
+        {
+            $facet: {
+                ingredient_data: arr,
+                info_page: [
+                    {
+                        $match: {
+                            status: "Active"
+                        }
+                    },
+                    {
+                        $group: {_id: null, count: {$sum: 1}}
+                    }
+                ]
+            }
+        }
+    ])
+    // console.log(queriesGetAll)
+    if(queriesGetAll[0].ingredient_data.length !== 0){
+        return {message: "Ingredient is displayed", data: queriesGetAll[0]}
     }else{
         throw new GraphQLError("No ingredient show")
     }
 }
 
-const CreateIngredient = async(parent, {data: {name, stock}}, ctx) => {
+const CreateIngredient = async(parent, {data: {name, stock,image_ingredient}}, ctx) => {
     try{
         if(stock < 0){
-            throw new GraphQLError("Stock must be grater than 0")
+            throw new GraphQLError("Stock must be grater than 0");
         }else if(!name && !stock){
-            throw new GraphQLError("Name and stock must be filled")
+            throw new GraphQLError("Name and stock must be filled");
         }
-    
-        const queriesInsert = new ingredientModel({name, stock});
+        let available;
+        if(stock===0){
+            available = false
+        }else{
+            available = true
+        }
+        let nameRegex = new RegExp(name, 'i');
+        const queryUpdate = await ingredientModel.findOneAndUpdate(
+            {name: nameRegex, status: "Deleted"},
+            {$set:{status: "Active", stock, image_ingredient, available}},
+            {new:true}
+        )
 
-        await queriesInsert.save()
-        return {message: "Ingredient is saved", data: queriesInsert}
+        if(!queryUpdate){
+            const queriesInsert = new ingredientModel({name, stock, image_ingredient, available});
+
+            await queriesInsert.save()
+            return {message: "Ingredient is saved", data: queriesInsert}
+        }
+
+        return {message: "Ingredient is available and updated", data: queryUpdate}
     }catch(e){
         throw new GraphQLError("Ingredient is available")
     }
@@ -153,20 +186,52 @@ const UpdateIngredient = async(parent, {data:{_id, name, stock}}, ctx) => {
         throw new GraphQLError("_id is null")
     }
 
-    const queriesUpdate = await ingredientModel.findOneAndUpdate(
-        {_id: mongoose.Types.ObjectId(_id), status: "Active"},
+    const recipeCheck = await recipeModel.aggregate([
         {
-            $set: {
-                stock,
-                name
+            $match: {
+                "ingredients.ingredient_id": mongoose.Types.ObjectId(_id)
             }
-        },
-        {new:true}
-    )
-    if(!queriesUpdate){
-        throw new GraphQLError("Ingredient isn't updated")
+        }
+    ])
+    let available;
+    if(stock === 0){
+        available = false
+    }else{
+        available = true
     }
-    return {message: "Ingredient is updated", data: queriesUpdate}
+
+    if(recipeCheck.length !== 0){
+        const queriesUpdate = await ingredientModel.findOneAndUpdate(
+            {_id: mongoose.Types.ObjectId(_id), status: "Active"},
+            {
+                $set: {
+                    stock,
+                    available
+                }
+            },
+            {new:true}
+        )
+        if(!queriesUpdate){
+            throw new GraphQLError("Ingredient isn't updated")
+        }
+        return {message: "Ingredient is updated", data: queriesUpdate}
+    }else{
+        const queriesUpdate = await ingredientModel.findOneAndUpdate(
+            {_id: mongoose.Types.ObjectId(_id), status: "Active"},
+            {
+                $set: {
+                    stock,
+                    name,
+                    available
+                }
+            },
+            {new:true}
+        )
+        if(!queriesUpdate){
+            throw new GraphQLError("Ingredient isn't updated")
+        }
+        return {message: "Ingredient is updated", data: queriesUpdate}
+    }
 }
 
 const DeleteIngredient = async(parent, {data: {_id}}, ctx) => {
@@ -174,19 +239,30 @@ const DeleteIngredient = async(parent, {data: {_id}}, ctx) => {
         throw new GraphQLError("_id is null")
     }
 
-    const queriesDelete = await ingredientModel.findOneAndUpdate(
-        {_id: mongoose.Types.ObjectId(_id), status: "Active"},
+    const recipeCheck = await recipeModel.aggregate([
         {
-            $set: {
-                status: "Deleted"
+            $match: {
+                "ingredients.ingredient_id": mongoose.Types.ObjectId(_id)
             }
         }
-    )
-    if(!queriesDelete){
-        throw new GraphQLError("Ingredient isn't deleted")
+    ])
+    if(recipeCheck.length !== 0){
+        throw new GraphQLError("The ingredient has been used in recipes")
+    }else{
+        const queriesDelete = await ingredientModel.findOneAndUpdate(
+            {_id: mongoose.Types.ObjectId(_id), status: "Active"},
+            {
+                $set: {
+                    status: "Deleted"
+                }
+            }
+        )
+        if(!queriesDelete){
+            throw new GraphQLError("Ingredient isn't deleted")
+        }
+    
+        return {message: "Ingredient is deleted", data: queriesDelete}
     }
-
-    return {message: "Ingredient is deleted", data: queriesDelete}
 }
 
 const loaderOfingredient = async(parent, args, ctx) => {

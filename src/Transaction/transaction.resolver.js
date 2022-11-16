@@ -221,12 +221,12 @@ const GetOneTransaction = async(parent, {data: {_id}}, ctx) => {
     return {message: "Transaction is available", data: querieGetOne}
 }
 
-const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
+const CreateTransaction = async(parent, {data:{menu, order_status}}, ctx) => {
     if(!menu){
         throw new GraphQLError("You must choice menu")
     }
 
-    let validate = await validateStockIngredient(menu)
+    let validate = await validateStockIngredient(menu, order_status)
     let queriesInsert = new transactionModel({
         ...validate,
         menu,

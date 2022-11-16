@@ -14,18 +14,22 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
         let generalPermit = [
             {
                 name: "Menu",
+                slug: "menu",
                 view: true
             },
             {
                 name: "Profile",
+                slug: "profile",
                 view: true
             },
             {
                 name: "Cart",
+                slug: "cart",
                 view: true
             },
             {
-                name: "Login",
+                name: "Get Started",
+                slug: "login",
                 view: false
             }
         ]
@@ -35,10 +39,12 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
                 ...generalPermit,
                 {
                     name: "Menu Management",
+                    slug: "menu-management",
                     view: true
                 },
                 {
                     name: "Stock Management",
+                    slug: "stock-management",
                     view: true
                 },
             )
@@ -47,10 +53,12 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
                 ...generalPermit,
                 {
                     name: "Menu Management",
+                    slug: "menu-management",
                     view: false
                 },
                 {
                     name: "Stock Management",
+                    slug: "stock-management",
                     view: false
                 }
             )

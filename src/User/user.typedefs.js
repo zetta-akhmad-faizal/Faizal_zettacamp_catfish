@@ -31,6 +31,7 @@ let userTypeDefs = gql`
     }
     type usertypes{
         name: String,
+        slug: String
         view:Boolean
     }
     type responseAtUser{

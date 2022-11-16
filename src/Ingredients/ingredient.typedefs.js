@@ -12,6 +12,7 @@ const ingredientTypeDefs = gql`
         name: String
         stock: Int
         status: statusIngredient
+        image_ingredient: String
     }
     type ingredientScheme{
         _id: ID
@@ -21,10 +22,18 @@ const ingredientTypeDefs = gql`
         available: Boolean
         createdAt: String
         updatedAt: String
+        image_ingredient: String
+    }
+    type newSchemeCount{
+        count:Int
+    }
+    type newIngredientPaginate{
+        ingredient_data: [ingredientScheme],
+        info_page: [newSchemeCount]
     }
     type responseIngredientAll{
         message: String,
-        data: [ingredientScheme],
+        data: newIngredientPaginate,
     }
     type responseIngredient{
         message: String,

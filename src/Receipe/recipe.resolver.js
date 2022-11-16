@@ -163,7 +163,7 @@ const ingredientSet = async (ingredients) => {
     return arr;
 }
 
-const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price}}, ctx) => {
+const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price, ingredient_id}}, ctx) => {
     if(!_id){
         throw new GraphQLError("_id is null");
     }
@@ -171,8 +171,13 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price}
     let container;
     let containerParams3 = {new: true}
     let containerParams2Set = {}
-
-    if(ingredients){
+    if(ingredient_id && !ingredients){
+        containerParams2Set["$pull"] = {
+            ingredients: {
+                ingredient_id: mongoose.Types.ObjectId(ingredient_id)
+            }
+        }
+    }else if(ingredients && !ingredient_id){
         container = await ingredientSet(ingredients);
         if(container.length !== 0){
             let id = container.map(val => val.ingredient_id)
@@ -189,6 +194,8 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price}
                 price
             }
         }
+    }else{
+        throw new GraphQLError("If ingredient_id & ingredients field parallel, update will be failed")
     }
 
     let updateQueries = await recipeModel.findOneAndUpdate(

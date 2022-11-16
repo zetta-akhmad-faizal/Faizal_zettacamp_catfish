@@ -18,6 +18,7 @@ const userSchema = new Schema({
     usertype: [
         {
             name: {type:String},
+            slug: {type:String},
             view: {type:Boolean}
         }
     ]

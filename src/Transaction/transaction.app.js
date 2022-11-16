@@ -2,7 +2,7 @@ const {recipeModel}= require('../Receipe/recipe.index');
 const {ingredientModel} = require('../Ingredients/ingredient.index')
 const {mongoose} = require('mongoose');
 
-let validateStockIngredient = async(menu) => {
+let validateStockIngredient = async(menu,order_status) => {
     let arr = [];
     let totalPrice = []
     let obj = {};
@@ -30,12 +30,15 @@ let validateStockIngredient = async(menu) => {
             }
         }
     }
-
-    if(arr.includes(false) === false){
-        obj['order_status'] = 'Success';
-        await reduceIngredientStock(arrIngredient)
+    if(order_status === "Draft"){
+        obj['order_status'] = "Draft"
     }else{
-        obj['order_status'] = 'Failed'
+        if(arr.includes(false) === false){
+            obj['order_status'] = 'Success';
+            await reduceIngredientStock(arrIngredient)
+        }else{
+            obj['order_status'] = 'Failed'
+        }
     }
     obj['total_price'] = totalPrice.reduce((accumVariable, curValue) => accumVariable + curValue);
     return obj
