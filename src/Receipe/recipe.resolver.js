@@ -22,10 +22,9 @@ const { GraphQLError} = require('graphql');
 //     }
 // }
 
-const GetAllrecipes = async(parent, {data:{recipe_name, page, limit}}, ctx) => {
+const GetAllrecipes = async(parent, {data:{recipe_name, page, limit, published}}, ctx) => {
     let arr = []
     let skip = page > 0 ? ((page - 1) * limit) : 0
-
     let general = {
         $lookup: {
             from: 'ingredients',
@@ -34,12 +33,27 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit}}, ctx) => {
             as: 'ingredient_list'
         }
     }
+    if(published === "Publish"){
+        published = true 
+    }else if(published === "Unpublish"){
+        published = false
+    }else if(!published){
+        published = null
+    }
+    // let statusPublish;
+    // if(!published){
+    //     statusPublish = undefined
+    // }else if(published === "Publish"){
+    //     statusPublish = true
+    // }else if(published === "Unpublish"){
+    //     statusPublish = false
+    // }
 
-    if(limit && page && !recipe_name){
+    if(limit && page && !recipe_name && !published){
         arr.push(
-            general,
+            // general,
             {
-                status: "Active"
+                $match: {status: "Active"}
             },
             {
                 $skip: skip
@@ -49,14 +63,14 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit}}, ctx) => {
             },
             {$sort: {createdAt:-1}}
         )
-    }else if(limit && page && recipe_name){
+    }else if(limit && page && recipe_name && !published){
         arr.push(
-            general,
+            // general,
             {
                 $match: {
                     recipe_name: new RegExp(recipe_name, 'i'),
                     // 'ingredient_list.available': true,
-                    status: "Active"
+                    status: "Active",
                 }
             },
             {
@@ -67,21 +81,91 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit}}, ctx) => {
             },
             {$sort: {createdAt:-1}}
         )
-    }else{
+    }else if(limit && page && !recipe_name && published){
         arr.push(
-            general,
-            {$match: {status: "Active"}},
+            // general,
+            {
+                $match: {
+                    // 'ingredient_list.available': true,
+                    published,
+                    status: "Active",
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
             {$sort: {createdAt:-1}}
         )
+    }else if(limit && page && recipe_name && published){
+        arr.push(
+            // general,
+            {
+                $match: {
+                    recipe_name: new RegExp(recipe_name, 'i'),
+                    // 'ingredient_list.available': true,
+                    status: "Active",
+                    published
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {$sort: {createdAt:-1}}
+        )
+    }else if(!limit && !page && !recipe_name && published){
+        arr.push(
+            // general,
+            {
+                $match: {
+                    published,
+                    status: "Active",
+                }
+            },
+        )
+    }else{
+        arr.push(
+            {
+                $match: {
+                    status: "Active",
+                }
+            },
+        )
     }
-    const queriesGetAll = await recipeModel.aggregate(arr)
-    return {message: "Recipes is listed", data: queriesGetAll}
+    const queriesGetAll = await recipeModel.aggregate([
+        {
+            $facet: {
+                recipe_data: arr,
+                info_page: [
+                    {
+                        $match: {
+                            status: "Active"
+                        }
+                    },
+                    {
+                        $group: {_id: null, count: {$sum: 1}}
+                    }
+                ]
+            }
+        }
+    ])
+    console.log(queriesGetAll)
+    if(queriesGetAll[0].recipe_data.length === 0){
+        throw new GraphQLError("No Recipes show")
+    }
+    return {message: "Recipes is listed", data: queriesGetAll[0]}
 }
 
 const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe, price}}, ctx) => {
     if(!recipe_name || !ingredients || ingredients.length === 0){
        throw new GraphQLError("Make a sure all fields are filled")
     }
+    console.log(recipe_name, ingredients);
 
     let container; let obj = {};
 
@@ -163,7 +247,7 @@ const ingredientSet = async (ingredients) => {
     return arr;
 }
 
-const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price, ingredient_id}}, ctx) => {
+const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price, ingredient_id, published}}, ctx) => {
     if(!_id){
         throw new GraphQLError("_id is null");
     }
@@ -171,7 +255,18 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
     let container;
     let containerParams3 = {new: true}
     let containerParams2Set = {}
-    if(ingredient_id && !ingredients){
+    
+    
+    if(published && !ingredient_id && !ingredients){
+        if(published === "Publish"){
+            published = true
+        }else if(published === "Unpublish"){
+            published = false
+        }
+        containerParams2Set["$set"] = {
+            published
+        }
+    }else if(ingredient_id && !ingredients){
         containerParams2Set["$pull"] = {
             ingredients: {
                 ingredient_id: mongoose.Types.ObjectId(ingredient_id)

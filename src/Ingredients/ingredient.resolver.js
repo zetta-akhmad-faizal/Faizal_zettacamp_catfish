@@ -135,12 +135,20 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
 }
 
 const CreateIngredient = async(parent, {data: {name, stock,image_ingredient}}, ctx) => {
+    // console.log(typeof stock)
     try{
         if(stock < 0){
             throw new GraphQLError("Stock must be grater than 0");
         }else if(!name && !stock){
             throw new GraphQLError("Name and stock must be filled");
         }
+
+        if(!stock){
+            throw new GraphQLError("Stock must be integer and must be filled")
+        }else if(Number.isInteger(stock) !== true){
+            throw new GraphQLError("Stock must be integer")
+        }
+
         let available;
         if(stock===0){
             available = false
@@ -193,7 +201,10 @@ const UpdateIngredient = async(parent, {data:{_id, name, stock}}, ctx) => {
             }
         }
     ])
+
     let available;
+    let obj = {}
+
     if(stock === 0){
         available = false
     }else{
@@ -201,37 +212,24 @@ const UpdateIngredient = async(parent, {data:{_id, name, stock}}, ctx) => {
     }
 
     if(recipeCheck.length !== 0){
-        const queriesUpdate = await ingredientModel.findOneAndUpdate(
-            {_id: mongoose.Types.ObjectId(_id), status: "Active"},
-            {
-                $set: {
-                    stock,
-                    available
-                }
-            },
-            {new:true}
-        )
-        if(!queriesUpdate){
-            throw new GraphQLError("Ingredient isn't updated")
+        obj["$set"] = {
+            stock, available
         }
-        return {message: "Ingredient is updated", data: queriesUpdate}
     }else{
-        const queriesUpdate = await ingredientModel.findOneAndUpdate(
-            {_id: mongoose.Types.ObjectId(_id), status: "Active"},
-            {
-                $set: {
-                    stock,
-                    name,
-                    available
-                }
-            },
-            {new:true}
-        )
-        if(!queriesUpdate){
-            throw new GraphQLError("Ingredient isn't updated")
+        obj["$set"] = {
+            stock, name, available
         }
-        return {message: "Ingredient is updated", data: queriesUpdate}
     }
+    const queriesUpdate = await ingredientModel.findOneAndUpdate(
+            {_id: mongoose.Types.ObjectId(_id), status: "Active"},
+            obj,
+            {new: true}
+    )
+    console.log(obj)
+    if(!queriesUpdate){
+        throw new GraphQLError("Ingredient isn't updated")
+    }
+    return {message: "Ingredient is updated", data: queriesUpdate}
 }
 
 const DeleteIngredient = async(parent, {data: {_id}}, ctx) => {

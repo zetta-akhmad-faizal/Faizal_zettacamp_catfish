@@ -1,6 +1,7 @@
 const {recipeModel}= require('../Receipe/recipe.index');
 const {ingredientModel} = require('../Ingredients/ingredient.index')
 const {mongoose} = require('mongoose');
+const { GraphQLError } = require('graphql');
 
 let validateStockIngredient = async(menu,order_status) => {
     let arr = [];
@@ -17,6 +18,9 @@ let validateStockIngredient = async(menu,order_status) => {
             let objIngredient = {}
             let stock_used = arraysIngredient.stock_used;
             let ingredientQueries = await ingredientModel.findOne({_id: arraysIngredient.ingredient_id, available:true});
+            // if(!ingredientQueries){
+            //     throw new GraphQLError("Ingredient isn't enough")
+            // }
             console.log(`stock ingredient before updated: ${ingredientQueries.stock}`, `stock used ingredient ${stock_used}`, `ingredient name: ${ingredientQueries.name}`)
             if(stock_used <= ingredientQueries.stock){
                 objIngredient['ingredient_id'] = ingredientQueries._id;

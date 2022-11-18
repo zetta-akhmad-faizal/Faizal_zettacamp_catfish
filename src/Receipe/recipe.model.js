@@ -4,6 +4,7 @@ let recipeScheme = new Schema({
     recipe_name: {type:String},
     link_recipe: {type:String},
     price:{type:Number},
+    published: {type:Boolean, default: false},
     ingredients: [
         {
             ingredient_id: {type:mongoose.Schema.Types.ObjectId, ref: 'ingredients'},

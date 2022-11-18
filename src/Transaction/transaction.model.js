@@ -9,7 +9,7 @@ const transactionSchema = new Schema({
             note: {type: String}
         }
     ],
-    order_status: {type: String},
+    order_status: {type: String, default:"Draft"},
     order_date: {type: Date},
     total_price: {type:Number},
     status: {type: String, default: "Active"}

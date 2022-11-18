@@ -15,6 +15,7 @@ let recipeTypeDefs = gql`
         link_recipe: String
         price:Int
         ingredient_id: ID
+        published: String
     }
     type recipeIngredientsField{
         ingredient_id: ingredientScheme
@@ -24,6 +25,10 @@ let recipeTypeDefs = gql`
         Active
         Deleted
     }
+    enum publishing{
+        Publish 
+        Unpublish
+    }
     type recipeScheme{
         _id: ID
         recipe_name: String
@@ -31,10 +36,15 @@ let recipeTypeDefs = gql`
         status: String,
         link_recipe: String
         price: Int
+        published: String
+    }
+    type newRecipePaginate{
+        recipe_data: [recipeScheme],
+        info_page: [newSchemeCount]
     }
     type responseAtRecipeAll{
         message:String
-        data: [recipeScheme]
+        data: newRecipePaginate
     }
     type responseAtRecipe{
         message:String
