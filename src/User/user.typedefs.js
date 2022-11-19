@@ -27,6 +27,7 @@ let userTypeDefs = gql`
         email: String
         password: String
         status: String
+        role:String
         usertype: [usertypes]
     }
     type usertypes{

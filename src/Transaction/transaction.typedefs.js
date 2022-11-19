@@ -18,6 +18,7 @@ let transactionTypeDefs = gql`
         recipe_name: String
         limit: Int 
         page: Int
+        typetr: String
     }
     type menuFields{
         recipe_id: recipeScheme
@@ -40,9 +41,13 @@ let transactionTypeDefs = gql`
         order_date: String
         status: String
     }
+    type newTransactionPaginate{
+        transaction_data: [transactionScheme],
+        info_page: [newSchemeCount]
+    }
     type responseAtTransactionAll{
         message: String,
-        data: [transactionScheme],
+        data: newTransactionPaginate,
     }
     type responseAtTransaction{
         message: String,

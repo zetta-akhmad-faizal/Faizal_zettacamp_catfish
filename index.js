@@ -97,4 +97,31 @@ server.start().then(res => {
     })
 })
 
-//test
+// //test
+
+// let x = [
+//     { ingredient_id: '63774c1bc1c692af5725aae7', stock_used: 5 },
+//     { ingredient_id: '63774c6bc1c692af5725ab90', stock_used: 3 }
+//   ]
+
+// let y = [
+//     {
+//         "ingredient_id" : "63774c1bc1c692af5725aae7",
+//         "stock_used" : 2
+//     },
+//     {
+//         "ingredient_id" : "63774c6bc1c692af5725ab90",
+//         "stock_used" : 3
+//     },
+//     {
+//         "ingredient_id" : "123774c6bc1c692af5725ab90",
+//         "stock_used" : 3
+//     }
+// ]
+// for(let i of x){
+//     const index = y.findIndex(el => el.ingredient_id === i.ingredient_id);
+//     if (index >= 0) {
+//         y.splice(index, 1);
+//     }
+// }
+// console.log(y)

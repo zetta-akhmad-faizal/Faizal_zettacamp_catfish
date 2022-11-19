@@ -154,7 +154,7 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit, published}}
             }
         }
     ])
-    console.log(queriesGetAll)
+    // console.log(queriesGetAll)
     if(queriesGetAll[0].recipe_data.length === 0){
         throw new GraphQLError("No Recipes show")
     }
@@ -165,7 +165,13 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe
     if(!recipe_name || !ingredients || ingredients.length === 0){
        throw new GraphQLError("Make a sure all fields are filled")
     }
-    console.log(recipe_name, ingredients);
+    // console.log(recipe_name, ingredients);
+
+    if(!price){
+        throw new GraphQLError("Stock must be integer and must be filled")
+    }else if(Number.isInteger(price) !== true){
+        throw new GraphQLError("Stock must be integer")
+    }
 
     let container; let obj = {};
 
@@ -233,10 +239,10 @@ const ingredientsLooping = async( ingredients, _id ) => {
     return arr
 }
 
-const ingredientSet = async (ingredients) => {
+const checkAvailableIngredients = async (_id, ingredients) => {
     let arr = [];
     for(let ingredient of ingredients){
-        let queries = await recipeModel.findOne({"ingredients.ingredient_id":mongoose.Types.ObjectId(ingredient.ingredient_id)});
+        let queries = await recipeModel.findOne({_id: mongoose.Types.ObjectId(_id), "ingredients.ingredient_id":mongoose.Types.ObjectId(ingredient.ingredient_id)});
         if(queries){
             arr.push({
                 ingredient_id: ingredient.ingredient_id,
@@ -247,17 +253,17 @@ const ingredientSet = async (ingredients) => {
     return arr;
 }
 
-const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price, ingredient_id, published}}, ctx) => {
+const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,  published, ingredient_id}}, ctx) => {
     if(!_id){
         throw new GraphQLError("_id is null");
     }
-
-    let container;
     let containerParams3 = {new: true}
     let containerParams2Set = {}
+    let arr = [];
+    let container;
     
-    
-    if(published && !ingredient_id && !ingredients){
+    //edit publish
+    if(published){
         if(published === "Publish"){
             published = true
         }else if(published === "Unpublish"){
@@ -266,41 +272,54 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
         containerParams2Set["$set"] = {
             published
         }
-    }else if(ingredient_id && !ingredients){
+    }
+    let message;
+    if(ingredients){
+        container = await checkAvailableIngredients(_id, ingredients)
+        if(container.length > 0){
+            for(indexOfContainer of container){
+                const index = ingredients.findIndex(el => el.ingredient_id === indexOfContainer.ingredient_id);
+                if (index >= 0) {
+                    ingredients.splice(index, 1);
+                }
+            }
+            arr = [...ingredients]
+            containerParams2Set["$push"] = {
+                ingredients: [...arr]
+            }
+            message = 'if container > 0'
+        }else{
+            arr = [...ingredients]
+            containerParams2Set["$push"] = {
+                ingredients: [...arr]
+            }
+            message = 'if container else'
+        }
+    }
+
+    //edit new ingredients to ingredient who has exist
+    if(recipe_name && price){
+        containerParams2Set["$set"] = {
+            recipe_name, price
+        }
+    }
+
+    //remove the ingredient who has exist
+    if(ingredient_id){
         containerParams2Set["$pull"] = {
             ingredients: {
                 ingredient_id: mongoose.Types.ObjectId(ingredient_id)
             }
         }
-    }else if(ingredients && !ingredient_id){
-        container = await ingredientSet(ingredients);
-        if(container.length !== 0){
-            let id = container.map(val => val.ingredient_id)
-            containerParams2Set["$set"] = {
-                "ingredients.$[elem]": container
-            }
-            containerParams3["arrayFilters"] = [
-                {"elem.ingredient_id": {$in: id}}
-            ]
-        }else{
-            containerParams2Set["$push"] = {ingredients:[...ingredients]}
-            containerParams2Set["$set"] = {
-                recipe_name,
-                price
-            }
-        }
-    }else{
-        throw new GraphQLError("If ingredient_id & ingredients field parallel, update will be failed")
     }
-
     let updateQueries = await recipeModel.findOneAndUpdate(
         {_id: mongoose.Types.ObjectId(_id)},
         containerParams2Set,
         containerParams3
     )
-    // let container = await ingredientSet(ingredients);
-    console.log(containerParams2Set, container)
-    return {message: "Recipe is updated", data:updateQueries}
+    // console.log(containerParams2Set);
+    // console.log(updateQueries)
+    return {message: "Recipe is updated", data: updateQueries}
 }
 
 const DeleteRecipe = async(parent, {data: {_id}}, ctx) => {

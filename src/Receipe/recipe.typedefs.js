@@ -59,6 +59,7 @@ let recipeTypeDefs = gql`
         CreateRecipe(data: recipeParams): responseAtRecipe
         UpdateRecipe(data: recipeParams): responseAtRecipe
         DeleteRecipe(data: recipeParams): responseAtRecipe
+        DeleteIngRecipe(data: recipeParams): responseAtRecipe
     }
 `
 

@@ -2,6 +2,7 @@ const {ingredientModel} = require('./ingredient.model');
 const DataLoader = require('dataloader');
 
 let ingredientCall = async(ingredientIds) => {
+    // console.log(ingredientIds);
     let queri = await ingredientModel.find({
         _id: {
             $in: ingredientIds

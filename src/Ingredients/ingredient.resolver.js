@@ -143,9 +143,7 @@ const CreateIngredient = async(parent, {data: {name, stock,image_ingredient}}, c
             throw new GraphQLError("Name and stock must be filled");
         }
 
-        if(!stock){
-            throw new GraphQLError("Stock must be integer and must be filled")
-        }else if(Number.isInteger(stock) !== true){
+        if(Number.isInteger(stock) !== true){
             throw new GraphQLError("Stock must be integer")
         }
 
@@ -225,7 +223,7 @@ const UpdateIngredient = async(parent, {data:{_id, name, stock}}, ctx) => {
             obj,
             {new: true}
     )
-    console.log(obj)
+    // console.log(obj)
     if(!queriesUpdate){
         throw new GraphQLError("Ingredient isn't updated")
     }
@@ -264,6 +262,7 @@ const DeleteIngredient = async(parent, {data: {_id}}, ctx) => {
 }
 
 const loaderOfingredient = async(parent, args, ctx) => {
+    // console.log(parent)
     if(parent){
         return await ctx.ingredientLoader.load(parent.ingredient_id);
     }

@@ -65,7 +65,7 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
         }
 
         let insertQueries = new userModel({
-            first_name, last_name, email, password, status, usertype
+            first_name, last_name, email, password, status, usertype, role
         })
 
         let validator = insertQueries.validateSync();
@@ -340,7 +340,7 @@ const UpdateUser = async(parent, {data:{_id, email, first_name, last_name, passw
 
     if(email){
         let queryGetUser = await userModel.findOne({email, status: "Active"});
-        console.log(queryGetUser)
+        // console.log(queryGetUser)
         if(queryGetUser){
             return {message: "Email has been used"}
         }

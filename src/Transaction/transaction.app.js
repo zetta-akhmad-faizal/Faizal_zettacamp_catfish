@@ -3,7 +3,7 @@ const {ingredientModel} = require('../Ingredients/ingredient.index')
 const {mongoose} = require('mongoose');
 const { GraphQLError } = require('graphql');
 
-let validateStockIngredient = async(menu,order_status) => {
+let validateStockIngredient = async(menu,type_transaction) => {
     let arr = [];
     let totalPrice = []
     let obj = {};
@@ -34,9 +34,9 @@ let validateStockIngredient = async(menu,order_status) => {
             }
         }
     }
-    if(order_status === "Draft"){
+    if(type_transaction === "Draft"){
         obj['order_status'] = "Draft"
-    }else{
+    }else if(type_transaction === "Checkout"){
         if(arr.includes(false) === false){
             obj['order_status'] = 'Success';
             await reduceIngredientStock(arrIngredient)

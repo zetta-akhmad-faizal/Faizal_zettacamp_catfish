@@ -4,37 +4,13 @@ const {validateStockIngredient} = require('./transaction.app');
 const { GraphQLError } = require('graphql');
 
 //employer side
-const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date}}, ctx) => {
+const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date, typetr}}, ctx) => {
     let arr = [];
     let endDate; let startDate;
-    if(last_name_user){
-        last_name_user = new RegExp(last_name_user, 'i');
-    }
 
-    if(last_name_user && recipe_name){
-        last_name_user = new RegExp(last_name_user, 'i');
-        recipe_name = new RegExp(recipe_name, 'i');
-    }
-
-    if(recipe_name){
-        recipe_name = new RegExp(recipe_name, 'i');
-    }
-
-    if(order_date){
-        //format MM/DD/YYYY
-        let splitter = order_date.split("/")
-        startDate = new Date(`${order_date}, 00:00:00.000Z`);
-        endDate = new Date(`${splitter[0]}/${parseInt(splitter[1])+1}/${splitter[2]}, 00:00:00.000Z`)
-        console.log(splitter)
-    }
-    let usersLookup = {
-        $lookup: {
-            from: 'users',
-            localField: 'user_id',
-            foreignField: '_id',
-            as: 'users'
-        }
-    }
+    let matchVal = {};
+    let matchObj = {};
+    let skip;
 
     let recipesLookup = {
         $lookup: {
@@ -44,167 +20,96 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
             as: 'recipes'
         }
     }
-    let skip = page > 0 ? ((page-1)*limit):0;
-    if(limit && page && !last_name_user && !recipe_name && !order_status && !order_date){
+
+    let usersLookup = {
+        $lookup: {
+            from: 'users',
+            localField: 'user_id',
+            foreignField: '_id',
+            as: 'users'
+        }
+    }
+
+    matchVal["status"] = "Active"
+
+    if(last_name_user){
+        last_name_user = new RegExp(last_name_user, 'i');
+        matchVal["users.last_name"] = last_name_user;
+        arr.push(
+            usersLookup
+        )
+    }
+
+    if(recipe_name){
+        recipe_name = new RegExp(recipe_name, 'i');
+        matchVal['recipes.recipe_name'] = recipe_name
+        arr.push(
+            recipesLookup
+        )
+    }
+
+    if(order_date){
+        //format MM/DD/YYYY
+        let splitter = order_date.split("/")
+        startDate = new Date(`${order_date}, 00:00:00.000Z`);
+        endDate = new Date(`${splitter[0]}/${parseInt(splitter[1])+1}/${splitter[2]}, 00:00:00.000Z`);
+
+        matchVal["order_date"] = {
+            $gte: startDate,
+            $lte: endDate,
+        }
+    }
+    if(limit && page){
+        skip = page > 0 ? ((page-1)*limit):0;
         arr.push(
             {
-                $match: {
-                    status: "Active"
-                }
+                $limit: limit,
             },
             {
                 $skip: skip
-            },
-            {
-                $limit: limit
-            }
-        )
-    }else if(limit && page && last_name_user && !recipe_name && !order_status && !order_date){
-        arr.push(
-            usersLookup,
-            {
-                $match: {
-                    status: 'Active',
-                    'users.last_name': last_name_user
-                }
-            },
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            }
-        )
-    }else if(limit && page && !last_name_user && recipe_name && !order_status && !order_date){
-        arr.push(
-            recipesLookup,
-            {
-                $match: {
-                    status: 'Active',
-                    'recipes.recipe_name': recipe_name
-                }
-            },
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            }
-        )
-    }else if(limit && page && !last_name_user && !recipe_name && order_status && !order_date){
-        arr.push(
-            {
-                $match: {
-                    status: "Active",
-                    order_status
-                }
-            },
-            {
-                $skip: skip,
-            },
-            {
-                $limit: limit
-            }
-        )
-    }else if(limit && page && !last_name_user && !recipe_name && !order_status && order_date){
-        arr.push(
-            {
-                $match: {
-                    status: "Active",
-                    order_date: {
-                        $gte: startDate,
-                        $lte: endDate,
-                    }
-                }
-            },
-            {
-                $skip: skip,
-            },
-            {
-                $limit: limit
-            }
-        )
-    }else if(limit && page && last_name_user && recipe_name && !order_status && !order_date){
-        arr.push(
-            usersLookup,
-            recipesLookup,
-            {
-                $match: {
-                    status: 'Active',
-                    'users.last_name': last_name_user,
-                    'recipes.recipe_name': recipe_name
-                }
-            },
-            {
-                $skip: skip,
-            },
-            {
-                $limit: limit
-            }
-        )
-    }else if(limit && page && last_name_user && recipe_name && order_status && !order_date){
-        arr.push(
-            usersLookup,
-            recipesLookup,
-            {
-                $match: {
-                    status: 'Active',
-                    'users.last_name': last_name_user,
-                    'recipes.recipe_name': recipe_name,
-                    order_status
-                }
-            },
-            {
-                $skip: skip,
-            },
-            {
-                $limit: limit
-            }
-        )
-    }else if(limit && page && last_name_user && recipe_name && order_status && order_date){
-        arr.push(
-            usersLookup,
-            recipesLookup,
-            {
-                $match: {
-                    status: 'Active',
-                    'users.last_name': last_name_user,
-                    'recipes.recipe_name': recipe_name,
-                    order_status,
-                    order_date: {
-                        $gte: startDate,
-                        $lte: endDate,
-                    }
-                }
-            },
-            {
-                $skip: skip,
-            },
-            {
-                $limit: limit
-            }
-        )
-    }else if(!limit && !page && !last_name_user && !recipe_name && !order_status && !order_date){
-        arr.push(
-            {
-                $match: {
-                    status: "Active"
-                }
-            },
-            {
-                $sort: {
-                    order_date: -1
-                }
             }
         )
     }
 
-    let queriesGetAll = await transactionModel.aggregate(arr);
+    if(order_status){
+        matchVal["order_status"] = order_status 
+    }
+
+    if(ctx.user.role === "Admin"){
+        if(typetr === "Draft"){
+            matchVal["user_id"] = ctx.user._id
+        }
+    }else if(ctx.user.role === "User"){
+        if(typetr){
+            matchVal["user_id"] = ctx.user._id
+        }
+    }
+
+    matchObj["$match"] = matchVal
+    arr.push(matchObj)
+    let queriesGetAll = await transactionModel.aggregate([
+        {
+            $facet: {
+                transaction_data: arr,
+                info_page: [
+                    {
+                        $match: {
+                            status: "Active"
+                        }
+                    },
+                    {
+                        $group: {_id: null, count: {$sum: 1}}
+                    }
+                ]
+            }
+        }
+    ]);
+    console.log(arr);
     if(!queriesGetAll){
         throw new GraphQLError("No transaction show")
     }
-    console.log(startDate, endDate)
-    return {message: "Transaction is displayed", data: queriesGetAll}
+
+    return {message: "Transaction is displayed", data: queriesGetAll[0]}
 }
 
 //employer side
@@ -221,12 +126,13 @@ const GetOneTransaction = async(parent, {data: {_id}}, ctx) => {
     return {message: "Transaction is available", data: querieGetOne}
 }
 
-const CreateTransaction = async(parent, {data:{menu, order_status}}, ctx) => {
+const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
     if(!menu){
         throw new GraphQLError("You must choice menu")
     }
 
-    let validate = await validateStockIngredient(menu, order_status)
+    let type_transaction = "Draft";
+    let validate = await validateStockIngredient(menu, type_transaction)
     let queriesInsert = new transactionModel({
         ...validate,
         menu,
@@ -238,19 +144,16 @@ const CreateTransaction = async(parent, {data:{menu, order_status}}, ctx) => {
     
 }
 
-const UpdateTransaction = async(parent, {data: {menu, _id}}) => {
+const UpdateTransaction = async(parent, {data: {_id, menu, type_transaction}}) => {
     if(!menu){
         throw new GraphQLError("You must choice menu");
     }
 
-    let validate = await validateStockIngredient(menu);
+    let validate = await validateStockIngredient(menu, type_transaction);
     if(validate['order_status'] === 'Success'){
         let queriesUpdate = await transactionModel.findOneAndUpdate(
             {_id: mongoose.Types.ObjectId(_id), status: "Active"},
             {
-                $push:{
-                    menu
-                },
                 $set: {
                     order_status: validate['order_status']
                 }
