@@ -13,6 +13,11 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
         }
         let generalPermit = [
             {
+                name: "Home",
+                slug: "home",
+                view: true
+            },
+            {
                 name: "Menu",
                 slug: "menu",
                 view: true
@@ -20,11 +25,6 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
             {
                 name: "Profile",
                 slug: "profile",
-                view: true
-            },
-            {
-                name: "Cart",
-                slug: "cart",
                 view: true
             },
             {
@@ -64,6 +64,14 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
             )
         }
 
+        usertype.push(
+            {
+                name: "Cart",
+                slug: "cart",
+                view: true
+            },
+        )
+        
         let insertQueries = new userModel({
             first_name, last_name, email, password, status, usertype, role
         })

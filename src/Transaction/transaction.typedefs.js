@@ -35,11 +35,13 @@ let transactionTypeDefs = gql`
         Deleted
     }
     type transactionScheme{
+        _id:ID
         user_id: userScheme
         menu: [menuFields]
         order_status: String
         order_date: String
         status: String
+        total_price: Int
     }
     type newTransactionPaginate{
         transaction_data: [transactionScheme],

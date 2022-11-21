@@ -4,107 +4,39 @@ const {mongoose} = require('mongoose');
 const { recipeModel } = require('../Receipe/recipe.index');
 
 const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx) => {
-    let queriesGetAll; let arr = [];
-    let nameRegex;
+    let queriesGetAll; 
+    let arr = [];
+    let matchVal = {};
+    let matchObj = {};
     let skip = page > 0 ? ((page - 1) * limit) : 0
 
     if(stock < 0){
         throw new GraphQLError("Stock must be grather than 0")
     }
 
-    if(limit && page && !name && !stock){
+    name = new RegExp(name,'i')
+    matchVal['status'] = "Active";
+
+    if(name){
+        matchVal['name'] = name
+    }
+    if(stock){
+        if(Number.isInteger(stock) !== true){
+            throw new GraphQLError("Stock must be integer")
+        }
+        matchVal['stock'] = stock
+    }
+
+    matchObj['$match'] = matchVal;
+    arr.push(matchObj);
+    
+    if(limit && page){
         arr.push(
-            {
-                $match: {
-                    status: "Active"
-                }
-            },
             {
                 $skip: skip
             },
             {
                 $limit: limit
-            },
-            {
-                $sort: {
-                    createdAt: -1
-                }
-            }
-        )
-    }else if(limit && page && name && !stock){
-        nameRegex = new RegExp(name, 'i');
-        arr.push(
-            {
-                $match: {
-                    name: nameRegex,
-                    status: "Active"
-                }
-            },
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            },
-            {
-                $sort: {
-                    createdAt: -1
-                }
-            }
-        )
-    }else if(limit && page && stock && !name){
-        arr.push(
-            {
-                $match: {
-                    stock,
-                    status: "Active"
-                }
-            },
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            },
-            {
-                $sort: {
-                    createdAt: -1
-                }
-            }
-        )
-    }else if(limit && page && name && stock){
-        nameRegex = new RegExp(name, 'i');
-        arr.push(
-            {
-                $match: {
-                    name: nameRegex,
-                    stock,
-                    status: "Active"
-                }
-            },
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            },
-            {
-                $sort: {
-                    createdAt: -1
-                }
-            }
-        )
-    }else{
-        arr.push(
-            {
-                $match: {
-                    status: "Active"
-                }
-            },
-            {
-                $sort: {
-                    createdAt: -1
-                }
             }
         )
     }

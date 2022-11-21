@@ -34,6 +34,7 @@ let validateStockIngredient = async(menu,type_transaction) => {
             }
         }
     }
+    obj['total_price'] = totalPrice.reduce((accumVariable, curValue) => accumVariable + curValue);
     if(type_transaction === "Draft"){
         obj['order_status'] = "Draft"
     }else if(type_transaction === "Checkout"){
@@ -44,7 +45,6 @@ let validateStockIngredient = async(menu,type_transaction) => {
             obj['order_status'] = 'Failed'
         }
     }
-    obj['total_price'] = totalPrice.reduce((accumVariable, curValue) => accumVariable + curValue);
     return obj
 }
 

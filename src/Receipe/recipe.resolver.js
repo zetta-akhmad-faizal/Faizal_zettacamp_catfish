@@ -24,119 +24,44 @@ const { GraphQLError} = require('graphql');
 
 const GetAllrecipes = async(parent, {data:{recipe_name, page, limit, published}}, ctx) => {
     let arr = []
+    let matchVal = {};
+    let matchObj = {};
     let skip = page > 0 ? ((page - 1) * limit) : 0
-    let general = {
-        $lookup: {
-            from: 'ingredients',
-            localField: 'ingredients.ingredient_id',
-            foreignField: '_id',
-            as: 'ingredient_list'
-        }
-    }
-    if(published === "Publish"){
-        published = true 
-    }else if(published === "Unpublish"){
-        published = false
-    }else if(!published){
-        published = null
-    }
-    // let statusPublish;
-    // if(!published){
-    //     statusPublish = undefined
-    // }else if(published === "Publish"){
-    //     statusPublish = true
-    // }else if(published === "Unpublish"){
-    //     statusPublish = false
+    // let general = {
+    //     $lookup: {
+    //         from: 'ingredients',
+    //         localField: 'ingredients.ingredient_id',
+    //         foreignField: '_id',
+    //         as: 'ingredient_list'
+    //     }
     // }
 
-    if(limit && page && !recipe_name && !published){
+    matchVal["status"] = "Active";
+
+    if(published){
+        published = published === "Publish" ? true: false
+        matchVal["published"] = published
+    }
+    
+
+    if(recipe_name){
+        matchVal["recipe_name"] = recipe_name
+    }
+
+    matchObj["$match"] = matchVal;
+    arr.push(matchObj)
+
+    if(limit && page){
         arr.push(
-            // general,
-            {
-                $match: {status: "Active"}
-            },
             {
                 $skip: skip
             },
             {
                 $limit: limit
-            },
-            {$sort: {createdAt:-1}}
-        )
-    }else if(limit && page && recipe_name && !published){
-        arr.push(
-            // general,
-            {
-                $match: {
-                    recipe_name: new RegExp(recipe_name, 'i'),
-                    // 'ingredient_list.available': true,
-                    status: "Active",
-                }
-            },
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            },
-            {$sort: {createdAt:-1}}
-        )
-    }else if(limit && page && !recipe_name && published){
-        arr.push(
-            // general,
-            {
-                $match: {
-                    // 'ingredient_list.available': true,
-                    published,
-                    status: "Active",
-                }
-            },
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            },
-            {$sort: {createdAt:-1}}
-        )
-    }else if(limit && page && recipe_name && published){
-        arr.push(
-            // general,
-            {
-                $match: {
-                    recipe_name: new RegExp(recipe_name, 'i'),
-                    // 'ingredient_list.available': true,
-                    status: "Active",
-                    published
-                }
-            },
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            },
-            {$sort: {createdAt:-1}}
-        )
-    }else if(!limit && !page && !recipe_name && published){
-        arr.push(
-            // general,
-            {
-                $match: {
-                    published,
-                    status: "Active",
-                }
-            },
-        )
-    }else{
-        arr.push(
-            {
-                $match: {
-                    status: "Active",
-                }
-            },
+            }
         )
     }
+
     const queriesGetAll = await recipeModel.aggregate([
         {
             $facet: {
@@ -273,7 +198,6 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
             published
         }
     }
-    let message;
     if(ingredients){
         container = await checkAvailableIngredients(_id, ingredients)
         if(container.length > 0){
@@ -306,12 +230,16 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
 
     //remove the ingredient who has exist
     if(ingredient_id){
+        ingredient_id = ingredient_id.map(val => mongoose.Types.ObjectId(val))
         containerParams2Set["$pull"] = {
             ingredients: {
-                ingredient_id: mongoose.Types.ObjectId(ingredient_id)
+                ingredient_id: {
+                    $in: ingredient_id
+                }
             }
         }
     }
+    console.log(ingredient_id)
     let updateQueries = await recipeModel.findOneAndUpdate(
         {_id: mongoose.Types.ObjectId(_id)},
         containerParams2Set,

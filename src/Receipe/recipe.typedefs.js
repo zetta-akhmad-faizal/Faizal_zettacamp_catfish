@@ -14,7 +14,7 @@ let recipeTypeDefs = gql`
         page: Int,
         link_recipe: String
         price:Int
-        ingredient_id: ID
+        ingredient_id: [ID]
         published: String
     }
     type recipeIngredientsField{

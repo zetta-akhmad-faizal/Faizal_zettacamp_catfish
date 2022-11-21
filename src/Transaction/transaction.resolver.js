@@ -59,17 +59,6 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
             $lte: endDate,
         }
     }
-    if(limit && page){
-        skip = page > 0 ? ((page-1)*limit):0;
-        arr.push(
-            {
-                $limit: limit,
-            },
-            {
-                $skip: skip
-            }
-        )
-    }
 
     if(order_status){
         matchVal["order_status"] = order_status 
@@ -87,6 +76,19 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
 
     matchObj["$match"] = matchVal
     arr.push(matchObj)
+    
+    if(limit && page){
+        skip = page > 0 ? ((page-1)*limit):0;
+        arr.push(
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit,
+            }
+        )
+    }
+    
     let queriesGetAll = await transactionModel.aggregate([
         {
             $facet: {
@@ -104,7 +106,7 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
             }
         }
     ]);
-    console.log(arr);
+    console.log(queriesGetAll[0].transaction_data);
     if(!queriesGetAll){
         throw new GraphQLError("No transaction show")
     }
@@ -140,19 +142,18 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
         order_date: new Date()
     })
     await queriesInsert.save();
+    console.log(queriesInsert)
     return {message: `Transaction insert ${validate['order_status']}`, data: queriesInsert}
     
 }
 
-const UpdateTransaction = async(parent, {data: {_id, menu, type_transaction}}) => {
-    if(!menu){
-        throw new GraphQLError("You must choice menu");
-    }
-
-    let validate = await validateStockIngredient(menu, type_transaction);
+const UpdateTransaction = async(parent, {data: {_id}}) => {
+    let queriesGet = await transactionModel.findOne({_id: mongoose.Types.ObjectId(_id), order_status: "Draft"});
+    let type_transaction = "Checkout"
+    let validate = await validateStockIngredient(queriesGet.menu, type_transaction);
     if(validate['order_status'] === 'Success'){
         let queriesUpdate = await transactionModel.findOneAndUpdate(
-            {_id: mongoose.Types.ObjectId(_id), status: "Active"},
+            {_id: mongoose.Types.ObjectId(_id)},
             {
                 $set: {
                     order_status: validate['order_status']
