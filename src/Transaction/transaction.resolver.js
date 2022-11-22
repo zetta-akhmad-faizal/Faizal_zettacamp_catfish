@@ -299,17 +299,11 @@ const DeleteTransaction = async(parent, {data:{_id}}, ctx) => {
     return {message: "Transaction is deleted", data: queriesDelete}
 }
 
-const test = async(parent, args, ctx) => {
-    let x = await transactionModel.findOne().populate("menu.recipe_id")
-    console.log(x.menu[0].recipe_id);
-    return x
-}
 
 module.exports = {
     Query:{
         GetAllTransaction,
         GetOneTransaction,
-        test
     },
     Mutation: {
         CreateTransaction,

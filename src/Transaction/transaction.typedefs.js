@@ -60,7 +60,7 @@ let transactionTypeDefs = gql`
     type Query{
         GetAllTransaction(data: transactionParams): responseAtTransactionAll 
         GetOneTransaction(data: transactionParams): responseAtTransaction
-        test: transactionScheme
+        TransactionHistory: [transactionScheme]
     }
     type Mutation{
         CreateTransaction(data: transactionParams): responseAtTransaction,
