@@ -100,26 +100,27 @@ server.start().then(res => {
 // //test
 
 // let x = [
-//     { ingredient_id: '63774c1bc1c692af5725aae7', stock_used: 5 },
-//     { ingredient_id: '63774c6bc1c692af5725ab90', stock_used: 3 }
+//     {
+//         recipe_id: "6377934adf4a7c07d5758272",
+//         amount: 2,
+//         note: "bakso balado"
+//     },
 //   ]
 
 // let y = [
 //     {
-//         "ingredient_id" : "63774c1bc1c692af5725aae7",
-//         "stock_used" : 2
+//         recipe_id: "6377934adf4a7c07d5758272",
+//         amount: 2,
+//         note: "bakso balado"
 //     },
 //     {
-//         "ingredient_id" : "63774c6bc1c692af5725ab90",
-//         "stock_used" : 3
+//         recipe_id: "637b2adb1d6b1f7260992aa2",
+//         amount: 3,
+//         note: "Fried Potato"
 //     },
-//     {
-//         "ingredient_id" : "123774c6bc1c692af5725ab90",
-//         "stock_used" : 3
-//     }
 // ]
 // for(let i of x){
-//     const index = y.findIndex(el => el.ingredient_id === i.ingredient_id);
+//     const index = y.findIndex(el => el.recipe_id === i.recipe_id);
 //     if (index >= 0) {
 //         y.splice(index, 1);
 //     }

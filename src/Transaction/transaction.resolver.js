@@ -130,25 +130,21 @@ const GetOneTransaction = async(parent, {data: {_id}}, ctx) => {
 }
 
 const checkMenuTransactions = async(menu, ctx) => {
-    let arr = [];
     let obj = {}
     let queryCheck = await transactionModel.findOne({user_id:ctx.user._id, order_status: "Draft", status: "Active"});
+    
     if(queryCheck){
         for(let menuOfTransaction of queryCheck.menu){
-            if(menu.recipe_id === menuOfTransaction.recipe_id.toString()){
-                arr.push(false)
-            }else{
-                arr.push(true)
+            const index = menu.findIndex(el => el.recipe_id === menuOfTransaction.recipe_id.toString());
+            if (index >= 0) {
+                menu.splice(index, 1);
             }
         }
         obj['price_before'] = queryCheck.total_price
     }
-    if(arr.includes(false)){
-        return true
-    }else{
-        obj['menu'] = menu
-        return obj
-    }
+    
+    obj['menu'] = menu 
+    return obj
 }
 
 const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
@@ -157,16 +153,19 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
     }
 
     let type_transaction = "Draft";
-    let checkMenu = await checkMenuTransactions(menu[0], ctx);
-    let validate = await validateStockIngredient(menu, type_transaction);
+    let checkMenu = await checkMenuTransactions(menu, ctx);
 
     if(Number.isInteger(menu[0].amount) !== true){
         throw new GraphQLError("Amount must be integer")
     }
 
-    if(checkMenu === true){
+    if(checkMenu.menu.length === 0){
+        console.log("error length")
         throw new GraphQLError("Please clearly your cart")
     }
+
+    let validate = await validateStockIngredient(checkMenu.menu, type_transaction);
+
     let total_price = {}
     if(checkMenu.price_before){
         total_price['total_price'] = validate['total_price'] + checkMenu.price_before
@@ -202,23 +201,20 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
 
 const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}}, ctx) => {
     let secParam = {}
+    let price_var = 0
     let thirdParam = {new:true}
 
     let queryCheck = await transactionModel.findOne({user_id: ctx.user._id, order_status: "Draft", status: "Active"}).populate("menu.recipe_id");
-    let recipe = await recipeModel.findOne({_id: mongoose.Types.ObjectId(recipe_id), status: "Active", available:true});
-    
-    if(!recipe){
-        throw GraphQLError("Recipe isn't available and active");
-    }
+    queryCheck.menu.map(val => {
+        if(val.recipe_id._id.toString() === recipe_id){
+            price_var += val.recipe_id.price
+        }
+    });
 
-    if(!queryCheck){
-        throw new GraphQLError("The Draft isn't exists");
-    }
-
-
+    // console.log('queryche',queryCheck.menu);
     if(recipe_id && amount && !note){
         secParam["$set"] = {
-            total_price: queryCheck.total_price - (recipe.price*amount)
+            total_price: queryCheck.total_price - (price_var*amount)
         }
         secParam["$pull"] = {
             menu: {
@@ -246,6 +242,7 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
                 val.total_price = val.amount*val.price
             }
         })
+        
         console.log('new', arr);
         let totalPrice = arr.map(val => val.total_price);
         console.log('new',totalPrice.reduce((arr, num) => arr+num));
