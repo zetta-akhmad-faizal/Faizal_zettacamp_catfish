@@ -2,6 +2,7 @@ const { mongoose } = require('mongoose');
 const {transactionModel} = require('./transaction.model');
 const {validateStockIngredient} = require('./transaction.app');
 const { GraphQLError } = require('graphql');
+const { recipeModel } = require('../Receipe/recipe.model');
 
 //employer side
 const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date, typetr}}, ctx) => {
@@ -129,7 +130,8 @@ const GetOneTransaction = async(parent, {data: {_id}}, ctx) => {
 }
 
 const checkMenuTransactions = async(menu, ctx) => {
-    let arr = []
+    let arr = [];
+    let obj = {}
     let queryCheck = await transactionModel.findOne({user_id:ctx.user._id, order_status: "Draft", status: "Active"});
     if(queryCheck){
         for(let menuOfTransaction of queryCheck.menu){
@@ -139,11 +141,13 @@ const checkMenuTransactions = async(menu, ctx) => {
                 arr.push(true)
             }
         }
+        obj['price_before'] = queryCheck.total_price
     }
     if(arr.includes(false)){
         return true
     }else{
-        return menu
+        obj['menu'] = menu
+        return obj
     }
 }
 
@@ -154,6 +158,7 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
 
     let type_transaction = "Draft";
     let checkMenu = await checkMenuTransactions(menu[0], ctx);
+    let validate = await validateStockIngredient(menu, type_transaction);
 
     if(Number.isInteger(menu[0].amount) !== true){
         throw new GraphQLError("Amount must be integer")
@@ -162,12 +167,17 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
     if(checkMenu === true){
         throw new GraphQLError("Please clearly your cart")
     }
-    
+    let total_price = {}
+    if(checkMenu.price_before){
+        total_price['total_price'] = validate['total_price'] + checkMenu.price_before
+    }
+    console.log(total_price);
     let findAndUpdate = await transactionModel.findOneAndUpdate(
         {user_id: ctx.user._id, status: "Active", order_status: "Draft"},
         {
+            $set: total_price,
             $push: {
-                menu: checkMenu
+                menu: checkMenu.menu
             }
         },
         {new: true}
@@ -178,7 +188,6 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
         return {message: "Your transaction is updated", data: findAndUpdate}
     }else{
         console.log(menu)
-        let validate = await validateStockIngredient(menu, type_transaction);
         let insertQueries = new transactionModel({
             ...validate,
             menu,
@@ -191,14 +200,26 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
     }
 }
 
-const UpdateTransaction = async(parent, {data: {_id, recipe_id, typetr}}, ctx) => {
+const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}}, ctx) => {
     let secParam = {}
+    let thirdParam = {new:true}
 
-    if(!_id){
-        throw new GraphQLError("_id is null")
+    let queryCheck = await transactionModel.findOne({user_id: ctx.user._id, order_status: "Draft", status: "Active"}).populate("menu.recipe_id");
+    let recipe = await recipeModel.findOne({_id: mongoose.Types.ObjectId(recipe_id), status: "Active", available:true});
+    
+    if(!recipe){
+        throw GraphQLError("Recipe isn't available and active");
     }
 
-    if(recipe_id){
+    if(!queryCheck){
+        throw new GraphQLError("The Draft isn't exists");
+    }
+
+
+    if(recipe_id && amount && !note){
+        secParam["$set"] = {
+            total_price: queryCheck.total_price - (recipe.price*amount)
+        }
         secParam["$pull"] = {
             menu: {
                 recipe_id: mongoose.Types.ObjectId(recipe_id)
@@ -206,11 +227,40 @@ const UpdateTransaction = async(parent, {data: {_id, recipe_id, typetr}}, ctx) =
         }
     }
 
-    if(typetr){
-        let queryCheck = await transactionModel.findOne({user_id: ctx.user._id, order_status: "Draft", status: "Active"})
-        if(!queryCheck){
-            throw new GraphQLError("The Draft isn't exists");
+    if(recipe_id && amount && note){
+        let arr = [];
+
+        for(let indexOfMenu of queryCheck.menu){
+            arr.push({
+                recipe_id: indexOfMenu.recipe_id._id,
+                amount: indexOfMenu.amount,
+                total_price: indexOfMenu.amount * indexOfMenu.recipe_id.price,
+                price: indexOfMenu.recipe_id.price
+            })
         }
+
+        console.log('old', arr);
+        arr.map(val => {
+            if(val.recipe_id.toString() === recipe_id){
+                val.amount = amount
+                val.total_price = val.amount*val.price
+            }
+        })
+        console.log('new', arr);
+        let totalPrice = arr.map(val => val.total_price);
+        console.log('new',totalPrice.reduce((arr, num) => arr+num));
+
+        secParam["$set"] = {
+            total_price: totalPrice.reduce((arr, num) => arr+num),
+            "menu.$[ele]": {
+                recipe_id: recipe_id,
+                amount,
+                note
+            }
+        }
+        thirdParam["arrayFilters"] = [{"ele.recipe_id": mongoose.Types.ObjectId(recipe_id)}]
+    }
+    if(typetr){
         let validate = await validateStockIngredient(queryCheck.menu, typetr);
         secParam["$set"] = {
             order_status: validate['order_status']
@@ -218,9 +268,9 @@ const UpdateTransaction = async(parent, {data: {_id, recipe_id, typetr}}, ctx) =
     }
 
     let queryUpdate = await transactionModel.findOneAndUpdate(
-        {_id: mongoose.Types.ObjectId(_id)},
+        {user_id: ctx.user._id, order_status: "Draft", status: "Active"},
         secParam,
-        {new:true}
+        thirdParam
     )
 
     return {message: "Transaction is updated", data:queryUpdate}
@@ -249,10 +299,17 @@ const DeleteTransaction = async(parent, {data:{_id}}, ctx) => {
     return {message: "Transaction is deleted", data: queriesDelete}
 }
 
+const test = async(parent, args, ctx) => {
+    let x = await transactionModel.findOne().populate("menu.recipe_id")
+    console.log(x.menu[0].recipe_id);
+    return x
+}
+
 module.exports = {
     Query:{
         GetAllTransaction,
         GetOneTransaction,
+        test
     },
     Mutation: {
         CreateTransaction,

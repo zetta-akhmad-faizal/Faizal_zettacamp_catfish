@@ -45,6 +45,7 @@ let validateStockIngredient = async(menu,type_transaction) => {
             obj['order_status'] = 'Failed'
         }
     }
+    console.log(obj['total_price'])
     return obj
 }
 

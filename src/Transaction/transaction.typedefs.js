@@ -8,6 +8,7 @@ let transactionTypeDefs = gql`
     }
     input transactionParams{
         amount: Int
+        note:String
         _id: ID
         user_id: ID
         recipe_id: ID
@@ -59,11 +60,12 @@ let transactionTypeDefs = gql`
     type Query{
         GetAllTransaction(data: transactionParams): responseAtTransactionAll 
         GetOneTransaction(data: transactionParams): responseAtTransaction
+        test: transactionScheme
     }
     type Mutation{
         CreateTransaction(data: transactionParams): responseAtTransaction,
         DeleteTransaction(data: transactionParams): responseAtTransaction,
-        UpdateTransaction(data: transactionParams): responseAtTransaction
+        UpdateTransaction(data: transactionParams): responseAtTransaction,
     }
 `
 
