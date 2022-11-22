@@ -71,7 +71,7 @@ const CreateUser = async(parent, {data:{first_name, last_name, email, password, 
                 view: true
             },
         )
-        
+
         let insertQueries = new userModel({
             first_name, last_name, email, password, status, usertype, role
         })
@@ -293,6 +293,7 @@ const getAllUsers = async(parent, {data: {email, last_name, first_name, page, li
 }
 
 const Login = async(parent, {data:{email, password}}, ctx) => {
+    console.log(email, password);
     let queries = await userModel.findOne({email, status: 'Active'});
     if (!queries) {
         throw new GraphQLError("User not found")

@@ -26,7 +26,7 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit, published}}
     let arr = []
     let matchVal = {};
     let matchObj = {};
-    let skip = page > 0 ? ((page - 1) * limit) : 0
+    let skip;
     // let general = {
     //     $lookup: {
     //         from: 'ingredients',
@@ -52,16 +52,17 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit, published}}
     arr.push(matchObj)
 
     if(limit && page){
+        skip = page > 0 ? ((page - 1)*limit):0;
         arr.push(
             {
                 $skip: skip
             },
             {
-                $limit: limit
+                $limit: limit,
             }
         )
     }
-
+    
     const queriesGetAll = await recipeModel.aggregate([
         {
             $facet: {

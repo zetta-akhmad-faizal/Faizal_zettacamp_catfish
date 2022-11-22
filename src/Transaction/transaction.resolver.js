@@ -30,7 +30,19 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
         }
     }
 
-    matchVal["status"] = "Active"
+    matchVal["status"] = "Active";
+
+    if(limit && page){
+        skip = page > 0 ? ((page-1)*limit):0;
+        arr.push(
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit,
+            }
+        )
+    }
 
     if(last_name_user){
         last_name_user = new RegExp(last_name_user, 'i');
@@ -76,19 +88,7 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
 
     matchObj["$match"] = matchVal
     arr.push(matchObj)
-    
-    if(limit && page){
-        skip = page > 0 ? ((page-1)*limit):0;
-        arr.push(
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit,
-            }
-        )
-    }
-    
+
     let queriesGetAll = await transactionModel.aggregate([
         {
             $facet: {
@@ -128,42 +128,102 @@ const GetOneTransaction = async(parent, {data: {_id}}, ctx) => {
     return {message: "Transaction is available", data: querieGetOne}
 }
 
+const checkMenuTransactions = async(menu, ctx) => {
+    let arr = []
+    let queryCheck = await transactionModel.findOne({user_id:ctx.user._id, order_status: "Draft", status: "Active"});
+    if(queryCheck){
+        for(let menuOfTransaction of queryCheck.menu){
+            if(menu.recipe_id === menuOfTransaction.recipe_id.toString()){
+                arr.push(false)
+            }else{
+                arr.push(true)
+            }
+        }
+    }
+    if(arr.includes(false)){
+        return true
+    }else{
+        return menu
+    }
+}
+
 const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
     if(!menu){
         throw new GraphQLError("You must choice menu")
     }
 
     let type_transaction = "Draft";
-    let validate = await validateStockIngredient(menu, type_transaction)
-    let queriesInsert = new transactionModel({
-        ...validate,
-        menu,
-        user_id: ctx.user._id,
-        order_date: new Date()
-    })
-    await queriesInsert.save();
-    console.log(queriesInsert)
-    return {message: `Transaction insert ${validate['order_status']}`, data: queriesInsert}
+    let checkMenu = await checkMenuTransactions(menu[0], ctx);
+
+    if(Number.isInteger(menu[0].amount) !== true){
+        throw new GraphQLError("Amount must be integer")
+    }
+
+    if(checkMenu === true){
+        throw new GraphQLError("Please clearly your cart")
+    }
     
+    let findAndUpdate = await transactionModel.findOneAndUpdate(
+        {user_id: ctx.user._id, status: "Active", order_status: "Draft"},
+        {
+            $push: {
+                menu: checkMenu
+            }
+        },
+        {new: true}
+    )
+    console.log("update",findAndUpdate)
+
+    if(findAndUpdate){
+        return {message: "Your transaction is updated", data: findAndUpdate}
+    }else{
+        console.log(menu)
+        let validate = await validateStockIngredient(menu, type_transaction);
+        let insertQueries = new transactionModel({
+            ...validate,
+            menu,
+            user_id: ctx.user._id,
+            order_date: new Date()
+        })
+        console.log("insert",insertQueries)
+        await insertQueries.save();
+        return {message: `Transaction insert ${validate['order_status']}`, data: insertQueries}
+    }
 }
 
-const UpdateTransaction = async(parent, {data: {_id}}) => {
-    let queriesGet = await transactionModel.findOne({_id: mongoose.Types.ObjectId(_id), order_status: "Draft"});
-    let type_transaction = "Checkout"
-    let validate = await validateStockIngredient(queriesGet.menu, type_transaction);
-    if(validate['order_status'] === 'Success'){
-        let queriesUpdate = await transactionModel.findOneAndUpdate(
-            {_id: mongoose.Types.ObjectId(_id)},
-            {
-                $set: {
-                    order_status: validate['order_status']
-                }
-            }
-        )
-        return {message: `Transaction ${validate['order_status']} updated`, data: queriesUpdate}
-    }else{
-        throw new GraphQLError("Ingredient isn't enough, transaction isn't be able updated")
+const UpdateTransaction = async(parent, {data: {_id, recipe_id, typetr}}, ctx) => {
+    let secParam = {}
+
+    if(!_id){
+        throw new GraphQLError("_id is null")
     }
+
+    if(recipe_id){
+        secParam["$pull"] = {
+            menu: {
+                recipe_id: mongoose.Types.ObjectId(recipe_id)
+            }
+        }
+    }
+
+    if(typetr){
+        let queryCheck = await transactionModel.findOne({user_id: ctx.user._id, order_status: "Draft", status: "Active"})
+        if(!queryCheck){
+            throw new GraphQLError("The Draft isn't exists");
+        }
+        let validate = await validateStockIngredient(queryCheck.menu, typetr);
+        secParam["$set"] = {
+            order_status: validate['order_status']
+        }
+    }
+
+    let queryUpdate = await transactionModel.findOneAndUpdate(
+        {_id: mongoose.Types.ObjectId(_id)},
+        secParam,
+        {new:true}
+    )
+
+    return {message: "Transaction is updated", data:queryUpdate}
 }
 
 const DeleteTransaction = async(parent, {data:{_id}}, ctx) => {

@@ -8,16 +8,16 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
     let arr = [];
     let matchVal = {};
     let matchObj = {};
-    let skip = page > 0 ? ((page - 1) * limit) : 0
+    let skip
 
     if(stock < 0){
         throw new GraphQLError("Stock must be grather than 0")
     }
 
-    name = new RegExp(name,'i')
     matchVal['status'] = "Active";
 
     if(name){
+        name = new RegExp(name,'i')
         matchVal['name'] = name
     }
     if(stock){
@@ -28,15 +28,17 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
     }
 
     matchObj['$match'] = matchVal;
+    console.log(matchObj)
     arr.push(matchObj);
-    
+
     if(limit && page){
+        skip = page > 0 ? ((page - 1)*limit):0;
         arr.push(
             {
                 $skip: skip
             },
             {
-                $limit: limit
+                $limit: limit,
             }
         )
     }

@@ -10,6 +10,7 @@ let transactionTypeDefs = gql`
         amount: Int
         _id: ID
         user_id: ID
+        recipe_id: ID
         menu: [menuFieldsParams]
         order_status: statusOrder
         order_date: String
