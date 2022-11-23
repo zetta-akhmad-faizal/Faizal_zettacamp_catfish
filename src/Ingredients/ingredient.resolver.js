@@ -3,10 +3,11 @@ const {GraphQLError} = require('graphql')
 const {mongoose} = require('mongoose');
 const { recipeModel } = require('../Receipe/recipe.index');
 
-const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx) => {
+const GetAllIngredients = async(parent, {data: {name, stock, limit, page, available}}, ctx) => {
     let queriesGetAll; 
     let arr = [];
     let matchVal = {};
+    let matchCount = {}
     let matchObj = {};
     let skip
 
@@ -15,23 +16,36 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
     }
 
     matchVal['status'] = "Active";
+    matchCount['status'] = "Active"
 
     if(name){
         name = new RegExp(name,'i')
         matchVal['name'] = name
+        matchCount['name'] = name
     }
     if(stock){
         if(Number.isInteger(stock) !== true){
             throw new GraphQLError("Stock must be integer")
         }
         matchVal['stock'] = stock
+        matchCount['stock'] = stock
+    }
+
+    if(available === "Available"){
+        available = true
+        matchVal['available'] = available
+        matchCount['available'] = available
+    }else if(available === "Unavailable"){
+        available = false
+        matchVal['available'] = available
+        matchCount['available'] = available
     }
 
     matchObj['$match'] = matchVal;
     console.log(matchObj)
     arr.push(matchObj);
 
-    if(limit && page){
+    if(limit && page || name === ""){
         skip = page > 0 ? ((page - 1)*limit):0;
         arr.push(
             {
@@ -49,9 +63,7 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page}}, ctx)
                 ingredient_data: arr,
                 info_page: [
                     {
-                        $match: {
-                            status: "Active"
-                        }
+                        $match: matchCount
                     },
                     {
                         $group: {_id: null, count: {$sum: 1}}

@@ -6,6 +6,7 @@ const ingredientTypeDefs = gql`
         Deleted
     }
     input ingredientParams{
+        available: String
         _id: ID
         page: Int
         limit: Int

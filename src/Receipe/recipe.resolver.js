@@ -25,33 +25,29 @@ const { GraphQLError} = require('graphql');
 const GetAllrecipes = async(parent, {data:{recipe_name, page, limit, published}}, ctx) => {
     let arr = []
     let matchVal = {};
+    let matchCount = {}
     let matchObj = {};
     let skip;
-    // let general = {
-    //     $lookup: {
-    //         from: 'ingredients',
-    //         localField: 'ingredients.ingredient_id',
-    //         foreignField: '_id',
-    //         as: 'ingredient_list'
-    //     }
-    // }
 
     matchVal["status"] = "Active";
+    matchCount["status"] = "Active";
 
     if(published){
         published = published === "Publish" ? true: false
         matchVal["published"] = published
+        matchCount['published'] = published
     }
     
 
     if(recipe_name){
-        matchVal["recipe_name"] = recipe_name
+        matchVal["recipe_name"] = new RegExp(recipe_name, 'i')
+        matchCount['recipe_name'] = new RegExp(recipe_name, 'i')
     }
 
     matchObj["$match"] = matchVal;
     arr.push(matchObj)
 
-    if(limit && page){
+    if(limit && page && recipe_name === ""){
         skip = page > 0 ? ((page - 1)*limit):0;
         arr.push(
             {
@@ -69,9 +65,7 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit, published}}
                 recipe_data: arr,
                 info_page: [
                     {
-                        $match: {
-                            status: "Active"
-                        }
+                        $match: matchCount
                     },
                     {
                         $group: {_id: null, count: {$sum: 1}}
