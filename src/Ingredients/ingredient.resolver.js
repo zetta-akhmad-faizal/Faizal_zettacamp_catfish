@@ -7,7 +7,7 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page, availa
     let queriesGetAll; 
     let arr = [];
     let matchVal = {};
-    let matchCount = {}
+    // let matchCount = {}
     let matchObj = {};
     let skip
 
@@ -16,34 +16,34 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page, availa
     }
 
     matchVal['status'] = "Active";
-    matchCount['status'] = "Active"
+    // matchCount['status'] = "Active"
 
     if(name){
         name = new RegExp(name,'i')
         matchVal['name'] = name
-        matchCount['name'] = name
+        // matchCount['name'] = name
     }
     if(stock){
         if(Number.isInteger(stock) !== true){
             throw new GraphQLError("Stock must be integer")
         }
         matchVal['stock'] = stock
-        matchCount['stock'] = stock
+        // matchCount['stock'] = stock
     }
 
     if(available === "Available"){
         available = true
         matchVal['available'] = available
-        matchCount['available'] = available
+        // matchCount['available'] = available
     }else if(available === "Unavailable"){
         available = false
         matchVal['available'] = available
-        matchCount['available'] = available
+        // matchCount['available'] = available
     }
 
     matchObj['$match'] = matchVal;
-    console.log(matchObj)
-    arr.push(matchObj);
+    
+    arr.push(matchObj, {$sort: {name:1}});
 
     if(limit && page || name === ""){
         skip = page > 0 ? ((page - 1)*limit):0;
@@ -63,7 +63,7 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page, availa
                 ingredient_data: arr,
                 info_page: [
                     {
-                        $match: matchCount
+                        $match: matchVal
                     },
                     {
                         $group: {_id: null, count: {$sum: 1}}
@@ -184,6 +184,7 @@ const DeleteIngredient = async(parent, {data: {_id}}, ctx) => {
     const recipeCheck = await recipeModel.aggregate([
         {
             $match: {
+                status: "Active",
                 "ingredients.ingredient_id": mongoose.Types.ObjectId(_id)
             }
         }

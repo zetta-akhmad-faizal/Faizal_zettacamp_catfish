@@ -13,6 +13,29 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
     let matchObj = {};
     let skip;
 
+    let date_now = new Date();
+    let end_date_order = date_now.getDate();
+    let end_month_order = date_now.getMonth()+1;
+    let end_year_order = date_now.getFullYear();
+
+    if(end_date_order-7 < 0){
+        end_month_order -= 1
+    }
+    if(end_month_order < 1){
+        end_year_order -= 1
+    }
+    let start_order = new Date(`${end_month_order}/${end_date_order-7}/${end_year_order}, 00:00:00.000Z`);
+    let last_order = new Date(`${end_month_order}/${end_date_order+1}/${end_year_order}, 00:00:00.000Z`);
+
+    arr.push({
+        $match: {
+            order_date: {
+                $gte: start_order,
+                $lte: last_order
+            }
+        }
+    })
+
     let recipesLookup = {
         $lookup: {
             from: 'recipes',
@@ -33,7 +56,7 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
 
     matchVal["status"] = "Active";
 
-    if(limit && page){
+    if(limit && page || last_name_user === '' || recipe_name === '', order_status === '' || order_date === ''){
         skip = page > 0 ? ((page-1)*limit):0;
         arr.push(
             {
@@ -77,6 +100,12 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
         matchVal["order_status"] = order_status 
     }
 
+    if(!order_status){
+        matchVal["order_status"] = {
+            $ne: "Draft"
+        }
+    }
+
     if(ctx.user.role === "Admin"){
         if(typetr === "Draft"){
             matchVal["user_id"] = ctx.user._id
@@ -107,7 +136,7 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
             }
         }
     ]);
-    console.log(queriesGetAll[0].transaction_data);
+    console.log(arr);
     if(!queriesGetAll){
         throw new GraphQLError("No transaction show")
     }
