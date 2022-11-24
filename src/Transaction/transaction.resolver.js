@@ -1,8 +1,7 @@
 const { mongoose } = require('mongoose');
 const {transactionModel} = require('./transaction.model');
 const {validateStockIngredient} = require('./transaction.app');
-const { GraphQLError } = require('graphql');
-const { recipeModel } = require('../Receipe/recipe.model');
+const { GraphQLError} = require('graphql');
 
 //employer side
 const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date, typetr}}, ctx) => {
@@ -117,7 +116,7 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
     }
 
     matchObj["$match"] = matchVal
-    arr.push(matchObj)
+    arr.push(matchObj, {$sort: {order_date:-1}})
 
     let queriesGetAll = await transactionModel.aggregate([
         {
@@ -150,7 +149,7 @@ const GetOneTransaction = async(parent, {data: {_id}}, ctx) => {
         throw new GraphQLError("_id is null")
     }
 
-    const querieGetOne = await transactionModel.findOne({_id: mongoose.Types.ObjectId(_id), status: "Active"});
+    const querieGetOne = await transactionModel.findOne({_id: mongoose.Types.ObjectId(_id), status: "Active", order_status: "Draft"});
     if(!querieGetOne){
         throw new GraphQLError("No transaction show")
     }
@@ -177,16 +176,13 @@ const checkMenuTransactions = async(menu, ctx) => {
 }
 
 const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
+    console.log('test',menu);
     if(!menu){
         throw new GraphQLError("You must choice menu")
     }
 
     let type_transaction = "Draft";
     let checkMenu = await checkMenuTransactions(menu, ctx);
-
-    if(Number.isInteger(menu[0].amount) !== true){
-        throw new GraphQLError("Amount must be integer")
-    }
 
     if(checkMenu.menu.length === 0){
         console.log("error length")
@@ -227,6 +223,7 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
         return {message: `Transaction insert ${validate['order_status']}`, data: insertQueries}
     }
 }
+
 
 const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}}, ctx) => {
     let secParam = {}
@@ -288,6 +285,9 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
     }
     if(typetr){
         let validate = await validateStockIngredient(queryCheck.menu, typetr);
+        if(validate['order_status'] === 'Failed'){
+            throw new GraphQLError("Transaction is failed")
+        }
         secParam["$set"] = {
             order_status: validate['order_status']
         }

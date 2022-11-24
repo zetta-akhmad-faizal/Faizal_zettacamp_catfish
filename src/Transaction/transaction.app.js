@@ -1,7 +1,6 @@
 const {recipeModel}= require('../Receipe/recipe.index');
 const {ingredientModel} = require('../Ingredients/ingredient.index')
 const {mongoose} = require('mongoose');
-const { GraphQLError } = require('graphql');
 
 let validateStockIngredient = async(menu,type_transaction) => {
     let arr = [];
@@ -16,15 +15,12 @@ let validateStockIngredient = async(menu,type_transaction) => {
         totalPrice.push(arraysRecipe.amount * recipeQueries.price)
         for(let arraysIngredient of recipeQueries.ingredients){
             let objIngredient = {}
-            let stock_used = arraysIngredient.stock_used;
+            let stock_used = arraysIngredient.stock_used * arraysRecipe.amount;
             let ingredientQueries = await ingredientModel.findOne({_id: arraysIngredient.ingredient_id, available:true});
-            // if(!ingredientQueries){
-            //     throw new GraphQLError("Ingredient isn't enough")
-            // }
             console.log(`stock ingredient before updated: ${ingredientQueries.stock}`, `stock used ingredient ${stock_used}`, `ingredient name: ${ingredientQueries.name}`)
             if(stock_used <= ingredientQueries.stock){
                 objIngredient['ingredient_id'] = ingredientQueries._id;
-                objIngredient['stock_remain'] = ingredientQueries.stock;
+                objIngredient['stock_remain'] = ingredientQueries.stock - stock_used;
                 objIngredient['stock_used'] = stock_used;
 
                 arrIngredient.push(objIngredient);
@@ -45,13 +41,13 @@ let validateStockIngredient = async(menu,type_transaction) => {
             obj['order_status'] = 'Failed'
         }
     }
-    console.log(obj['total_price'])
     return obj
 }
 
 let reduceIngredientStock = async(arrs) => {
     let data;
     for(let arrays of arrs){
+        console.log('sr',arrays);
         data = await ingredientModel.findOneAndUpdate(
             {
                 _id:arrays.ingredient_id,

@@ -45,7 +45,7 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit, published}}
     }
 
     matchObj["$match"] = matchVal;
-    arr.push(matchObj, {$set: {recipe_name:1}});
+    arr.push(matchObj, {$sort: {recipe_name:1}});
 
     if(limit && page || recipe_name === ""){
         skip = page > 0 ? ((page - 1)*limit):0;
@@ -181,13 +181,16 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
     let containerParams2Set = {}
     let arr = [];
     let container;
+    let message;
     
     //edit publish
     if(published){
         if(published === "Publish"){
             published = true
+            message = "Recipe is published"
         }else if(published === "Unpublish"){
             published = false
+            message = "Recipe is unpublished"
         }
         containerParams2Set["$set"] = {
             published
@@ -206,13 +209,13 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
             containerParams2Set["$push"] = {
                 ingredients: [...arr]
             }
-            message = 'if container > 0'
+            message = 'Ingredient is added'
         }else{
             arr = [...ingredients]
             containerParams2Set["$push"] = {
                 ingredients: [...arr]
             }
-            message = 'if container else'
+            message = 'Ingredient is added'
         }
     }
 
@@ -233,6 +236,7 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
                 }
             }
         }
+        message="Ingredient is deleted"
     }
     console.log(ingredient_id)
     let updateQueries = await recipeModel.findOneAndUpdate(
@@ -242,7 +246,7 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
     )
     // console.log(containerParams2Set);
     // console.log(updateQueries)
-    return {message: "Recipe is updated", data: updateQueries}
+    return {message, data: updateQueries}
 }
 
 const DeleteRecipe = async(parent, {data: {_id}}, ctx) => {
