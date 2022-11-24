@@ -159,27 +159,13 @@ const ingredientsLooping = async( ingredients, _id ) => {
     return arr
 }
 
-const checkAvailableIngredients = async (_id, ingredients) => {
-    let arr = [];
-    for(let ingredient of ingredients){
-        let queries = await recipeModel.findOne({_id: mongoose.Types.ObjectId(_id), "ingredients.ingredient_id":mongoose.Types.ObjectId(ingredient.ingredient_id)});
-        if(queries){
-            arr.push({
-                ingredient_id: ingredient.ingredient_id,
-                stock_used: ingredient.stock_used
-            })
-        }
-    }
-    return arr;
-}
-
-const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,  published, ingredient_id}}, ctx) => {
+const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,  published, ingredient_id, link_recipe}}, ctx) => {
     if(!_id){
         throw new GraphQLError("_id is null");
     }
     let containerParams3 = {new: true}
     let containerParams2Set = {}
-    let arr = [];
+    let arr;
     let container;
     let message;
     
@@ -197,32 +183,33 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
         }
     }
     if(ingredients){
-        container = await checkAvailableIngredients(_id, ingredients)
-        if(container.length > 0){
-            for(indexOfContainer of container){
-                const index = ingredients.findIndex(el => el.ingredient_id === indexOfContainer.ingredient_id);
-                if (index >= 0) {
-                    ingredients.splice(index, 1);
+        let queriesGet = await recipeModel.findOne({_id: mongoose.Types.ObjectId(_id), status: "Active"});
+        for(let ingredient of queriesGet.ingredients){
+            arr = ingredients.filter(val => val.ingredient_id === ingredient.ingredient_id.toString());
+        }
+        if(typeof arr === "undefined"){
+            containerParams2Set["$push"] = {
+                ingredients: [...ingredients]
+            }
+            message = 'Ingredient is added'
+        }
+
+        if(typeof arr === "object"){
+            await recipeModel.findOneAndUpdate(
+                {_id: mongoose.Types.ObjectId(_id)},
+                {
+                    $set: {
+                        ingredients
+                    }
                 }
-            }
-            arr = [...ingredients]
-            containerParams2Set["$push"] = {
-                ingredients: [...arr]
-            }
-            message = 'Ingredient is added'
-        }else{
-            arr = [...ingredients]
-            containerParams2Set["$push"] = {
-                ingredients: [...arr]
-            }
-            message = 'Ingredient is added'
+            )
         }
     }
 
     //edit new ingredients to ingredient who has exist
-    if(recipe_name && price){
+    if(recipe_name || price || link_recipe){
         containerParams2Set["$set"] = {
-            recipe_name, price
+            recipe_name, price, link_recipe
         }
     }
 
