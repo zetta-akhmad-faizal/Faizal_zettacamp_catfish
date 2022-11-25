@@ -43,7 +43,7 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page, availa
 
     matchObj['$match'] = matchVal;
     
-    arr.push(matchObj, {$sort: {name:1}});
+    arr.push(matchObj, {$sort: {name:1, createdAt: -1}});
 
     if(limit && page || name === ""){
         skip = page > 0 ? ((page - 1)*limit):0;

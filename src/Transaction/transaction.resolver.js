@@ -2,6 +2,7 @@ const { mongoose } = require('mongoose');
 const {transactionModel} = require('./transaction.model');
 const {validateStockIngredient} = require('./transaction.app');
 const { GraphQLError} = require('graphql');
+const { recipeModel } = require('../Receipe/recipe.model');
 
 //employer side
 const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date, typetr}}, ctx) => {
@@ -110,14 +111,14 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
             matchVal["user_id"] = ctx.user._id
         }
     }else if(ctx.user.role === "User"){
-        if(typetr){
+        // if(typetr){
             matchVal["user_id"] = ctx.user._id
-        }
+        // }
     }
 
     matchObj["$match"] = matchVal
     arr.push(matchObj, {$sort: {order_date:-1}})
-
+    console.log(arr);
     let queriesGetAll = await transactionModel.aggregate([
         {
             $facet: {
@@ -224,6 +225,10 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
     }
 }
 
+let loadingTransaction = async(menu, typetr) => {
+    return await validateStockIngredient(menu, typetr);
+}
+
 
 const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}}, ctx) => {
     let secParam = {}
@@ -287,11 +292,13 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
         message = "Cart is updated"
     }
     if(typetr){
-        let validate = await validateStockIngredient(queryCheck.menu, typetr);
+        let validate = await new Promise((resolve) => setTimeout(() => resolve(loadingTransaction(queryCheck.menu, typetr)), 5000));
+        console.log(validate);
         if(validate['order_status'] === 'Failed'){
             let txt = JSON.stringify(validate['reason'])
             throw new GraphQLError(`Transaction is Failed ${txt} aren't enough`)
         }else{
+            console.log('test validate',validate);
             message = "Transaction is success"
         }
         secParam["$set"] = {
@@ -331,11 +338,57 @@ const DeleteTransaction = async(parent, {data:{_id}}, ctx) => {
     return {message: "Transaction is deleted", data: queriesDelete}
 }
 
+const MenuOffers = async(parent, args, ctx) => {
+    let menuHighlightMessage;
+    let specialOfferMessage;
+    let arr = [];
+    let afterConvert = []
+    let menuHighlightQueries = await recipeModel.aggregate([
+        {
+            $match: {
+                discount: {
+                    $gt: 0
+                },
+                status: "Active"
+            }
+        }
+    ])
+    let specialOfferQueries = await transactionModel.find();
+
+    if(!specialOfferMessage){
+        specialOfferMessage = "Special Offer isn't availability"
+    }else{
+    specialOfferMessage = "Special Offer isn availability"
+    }
+
+    if(!menuHighlightQueries){
+        menuHighlightMessage= "Menu Highlight isn't availability"
+    }else{
+        menuHighlightMessage= "Menu Highlight is availability"
+    }
+
+    for(let specialOffer of specialOfferQueries){
+        for(let menuOfSpecial of specialOffer.menu){
+            arr.push(menuOfSpecial.recipe_id.toString())
+        }
+    }
+
+    arr = arr.filter((item, index) => arr.indexOf(item) === index)
+
+    for(let indexOfArr of arr){
+        afterConvert.push(mongoose.Types.ObjectId(indexOfArr))
+    }
+    
+    let recipeQueries = await recipeModel.find({_id: {$in: afterConvert}})
+    console.log(recipeQueries);
+    return {message: `${menuHighlightMessage} and ${specialOfferMessage}`, menuHighlight: menuHighlightQueries, specialOffer: recipeQueries}
+}
 
 module.exports = {
     Query:{
         GetAllTransaction,
         GetOneTransaction,
+        MenuOffers
     },
     Mutation: {
         CreateTransaction,

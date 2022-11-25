@@ -7,6 +7,7 @@ let recipeTypeDefs = gql`
     }
     input recipeParams{
         _id: ID
+        discount: Int
         recipe_name:String
         ingredients: [recipeIngredientsParams]
         status: statusRecipes
@@ -31,6 +32,7 @@ let recipeTypeDefs = gql`
     }
     type recipeScheme{
         _id: ID
+        discount: Int
         recipe_name: String
         ingredients: [recipeIngredientsField]
         status: String,

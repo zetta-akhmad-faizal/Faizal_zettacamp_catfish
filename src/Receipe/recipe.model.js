@@ -4,6 +4,7 @@ let recipeScheme = new Schema({
     recipe_name: {type:String},
     link_recipe: {type:String},
     price:{type:Number},
+    discount: {type: Number},
     published: {type:Boolean, default: false},
     ingredients: [
         {

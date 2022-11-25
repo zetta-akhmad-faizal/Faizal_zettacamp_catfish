@@ -57,10 +57,16 @@ let transactionTypeDefs = gql`
         message: String,
         data: transactionScheme,
     }
+    type responseMenuOffer{
+        message: String
+        menuHighlight: [recipeScheme]
+        specialOffer: [recipeScheme]
+    }
     type Query{
         GetAllTransaction(data: transactionParams): responseAtTransactionAll 
         GetOneTransaction(data: transactionParams): responseAtTransaction
         TransactionHistory: [transactionScheme]
+        MenuOffers: responseMenuOffer
     }
     type Mutation{
         CreateTransaction(data: transactionParams): responseAtTransaction,

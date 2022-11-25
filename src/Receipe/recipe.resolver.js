@@ -45,7 +45,7 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit, published}}
     }
 
     matchObj["$match"] = matchVal;
-    arr.push(matchObj, {$sort: {recipe_name:1}});
+    arr.push(matchObj, {$sort: {recipe_name:1, createdAt: -1}});
 
     if(limit && page || recipe_name === ""){
         skip = page > 0 ? ((page - 1)*limit):0;
@@ -81,7 +81,7 @@ const GetAllrecipes = async(parent, {data:{recipe_name, page, limit, published}}
     return {message: "Recipes is listed", data: queriesGetAll[0]}
 }
 
-const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe, price}}, ctx) => {
+const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe, price, discount}}, ctx) => {
     if(!recipe_name || !ingredients || ingredients.length === 0){
        throw new GraphQLError("Make a sure all fields are filled")
     }
@@ -95,6 +95,11 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe
         throw new GraphQLError("Stock must be integer and must be filled")
     }else if(Number.isInteger(price) !== true){
         throw new GraphQLError("Stock must be integer")
+    }
+    if(discount){
+        price = price - (price*(discount/100))
+    }else{
+        discount = 0
     }
 
     let container; let obj = {};
@@ -115,7 +120,7 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe
     link_recipe = matcher ? 'https://drive.google.com/uc?export=view&id=' + matcher[1] : link_recipe
 
     //save to db
-    let formInput = {recipe_name, ingredients, link_recipe, price};
+    let formInput = {recipe_name, ingredients, link_recipe, price, discount};
     const queriesInsert = new recipeModel(formInput);
     await queriesInsert.save();
 
@@ -167,7 +172,7 @@ const ingredientsLooping = async( ingredients, _id ) => {
     return arr
 }
 
-const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,  published, ingredient_id, link_recipe}}, ctx) => {
+const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,  published, ingredient_id, link_recipe, discount}}, ctx) => {
     if(!_id){
         throw new GraphQLError("_id is null");
     }
@@ -213,12 +218,18 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
         }
     }
 
+    if(discount){
+        price = price - (price*(discount/100))
+    }else{
+        discount = 0
+    }
+
     //edit new ingredients to ingredient who has exist
     if(recipe_name || price || link_recipe){
         let matcher = link_recipe.match( /d\/([A-Za-z0-9\-]+)/ ) ;
         link_recipe = matcher ? 'https://drive.google.com/uc?export=view&id=' + matcher[1] : link_recipe
         containerParams2Set["$set"] = {
-            recipe_name, price, link_recipe
+            recipe_name, price, link_recipe, discount
         }
         message="Recipe is updated"
     }
