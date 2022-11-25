@@ -4,6 +4,7 @@ const {mongoose} = require('mongoose');
 
 let validateStockIngredient = async(menu,type_transaction) => {
     let arr = [];
+    let arrReason = []
     let totalPrice = []
     let obj = {};
     let arrIngredient = [];
@@ -22,14 +23,16 @@ let validateStockIngredient = async(menu,type_transaction) => {
                 objIngredient['ingredient_id'] = ingredientQueries._id;
                 objIngredient['stock_remain'] = ingredientQueries.stock - stock_used;
                 objIngredient['stock_used'] = stock_used;
-
                 arrIngredient.push(objIngredient);
                 arr.push(true);
             }else{
+                arrReason.push(ingredientQueries.name)
+                console.log('ingredient abis',ingredientQueries.name);
                 arr.push(false)
             }
         }
     }
+    obj['reason'] = arrReason
     obj['total_price'] = totalPrice.reduce((accumVariable, curValue) => accumVariable + curValue);
     if(type_transaction === "Draft"){
         obj['order_status'] = "Draft"

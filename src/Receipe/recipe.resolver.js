@@ -86,6 +86,10 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe
        throw new GraphQLError("Make a sure all fields are filled")
     }
     // console.log(recipe_name, ingredients);
+    let checkMenu = await recipeModel.findOne({recipe_name: new RegExp(recipe_name, 'i'), status: "Active"})
+    if(checkMenu){
+        throw new GraphQLError("Recipes has been available")
+    }
 
     if(!price){
         throw new GraphQLError("Stock must be integer and must be filled")
@@ -106,6 +110,10 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe
         obj[val.ingredient_id] = val
     })
     ingredients = container.map(id => obj[id])
+
+    let matcher = link_recipe.match( /d\/([A-Za-z0-9\-]+)/ ) ;
+    link_recipe = matcher ? 'https://drive.google.com/uc?export=view&id=' + matcher[1] : link_recipe
+
     //save to db
     let formInput = {recipe_name, ingredients, link_recipe, price};
     const queriesInsert = new recipeModel(formInput);
@@ -166,7 +174,6 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
     let containerParams3 = {new: true}
     let containerParams2Set = {}
     let arr;
-    let container;
     let message;
     
     //edit publish
@@ -208,9 +215,12 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
 
     //edit new ingredients to ingredient who has exist
     if(recipe_name || price || link_recipe){
+        let matcher = link_recipe.match( /d\/([A-Za-z0-9\-]+)/ ) ;
+        link_recipe = matcher ? 'https://drive.google.com/uc?export=view&id=' + matcher[1] : link_recipe
         containerParams2Set["$set"] = {
             recipe_name, price, link_recipe
         }
+        message="Recipe is updated"
     }
 
     //remove the ingredient who has exist
@@ -254,7 +264,7 @@ const DeleteRecipe = async(parent, {data: {_id}}, ctx) => {
         throw new GraphQLError("Recipe isn't found")
     }
 
-    return {message: "Recipe is found", data: queriesDelete}
+    return {message: "Recipe is Deleted", data: queriesDelete}
 }
 
 const recipeLoaders = async(parent, args, ctx) => {

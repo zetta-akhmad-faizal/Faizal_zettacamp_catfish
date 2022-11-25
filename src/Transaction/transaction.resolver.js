@@ -228,6 +228,7 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
 const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}}, ctx) => {
     let secParam = {}
     let price_var = 0
+    let message;
     let thirdParam = {new:true}
 
     let queryCheck = await transactionModel.findOne({user_id: ctx.user._id, order_status: "Draft", status: "Active"}).populate("menu.recipe_id");
@@ -247,6 +248,7 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
                 recipe_id: mongoose.Types.ObjectId(recipe_id)
             }
         }
+        message = "Cart is updated"
     }
 
     if(recipe_id && amount && note){
@@ -282,11 +284,15 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
             }
         }
         thirdParam["arrayFilters"] = [{"ele.recipe_id": mongoose.Types.ObjectId(recipe_id)}]
+        message = "Cart is updated"
     }
     if(typetr){
         let validate = await validateStockIngredient(queryCheck.menu, typetr);
         if(validate['order_status'] === 'Failed'){
-            throw new GraphQLError("Transaction is failed")
+            let txt = JSON.stringify(validate['reason'])
+            throw new GraphQLError(`Transaction is Failed ${txt} aren't enough`)
+        }else{
+            message = "Transaction is success"
         }
         secParam["$set"] = {
             order_status: validate['order_status']
@@ -299,7 +305,7 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
         thirdParam
     )
 
-    return {message: "Transaction is updated", data:queryUpdate}
+    return {message, data:queryUpdate}
 }
 
 const DeleteTransaction = async(parent, {data:{_id}}, ctx) => {

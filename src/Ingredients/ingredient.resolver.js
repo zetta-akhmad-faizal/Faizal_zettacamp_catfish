@@ -134,46 +134,58 @@ const GetOneIngredient = async(parent, {data:{_id}}, ctx) => {
 }
 
 const UpdateIngredient = async(parent, {data:{_id, name, stock}}, ctx) => {
+    let message;
+
     if(!_id){
         throw new GraphQLError("_id is null")
     }
 
     const recipeCheck = await recipeModel.aggregate([
         {
+            $lookup:{
+                from: 'ingredients',
+                localField: 'ingredients.ingredient_id',
+                foreignField: '_id',
+                as: 'anyIngredient'
+            }
+        },
+        {
             $match: {
-                "ingredients.ingredient_id": mongoose.Types.ObjectId(_id)
+                'anyIngredient.name': name
             }
         }
     ])
 
     let available;
     let obj = {}
-
+    
     if(stock === 0){
         available = false
     }else{
         available = true
     }
 
-    if(recipeCheck.length !== 0){
+    if(recipeCheck.length > 0){
         obj["$set"] = {
             stock, available
         }
+        message = "Stock and availability changes"
     }else{
         obj["$set"] = {
             stock, name, available
         }
+        message  = "Name, stock and availability changes"
     }
     const queriesUpdate = await ingredientModel.findOneAndUpdate(
             {_id: mongoose.Types.ObjectId(_id), status: "Active"},
             obj,
             {new: true}
     )
-    // console.log(obj)
+
     if(!queriesUpdate){
         throw new GraphQLError("Ingredient isn't updated")
     }
-    return {message: "Ingredient is updated", data: queriesUpdate}
+    return {message, data: queriesUpdate}
 }
 
 const DeleteIngredient = async(parent, {data: {_id}}, ctx) => {
