@@ -3,11 +3,11 @@ const {GraphQLError} = require('graphql')
 const {mongoose} = require('mongoose');
 const { recipeModel } = require('../Receipe/recipe.index');
 
-const GetAllIngredients = async(parent, {data: {name, stock, limit, page, available}}, ctx) => {
+const GetAllIngredients = async(parent, {data: {name, stock, limit, page, available, name_sort}}, ctx) => {
     let queriesGetAll; 
     let arr = [];
     let matchVal = {};
-    // let matchCount = {}
+    let sorter = {}
     let matchObj = {};
     let skip
 
@@ -41,9 +41,15 @@ const GetAllIngredients = async(parent, {data: {name, stock, limit, page, availa
         // matchCount['available'] = available
     }
 
+    if(name_sort){
+        sorter = {$sort: {name:name_sort, createdAt: -1}}
+    }else{
+        sorter = {$sort: {createdAt: -1}}
+    }
+
     matchObj['$match'] = matchVal;
     
-    arr.push(matchObj, {$sort: {name:1, createdAt: -1}});
+    arr.push(matchObj, sorter);
 
     if(limit && page || name === ""){
         skip = page > 0 ? ((page - 1)*limit):0;

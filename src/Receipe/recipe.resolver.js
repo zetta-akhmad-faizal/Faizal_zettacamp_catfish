@@ -96,9 +96,7 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe
     }else if(Number.isInteger(price) !== true){
         throw new GraphQLError("Stock must be integer")
     }
-    if(discount){
-        price = price - (price*(discount/100))
-    }else{
+    if(!discount){
         discount = 0
     }
 
@@ -218,9 +216,7 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
         }
     }
 
-    if(discount){
-        price = price - (price*(discount/100))
-    }else{
+    if(!discount){
         discount = 0
     }
 

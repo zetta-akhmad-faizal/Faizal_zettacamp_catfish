@@ -13,7 +13,7 @@ let validateStockIngredient = async(menu,type_transaction) => {
         let recipeQueries = await recipeModel.findOne({
             _id: mongoose.Types.ObjectId(arraysRecipe.recipe_id)
         })
-        totalPrice.push(arraysRecipe.amount * recipeQueries.price)
+        totalPrice.push(arraysRecipe.amount * (recipeQueries.price - (recipeQueries.price * (recipeQueries.discount/100))))
         for(let arraysIngredient of recipeQueries.ingredients){
             let objIngredient = {}
             let stock_used = arraysIngredient.stock_used * arraysRecipe.amount;
@@ -33,6 +33,7 @@ let validateStockIngredient = async(menu,type_transaction) => {
         }
     }
     obj['reason'] = arrReason
+    console.log(totalPrice);
     obj['total_price'] = totalPrice.reduce((accumVariable, curValue) => accumVariable + curValue);
     if(type_transaction === "Draft"){
         obj['order_status'] = "Draft"

@@ -3,15 +3,31 @@ const {transactionModel} = require('./transaction.model');
 const {validateStockIngredient} = require('./transaction.app');
 const { GraphQLError} = require('graphql');
 const { recipeModel } = require('../Receipe/recipe.model');
+const cron = require('node-cron');
 
 //employer side
 const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date, typetr}}, ctx) => {
     let arr = [];
     let endDate; let startDate;
+    let getQueries = await transactionModel.findOne({status: "Active", user_id: ctx.user._id, order_status:"Draft"})
+    if(getQueries){
+        let schedule = new Date(getQueries.order_date);
+        cron.schedule(`${schedule.getSeconds()} ${schedule.getMinutes() + 15} * * * *`, async() => {
+            await transactionModel.findOneAndUpdate(
+                {status: "Active", user_id: ctx.user._id, order_status: "Draft"},
+                {
+                    $set: {
+                        status: "Deleted"
+                    }
+                }
+            )
+            // throw new GraphQLError("Checkout time is given for 15 minutes")
+        })  
+    }
 
     let matchVal = {};
     let matchObj = {};
-    let skip;
+    let skip
 
     let date_now = new Date();
     let end_date_order = date_now.getDate();
@@ -27,14 +43,10 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
     let start_order = new Date(`${end_month_order}/${end_date_order-7}/${end_year_order}, 00:00:00.000Z`);
     let last_order = new Date(`${end_month_order}/${end_date_order+1}/${end_year_order}, 00:00:00.000Z`);
 
-    arr.push({
-        $match: {
-            order_date: {
-                $gte: start_order,
-                $lte: last_order
-            }
-        }
-    })
+    matchVal['order_date'] ={
+        $gte: start_order,
+        $lte: last_order
+    }
 
     let recipesLookup = {
         $lookup: {
@@ -55,18 +67,6 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
     }
 
     matchVal["status"] = "Active";
-
-    if(limit && page || last_name_user === '' || recipe_name === '', order_status === '' || order_date === ''){
-        skip = page > 0 ? ((page-1)*limit):0;
-        arr.push(
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit,
-            }
-        )
-    }
 
     if(last_name_user){
         last_name_user = new RegExp(last_name_user, 'i');
@@ -107,27 +107,46 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
     }
 
     if(ctx.user.role === "Admin"){
-        if(typetr === "Draft"){
+        skip = page > 0 ? (page-1)*limit:0;
+        if(typetr === "Draft" ){
             matchVal["user_id"] = ctx.user._id
+            matchVal["order_status"] = "Draft"
+        }else{
+            matchVal["order_status"] = {$ne: "Draft"}
         }
     }else if(ctx.user.role === "User"){
-        // if(typetr){
+        skip = page > 0 ? (page-1)*limit:0;
+        if(typetr === "Draft"){
             matchVal["user_id"] = ctx.user._id
-        // }
+            matchVal["order_status"] = "Draft"
+        }else{
+            matchVal["user_id"] = ctx.user._id
+            matchVal["order_status"] = {$ne: "Draft"}
+        }
     }
 
     matchObj["$match"] = matchVal
     arr.push(matchObj, {$sort: {order_date:-1}})
-    console.log(arr);
+
+    if(limit && page || last_name_user === '' || recipe_name === '' || order_status === '' || order_date === ''){
+        skip = page > 0 ? ((page-1)*limit):0;
+        arr.push(
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit,
+            }
+        )
+    }
+    
     let queriesGetAll = await transactionModel.aggregate([
         {
             $facet: {
                 transaction_data: arr,
                 info_page: [
                     {
-                        $match: {
-                            status: "Active"
-                        }
+                        $match: matchVal
                     },
                     {
                         $group: {_id: null, count: {$sum: 1}}
@@ -136,7 +155,6 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
             }
         }
     ]);
-    console.log(arr);
     if(!queriesGetAll){
         throw new GraphQLError("No transaction show")
     }
@@ -158,8 +176,37 @@ const GetOneTransaction = async(parent, {data: {_id}}, ctx) => {
     return {message: "Transaction is available", data: querieGetOne}
 }
 
+const checkLimitOrder = async(recipe_id) => {
+    let validateArr = [];
+    let arrs = [];
+
+    let queryRecipe = await recipeModel.find({status: "Active"}).populate("ingredients.ingredient_id");
+    for(let arrayOfRecipe of queryRecipe){
+        for(let indexOfArray of arrayOfRecipe.ingredients){
+            let objRecipe = {}
+            objRecipe.recipeId = arrayOfRecipe._id
+            objRecipe.ingredientId = indexOfArray.ingredient_id._id 
+            objRecipe.stock_used = indexOfArray.stock_used
+            objRecipe.stock_ingredient = indexOfArray.ingredient_id.stock
+            validateArr.push(objRecipe)
+        }
+    }
+    
+    for(let val of validateArr){
+        if(val.recipeId.toString() === recipe_id){
+            console.log(val);
+            arrs.push(
+                Math.ceil(val.stock_ingredient/val.stock_used)
+            )
+        }
+    }
+
+    let getValueMin = Math.min(...arrs);
+    return getValueMin
+}
+
 const checkMenuTransactions = async(menu, ctx) => {
-    let obj = {}
+    let obj = {};
     let queryCheck = await transactionModel.findOne({user_id:ctx.user._id, order_status: "Draft", status: "Active"});
     
     if(queryCheck){
@@ -171,13 +218,12 @@ const checkMenuTransactions = async(menu, ctx) => {
         }
         obj['price_before'] = queryCheck.total_price
     }
-    
+
     obj['menu'] = menu 
     return obj
 }
 
 const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
-    console.log('test',menu);
     if(!menu){
         throw new GraphQLError("You must choice menu")
     }
@@ -190,13 +236,19 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
         throw new GraphQLError("Please clearly your cart")
     }
 
+    let getValueMin = await checkLimitOrder(checkMenu.menu[0].recipe_id)
+
+    if(getValueMin < checkMenu.menu[0].amount){
+        throw new GraphQLError(`Limit ingredients. Menu can only be ordered ${getValueMin}`)
+    }
+
     let validate = await validateStockIngredient(checkMenu.menu, type_transaction);
 
     let total_price = {}
     if(checkMenu.price_before){
         total_price['total_price'] = validate['total_price'] + checkMenu.price_before
     }
-    console.log(total_price);
+
     let findAndUpdate = await transactionModel.findOneAndUpdate(
         {user_id: ctx.user._id, status: "Active", order_status: "Draft"},
         {
@@ -236,6 +288,12 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
     let message;
     let thirdParam = {new:true}
 
+    let getValueMin = await checkLimitOrder(recipe_id);
+
+    if(getValueMin < amount){
+        throw new GraphQLError(`Limit ingredients. Menu can only be ordered ${getValueMin}`)
+    }
+
     let queryCheck = await transactionModel.findOne({user_id: ctx.user._id, order_status: "Draft", status: "Active"}).populate("menu.recipe_id");
     queryCheck.menu.map(val => {
         if(val.recipe_id._id.toString() === recipe_id){
@@ -243,8 +301,7 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
         }
     });
 
-    // console.log('queryche',queryCheck.menu);
-    if(recipe_id && amount && !note){
+    if(recipe_id && amount && note === undefined){
         secParam["$set"] = {
             total_price: queryCheck.total_price - (price_var*amount)
         }
@@ -256,7 +313,7 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
         message = "Cart is updated"
     }
 
-    if(recipe_id && amount && note){
+    if(recipe_id && amount && note || note === ""){
         let arr = [];
 
         for(let indexOfMenu of queryCheck.menu){
@@ -338,11 +395,24 @@ const DeleteTransaction = async(parent, {data:{_id}}, ctx) => {
     return {message: "Transaction is deleted", data: queriesDelete}
 }
 
+let randomArray = (arrays) => {
+    let arrSet = new Set(arrays);
+    let [...arrPlaylist] = arrSet;
+    let arr = [];
+    while(arrPlaylist.length !== 0){
+        let randomIndex = Math.floor(Math.random() * arrPlaylist.length);
+        arr.push(arrPlaylist[randomIndex]);
+        arrPlaylist.splice(randomIndex, 1);
+    }
+    arrPlaylist = arr;
+    return arrPlaylist;
+}
+
 const MenuOffers = async(parent, args, ctx) => {
     let menuHighlightMessage;
     let specialOfferMessage;
     let arr = [];
-    let afterConvert = []
+
     let menuHighlightQueries = await recipeModel.aggregate([
         {
             $match: {
@@ -351,14 +421,22 @@ const MenuOffers = async(parent, args, ctx) => {
                 },
                 status: "Active"
             }
+        },
+        {
+            $sort: {
+                discount: -1
+            }
+        },
+        {
+            $limit: 3
         }
     ])
     let specialOfferQueries = await transactionModel.find();
-
-    if(!specialOfferMessage){
+    
+    if(!specialOfferQueries){
         specialOfferMessage = "Special Offer isn't availability"
     }else{
-    specialOfferMessage = "Special Offer isn availability"
+        specialOfferMessage = "Special Offer is availability"
     }
 
     if(!menuHighlightQueries){
@@ -369,18 +447,24 @@ const MenuOffers = async(parent, args, ctx) => {
 
     for(let specialOffer of specialOfferQueries){
         for(let menuOfSpecial of specialOffer.menu){
-            arr.push(menuOfSpecial.recipe_id.toString())
+            arr.push(menuOfSpecial.recipe_id)
         }
     }
 
-    arr = arr.filter((item, index) => arr.indexOf(item) === index)
-
-    for(let indexOfArr of arr){
-        afterConvert.push(mongoose.Types.ObjectId(indexOfArr))
-    }
+    let randomArrays = randomArray(arr)
     
-    let recipeQueries = await recipeModel.find({_id: {$in: afterConvert}})
-    console.log(recipeQueries);
+    let recipeQueries = await recipeModel.aggregate([
+        {
+            $match: {_id: {$in: randomArrays}}
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
+        }
+    ])
+    console.log('mh',menuHighlightQueries);
+    console.log('so', recipeQueries)
     return {message: `${menuHighlightMessage} and ${specialOfferMessage}`, menuHighlight: menuHighlightQueries, specialOffer: recipeQueries}
 }
 
