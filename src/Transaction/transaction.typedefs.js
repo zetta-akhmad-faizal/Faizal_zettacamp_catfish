@@ -46,16 +46,16 @@ let transactionTypeDefs = gql`
         total_price: Int
     }
     type newTransactionPaginate{
-        transaction_data: [transactionScheme],
+        transaction_data: [transactionScheme]
         info_page: [newSchemeCount]
     }
     type responseAtTransactionAll{
-        message: String,
-        data: newTransactionPaginate,
+        message: String
+        data: newTransactionPaginate
     }
     type responseAtTransaction{
-        message: String,
-        data: transactionScheme,
+        message: String
+        data: transactionScheme
     }
     type responseMenuOffer{
         message: String
@@ -69,9 +69,9 @@ let transactionTypeDefs = gql`
         MenuOffers: responseMenuOffer
     }
     type Mutation{
-        CreateTransaction(data: transactionParams): responseAtTransaction,
-        DeleteTransaction(data: transactionParams): responseAtTransaction,
-        UpdateTransaction(data: transactionParams): responseAtTransaction,
+        CreateTransaction(data: transactionParams): responseAtTransaction
+        DeleteTransaction(data: transactionParams): responseAtTransaction
+        UpdateTransaction(data: transactionParams): responseAtTransaction
     }
 `
 

@@ -26,14 +26,12 @@ let validateStockIngredient = async(menu,type_transaction) => {
                 arrIngredient.push(objIngredient);
                 arr.push(true);
             }else{
-                arrReason.push(ingredientQueries.name)
-                console.log('ingredient abis',ingredientQueries.name);
+                arrReason.push(recipeQueries.recipe_name)
                 arr.push(false)
             }
         }
     }
     obj['reason'] = arrReason
-    console.log(totalPrice);
     obj['total_price'] = totalPrice.reduce((accumVariable, curValue) => accumVariable + curValue);
     if(type_transaction === "Draft"){
         obj['order_status'] = "Draft"

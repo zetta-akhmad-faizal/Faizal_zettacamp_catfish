@@ -5,25 +5,33 @@ const { GraphQLError} = require('graphql');
 const { recipeModel } = require('../Receipe/recipe.model');
 const cron = require('node-cron');
 
-//employer side
-const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date, typetr}}, ctx) => {
-    let arr = [];
-    let endDate; let startDate;
-    let getQueries = await transactionModel.findOne({status: "Active", user_id: ctx.user._id, order_status:"Draft"})
+const TriggerCronJob = async(userId) => {
+    let getQueries = await transactionModel.findOne({status: "Active", user_id: userId, order_status: "Draft"})
     if(getQueries){
         let schedule = new Date(getQueries.order_date);
-        cron.schedule(`${schedule.getSeconds()} ${schedule.getMinutes() + 15} * * * *`, async() => {
-            await transactionModel.findOneAndUpdate(
-                {status: "Active", user_id: ctx.user._id, order_status: "Draft"},
+        let minute = schedule.getMinutes() + 20
+        if(minute > 59){
+            minute -= 59;
+        }
+        return cron.schedule(`${schedule.getSeconds()} ${minute} * * * *`, async() => {
+            return await transactionModel.findOneAndUpdate(
+                {status: "Active", user_id: userId, order_status: "Draft"},
                 {
                     $set: {
-                        status: "Deleted"
+                        order_status: "Failed"
                     }
                 }
             )
-            // throw new GraphQLError("Checkout time is given for 15 minutes")
         })  
     }
+}
+
+//employer side
+const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recipe_name, order_status, order_date, typetr}}, ctx) => {
+    await TriggerCronJob(ctx.user._id)
+    
+    let arr = [];
+    let endDate; let startDate;
 
     let matchVal = {};
     let matchObj = {};
