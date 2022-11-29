@@ -114,8 +114,13 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe
     })
     ingredients = container.map(id => obj[id])
 
-    let matcher = link_recipe.match( /d\/([A-Za-z0-9\-]+)/ ) ;
-    link_recipe = matcher ? 'https://drive.google.com/uc?export=view&id=' + matcher[1] : link_recipe
+    let matcherDrive = link_recipe.match(/drive/)
+    if(matcherDrive){
+        let matcher = link_recipe.match( /d\/([A-Za-z0-9\-]+)/ )
+        if(matcher){
+            link_recipe = 'https://drive.google.com/uc?export=view&id=' + matcher[1]
+        }
+    }
 
     //save to db
     let formInput = {recipe_name, ingredients, link_recipe, price, discount};
@@ -193,27 +198,31 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
         }
     }
     if(ingredients){
-        let queriesGet = await recipeModel.findOne({_id: mongoose.Types.ObjectId(_id), status: "Active"});
-        for(let ingredient of queriesGet.ingredients){
-            arr = ingredients.filter(val => val.ingredient_id === ingredient.ingredient_id.toString());
-        }
-        if(typeof arr === "undefined"){
-            containerParams2Set["$push"] = {
-                ingredients: [...ingredients]
-            }
-            message = 'Ingredient is added'
-        }
-
-        if(typeof arr === "object"){
-            await recipeModel.findOneAndUpdate(
-                {_id: mongoose.Types.ObjectId(_id)},
-                {
-                    $set: {
-                        ingredients
-                    }
+        let mymap = new Map();
+ 
+        ingredients = ingredients.filter(el => {
+            const val = mymap.get(el.ingredient_id);
+            if(val) {
+                if(el.stock_used < val) {
+                    mymap.delete(el.name);
+                    mymap.set(el.ingredient_id, el.stock_used);
+                    return true;
+                } else {
+                    return false;
                 }
-            )
-        }
+            }
+            mymap.set(el.ingredient_id, el.stock_used);
+            return true;
+        });
+
+        await recipeModel.findOneAndUpdate(
+            {_id: mongoose.Types.ObjectId(_id)},
+            {
+                $set: {
+                    ingredients: [...ingredients]
+                }
+            }
+        )
     }
 
     if(!discount){
@@ -222,8 +231,13 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
 
     //edit new ingredients to ingredient who has exist
     if(recipe_name || price || link_recipe){
-        let matcher = link_recipe.match( /d\/([A-Za-z0-9\-]+)/ ) ;
-        link_recipe = matcher ? 'https://drive.google.com/uc?export=view&id=' + matcher[1] : link_recipe
+        let matcherDrive = link_recipe.match(/drive/)
+        if(matcherDrive){
+            let matcher = link_recipe.match( /d\/([A-Za-z0-9\-]+)/ )
+            if(matcher){
+                link_recipe = 'https://drive.google.com/uc?export=view&id=' + matcher[1]
+            }
+        }
         containerParams2Set["$set"] = {
             recipe_name, price, link_recipe, discount
         }
@@ -252,6 +266,7 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
     // console.log(updateQueries)
     return {message, data: updateQueries}
 }
+
 
 const DeleteRecipe = async(parent, {data: {_id}}, ctx) => {
     if(!_id){
