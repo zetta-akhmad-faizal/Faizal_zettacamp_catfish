@@ -1,5 +1,11 @@
 const {Schema, mongoose} = require('mongoose');
 
+const codeVerification = new Schema({
+    user_id: {type:mongoose.Schema.Types.ObjectId, ref: 'users'},
+    code: {type: String},
+    isUsed: {type: Boolean, default: false}
+})
+
 const userSchema = new Schema({
     first_name: {type: String, required:true},
     last_name: {type:String, required:true},
@@ -22,7 +28,8 @@ const userSchema = new Schema({
             slug: {type:String},
             view: {type:Boolean}
         }
-    ]
+    ],
+    credite: {type: Number, default: 200000}
 })
 
 userSchema.set('timestamps', true);
@@ -34,5 +41,6 @@ userSchema.virtual('transactions', {
 })
 
 const userModel = mongoose.model('users', userSchema);
+const verificationModel = mongoose.model('verification', codeVerification)
 
-module.exports = {userModel}
+module.exports = {userModel, verificationModel}

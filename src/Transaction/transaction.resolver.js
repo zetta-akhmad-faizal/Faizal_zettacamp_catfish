@@ -4,6 +4,7 @@ const {validateStockIngredient} = require('./transaction.app');
 const { GraphQLError} = require('graphql');
 const { recipeModel } = require('../Receipe/recipe.model');
 const cron = require('node-cron');
+const { userModel } = require('../User/user.model');
 
 const TriggerCronJob = async(userId) => {
     let getQueries = await transactionModel.findOne({status: "Active", user_id: userId, order_status: "Draft"})
@@ -38,18 +39,28 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
     let skip
 
     let date_now = new Date();
-    let end_date_order = date_now.getDate();
+    let end_date_order = date_now.getDate() - 7;
     let end_month_order = date_now.getMonth()+1;
     let end_year_order = date_now.getFullYear();
 
-    if(end_date_order-7 < 0){
+    let last_order_date = date_now.getDate() + 1;
+    let last_order_month = date_now.getMonth();
+    let last_order_year = date_now.getFullYear();
+    
+    if(last_order_date > 29){
+        last_order_month += 1
+    }
+    if(last_order_month > 12){
+        last_order_year += 1
+    }
+    if(end_date_order < 0){
         end_month_order -= 1
     }
     if(end_month_order < 1){
         end_year_order -= 1
     }
-    let start_order = new Date(`${end_month_order}/${end_date_order-7}/${end_year_order}, 00:00:00.000Z`);
-    let last_order = new Date(`${end_month_order}/${end_date_order+1}/${end_year_order}, 00:00:00.000Z`);
+    let start_order = new Date(`${end_month_order}/${end_date_order}/${end_year_order}, 00:00:00.000Z`);
+    let last_order = new Date(`${last_order_month}/${last_order_date}/${last_order_year}, 00:00:00.000Z`);
 
     matchVal['order_date'] ={
         $gte: start_order,
@@ -250,7 +261,11 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
         throw new GraphQLError(`Limit ingredients. Menu can only be ordered ${getValueMin}`)
     }
 
-    let validate = await validateStockIngredient(checkMenu.menu, type_transaction);
+    let validate = await validateStockIngredient(checkMenu.menu, type_transaction, ctx);
+    
+    if(validate['order_status'] === "Failed"){
+        throw new GraphQLError(validate['reason'])
+    }
 
     let total_price = {}
     if(checkMenu.price_before){
@@ -285,8 +300,8 @@ const CreateTransaction = async(parent, {data:{menu}}, ctx) => {
     }
 }
 
-let loadingTransaction = async(menu, typetr) => {
-    return await validateStockIngredient(menu, typetr);
+let loadingTransaction = async(menu, typetr, ctx) => {
+    return await validateStockIngredient(menu, typetr, ctx);
 }
 
 
@@ -357,13 +372,13 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
         message = "Cart is updated"
     }
     if(typetr){
-        let validate = await new Promise((resolve) => setTimeout(() => resolve(loadingTransaction(queryCheck.menu, typetr)), 5000));
+        let validate = await new Promise((resolve) => setTimeout(() => resolve(loadingTransaction(queryCheck.menu, typetr, ctx)), 5000));
         console.log(validate);
         if(validate['order_status'] === 'Failed'){
-            let txt = JSON.stringify(validate['reason'])
-            throw new GraphQLError(`Transaction is Failed ${txt} aren't enough`)
-        }else{
-            console.log('test validate',validate);
+            throw new GraphQLError(validate['reason'])
+        }else if(validate['order_status'] === 'Success'){
+            let crediteRemain = ctx.user.credite - validate['total_price']
+            await userModel.updateOne({_id: ctx.user._id}, {$set: {credite:crediteRemain}});
             message = "Transaction is success"
         }
         secParam["$set"] = {
@@ -376,7 +391,6 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
         secParam,
         thirdParam
     )
-    console.log('uptotest', recipe_id);
 
     return {message, data:queryUpdate}
 }
@@ -477,11 +491,40 @@ const MenuOffers = async(parent, args, ctx) => {
     return {message: `${menuHighlightMessage} and ${specialOfferMessage}`, menuHighlight: menuHighlightQueries, specialOffer: recipeQueries}
 }
 
+const FinanceManagement = async(parent, {limit, page}, ctx) => {
+    if(ctx.user.role === "Admin"){
+        const queryFinance = await transactionModel.aggregate([
+            {
+                $match: {
+                    status: "Active",
+                    order_status: "Success"
+                }
+            }
+        ])
+        if(!queryFinance){
+            throw new GraphQLError("No Transaction history yet")
+        }
+    
+        let balance = 0
+    
+        for(let transaction of queryFinance){
+            balance += transaction.total_price
+        }
+    
+        console.log(queryFinance);
+    
+        return {balance}
+    }else{
+        throw new GraphQLError("You dont have access to FinanceManagement")
+    }
+}
+
 module.exports = {
     Query:{
         GetAllTransaction,
         GetOneTransaction,
-        MenuOffers
+        MenuOffers,
+        FinanceManagement
     },
     Mutation: {
         CreateTransaction,

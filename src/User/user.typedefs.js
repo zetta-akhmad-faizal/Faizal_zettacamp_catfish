@@ -19,6 +19,8 @@ let userTypeDefs = gql`
         role: roleUser
         page: Int 
         limit: Int
+        credite: Int,
+        code:String
     }
     type userScheme{
         _id: ID
@@ -29,6 +31,12 @@ let userTypeDefs = gql`
         status: String
         role:String
         usertype: [usertypes]
+        credite: Int
+    }
+    type verificationScheme{
+        user_id: ID
+        code: String
+        isUsed: Boolean
     }
     type usertypes{
         name: String,
@@ -53,6 +61,8 @@ let userTypeDefs = gql`
         Login(data:userParams): responseAtlogin
         UpdateUser(data: userParams): responseAtUser,
         DeleteUser(data: userParams): responseAtUser
+        saveVerification(data: userParams): responseAtUser
+        ForgetPassword(data:userParams): responseAtUser
     }
     type Query{
         getAllUsers(data:userParams): responseAtUserList

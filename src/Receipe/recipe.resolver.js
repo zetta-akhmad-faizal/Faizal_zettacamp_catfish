@@ -181,7 +181,7 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
     }
     let containerParams3 = {new: true}
     let containerParams2Set = {}
-    let arr;
+    let obj = {};
     let message;
     
     //edit publish
@@ -193,18 +193,17 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
             published = false
             message = "Recipe is unpublished"
         }
-        containerParams2Set["$set"] = {
-            published
-        }
+        obj.published = published
     }
     if(ingredients){
         let mymap = new Map();
  
-        ingredients = ingredients.filter(el => {
+        let unique = ingredients.filter(el => {
             const val = mymap.get(el.ingredient_id);
             if(val) {
-                if(el.stock_used < val) {
-                    mymap.delete(el.name);
+                if(el.stock_used > val) {
+                    mymap.delete(el.ingredient_id);
+                    mymap.delete(el.stock_used);
                     mymap.set(el.ingredient_id, el.stock_used);
                     return true;
                 } else {
@@ -214,15 +213,7 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
             mymap.set(el.ingredient_id, el.stock_used);
             return true;
         });
-
-        await recipeModel.findOneAndUpdate(
-            {_id: mongoose.Types.ObjectId(_id)},
-            {
-                $set: {
-                    ingredients: [...ingredients]
-                }
-            }
-        )
+        obj.ingredients = [...unique]
     }
 
     if(!discount){
@@ -238,11 +229,16 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
                 link_recipe = 'https://drive.google.com/uc?export=view&id=' + matcher[1]
             }
         }
-        containerParams2Set["$set"] = {
-            recipe_name, price, link_recipe, discount
-        }
+        // containerParams2Set["$set"] = {recipe_name, price, link_recipe, discount}
+        obj.recipe_name =  recipe_name
+        obj.price = price
+        obj.link_recipe = link_recipe 
+        obj.discount = discount
+
         message="Recipe is updated"
     }
+
+    containerParams2Set["$set"] = obj
 
     //remove the ingredient who has exist
     if(ingredient_id){
@@ -256,7 +252,6 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
         }
         message="Ingredient is deleted"
     }
-    console.log(ingredient_id)
     let updateQueries = await recipeModel.findOneAndUpdate(
         {_id: mongoose.Types.ObjectId(_id)},
         containerParams2Set,

@@ -1,8 +1,9 @@
 const {recipeModel}= require('../Receipe/recipe.index');
-const {ingredientModel} = require('../Ingredients/ingredient.index')
+const {ingredientModel} = require('../Ingredients/ingredient.index');
+const {userModel} = require("../User/user.index")
 const {mongoose} = require('mongoose');
 
-let validateStockIngredient = async(menu,type_transaction) => {
+let validateStockIngredient = async(menu,type_transaction, ctx) => {
     let arr = [];
     let arrReason = []
     let totalPrice = []
@@ -31,16 +32,25 @@ let validateStockIngredient = async(menu,type_transaction) => {
             }
         }
     }
-    obj['reason'] = arrReason
+
     obj['total_price'] = totalPrice.reduce((accumVariable, curValue) => accumVariable + curValue);
-    if(type_transaction === "Draft"){
-        obj['order_status'] = "Draft"
-    }else if(type_transaction === "Checkout"){
-        if(arr.includes(false) === false){
-            obj['order_status'] = 'Success';
-            await reduceIngredientStock(arrIngredient)
-        }else{
-            obj['order_status'] = 'Failed'
+
+    let users = await userModel.findOne({_id: ctx.user._id});
+
+    if(users.credite < obj['total_price']){
+        obj['order_status'] = "Failed"
+        obj['reason'] = `Your balance isn't sufficient to purchase this menu`
+    }else{
+        if(type_transaction === "Draft"){
+            obj['order_status'] = "Draft"
+        }else if(type_transaction === "Checkout"){
+            if(arr.includes(false) === false){
+                obj['order_status'] = 'Success';
+                await reduceIngredientStock(arrIngredient)
+            }else{
+                obj['order_status'] = 'Failed'
+                obj['reason'] = `These menu ${JSON.stringify(arrReason)} can't be ordered because the ingredients stock of out`
+            }
         }
     }
     return obj

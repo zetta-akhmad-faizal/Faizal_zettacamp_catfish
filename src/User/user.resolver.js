@@ -1,8 +1,12 @@
-const {userModel} = require('./user.model');
+const {userModel, verificationModel} = require('./user.model');
 const {GraphQLError} = require('graphql');
 const {hash, compare} = require('bcrypt');
 const {mongoose} = require('mongoose');
 const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer');
+const randomstring = require("randomstring");
+const dotenv = require('dotenv');
+dotenv.config()
 
 const CreateUser = async(parent, {data:{first_name, last_name, email, password, role, status}}, ctx) => {
     try{
@@ -340,11 +344,10 @@ const getOneUser = async(parent, {data:{_id, email}}, ctx) => {
     }
 }
 
-const UpdateUser = async(parent, {data:{_id, email, first_name, last_name, password}}, ctx) => {
-    if(!_id){
-        throw new GraphQLError("_id is null")
-    }
-    
+const UpdateUser = async(parent, {data:{email, credite, password}}, ctx) => {
+    let setObj = {};
+    let message;
+
     let emailReg = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 
     if(email){
@@ -356,27 +359,104 @@ const UpdateUser = async(parent, {data:{_id, email, first_name, last_name, passw
         if(!email.match(emailReg)){
             return {message: "Email incorrect"}
         }
+        setObj.email = email
     }
     if(password){
         password = await hash(password, 10);
+        setObj.password = password
     }
-    let converterId = mongoose.Types.ObjectId(_id)
+    if(credite){
+        setObj.credite = ctx.user.credite + credite
+        message = "Top Up is successfuly"
+    }
+
     let updateQueries = await userModel.findOneAndUpdate(
-        {_id: converterId, status: "Active"},
+        {_id: ctx.user._id, status: "Active"},
         {
-            $set: {
-                email,
-                first_name,
-                last_name,
-                password
-            }
+            $set: setObj
         },
         {new: true}
     )
     if(!updateQueries){
         throw new GraphQLError("User isn't updated")
     }
-    return {message: "User is updated", data: updateQueries}
+    return {message, data: updateQueries}
+}
+
+const saveVerification = async(parent, {data: {email}}, ctx) => {
+    if(!email){
+        throw new GraphQLError("For sign your account, email is important");
+    }
+
+    let message;
+    let generate = randomstring.generate(4);
+
+    let userCheck = await userModel.findOne({email});
+
+    if(!userCheck){
+        throw new GraphQLError("Your account isn't found")
+    }
+
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        service: 'gmail',
+        port: 587,
+        secure: false,
+        auth: {
+        user: 'akhmadfaizal13@gmail.com',
+        pass: `${process.env.PASS}`
+        }
+    });
+
+    let mailOptions = {
+        from: 'akhmadfaizal13@gmail.com',
+        to: userCheck.email,
+        subject: 'Verification forget password',
+        text: `Please fill the form with this code:  ${generate}`
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+        console.log(error);
+        } else {
+        console.log('Email sent: ' + info.response);
+        }
+    });
+
+    let savingCode = new verificationModel({code: generate, user_id: userCheck._id})
+    await savingCode.save()
+    message = "Verification code has been sent to your email"
+        
+
+    return {message, data:userCheck}
+}
+
+const ForgetPassword = async(parent, {data: {email ,code, password}}, ctx) => {
+    if(!code || !password){
+        throw new GraphQLError("Code and password field must be filled")
+    }
+
+    if(!email){
+        throw new GraphQLError("Session is the end")
+    }
+
+    let new_password = await hash(password, 10);
+    let checkUser = await userModel.findOne({email});
+    let checkCode = await verificationModel.findOne({user_id: checkUser._id, code, isUsed:false})
+
+    if(!checkCode){
+        throw new GraphQLError("Code isn't detected")
+    }
+    await userModel.updateOne(
+        {email},
+        {
+            $set: {
+                password: new_password
+            }
+        }
+    )
+
+    return {message: "Password is changed"}
 }
 
 const DeleteUser = async(parent, {data: {_id}}, ctx) => {
@@ -409,7 +489,9 @@ module.exports = {
         CreateUser,
         Login,
         UpdateUser,
-        DeleteUser
+        DeleteUser,
+        saveVerification,
+        ForgetPassword 
     }, 
     Query: {
         getAllUsers,

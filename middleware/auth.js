@@ -38,10 +38,11 @@ module.exports = {
         GetOneRecipe: Authorization,
         GetAllTransaction: Authorization,
         GetOneTransaction: Authorization,
-        // GetAllrecipes:Authorization
+        FinanceManagement: Authorization
     },
     Mutation: {
         DeleteUser: Authorization,
+        UpdateUser: Authorization,
         CreateIngredient: Authorization,
         UpdateIngredient: Authorization,
         DeleteIngredient: Authorization,

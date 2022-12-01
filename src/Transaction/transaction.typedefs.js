@@ -45,6 +45,9 @@ let transactionTypeDefs = gql`
         status: String
         total_price: Int
     }
+    type responseFinance{
+        balance: Int
+    }
     type newTransactionPaginate{
         transaction_data: [transactionScheme]
         info_page: [newSchemeCount]
@@ -67,6 +70,7 @@ let transactionTypeDefs = gql`
         GetOneTransaction(data: transactionParams): responseAtTransaction
         TransactionHistory: [transactionScheme]
         MenuOffers: responseMenuOffer
+        FinanceManagement(data: transactionParams): responseFinance
     }
     type Mutation{
         CreateTransaction(data: transactionParams): responseAtTransaction
