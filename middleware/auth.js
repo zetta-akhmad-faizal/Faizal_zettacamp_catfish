@@ -42,7 +42,7 @@ module.exports = {
     },
     Mutation: {
         DeleteUser: Authorization,
-        UpdateUser: Authorization,
+        TopUp: Authorization,
         CreateIngredient: Authorization,
         UpdateIngredient: Authorization,
         DeleteIngredient: Authorization,

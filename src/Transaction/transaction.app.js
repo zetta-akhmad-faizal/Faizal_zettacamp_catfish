@@ -39,7 +39,7 @@ let validateStockIngredient = async(menu,type_transaction, ctx) => {
 
     if(users.credite < obj['total_price']){
         obj['order_status'] = "Failed"
-        obj['reason'] = `Your balance isn't sufficient to purchase this menu`
+        obj['reason'] = `Your credite isn't sufficient to purchase this menu`
     }else{
         if(type_transaction === "Draft"){
             obj['order_status'] = "Draft"

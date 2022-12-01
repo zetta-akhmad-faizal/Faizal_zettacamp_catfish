@@ -344,7 +344,7 @@ const getOneUser = async(parent, {data:{_id, email}}, ctx) => {
     }
 }
 
-const UpdateUser = async(parent, {data:{email, credite, password}}, ctx) => {
+const TopUp = async(parent, {data:{email, credite, password}}, ctx) => {
     let setObj = {};
     let message;
 
@@ -488,7 +488,7 @@ module.exports = {
     Mutation: {
         CreateUser,
         Login,
-        UpdateUser,
+        TopUp,
         DeleteUser,
         saveVerification,
         ForgetPassword 

@@ -39,33 +39,6 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
     let skip
 
     let date_now = new Date();
-    let end_date_order = date_now.getDate() - 7;
-    let end_month_order = date_now.getMonth()+1;
-    let end_year_order = date_now.getFullYear();
-
-    let last_order_date = date_now.getDate() + 1;
-    let last_order_month = date_now.getMonth();
-    let last_order_year = date_now.getFullYear();
-    
-    if(last_order_date > 29){
-        last_order_month += 1
-    }
-    if(last_order_month > 12){
-        last_order_year += 1
-    }
-    if(end_date_order < 0){
-        end_month_order -= 1
-    }
-    if(end_month_order < 1){
-        end_year_order -= 1
-    }
-    let start_order = new Date(`${end_month_order}/${end_date_order}/${end_year_order}, 00:00:00.000Z`);
-    let last_order = new Date(`${last_order_month}/${last_order_date}/${last_order_year}, 00:00:00.000Z`);
-
-    matchVal['order_date'] ={
-        $gte: start_order,
-        $lte: last_order
-    }
 
     let recipesLookup = {
         $lookup: {
@@ -174,6 +147,7 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
             }
         }
     ]);
+    console.log(matchObj);
     if(!queriesGetAll){
         throw new GraphQLError("No transaction show")
     }

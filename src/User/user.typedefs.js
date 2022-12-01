@@ -59,7 +59,7 @@ let userTypeDefs = gql`
     type Mutation{
         CreateUser(data:userParams): responseAtUser
         Login(data:userParams): responseAtlogin
-        UpdateUser(data: userParams): responseAtUser,
+        TopUp(data: userParams): responseAtUser,
         DeleteUser(data: userParams): responseAtUser
         saveVerification(data: userParams): responseAtUser
         ForgetPassword(data:userParams): responseAtUser
