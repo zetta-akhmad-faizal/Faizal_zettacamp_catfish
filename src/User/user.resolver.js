@@ -437,7 +437,7 @@ const ForgetPassword = async(parent, {data: {email ,code, password}}, ctx) => {
     }
 
     if(!email){
-        throw new GraphQLError("Session is the end")
+        throw new GraphQLError("Email field must be filled")
     }
 
     let new_password = await hash(password, 10);

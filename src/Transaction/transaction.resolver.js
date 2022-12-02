@@ -413,10 +413,11 @@ const MenuOffers = async(parent, args, ctx) => {
     let menuHighlightQueries = await recipeModel.aggregate([
         {
             $match: {
+                published:true,
                 discount: {
                     $gt: 0
                 },
-                status: "Active"
+                status: "Active",
             }
         },
         {
@@ -428,7 +429,7 @@ const MenuOffers = async(parent, args, ctx) => {
             $limit: 3
         }
     ])
-    let specialOfferQueries = await transactionModel.find();
+    let specialOfferQueries = await transactionModel.find({order_status:"Success"});
     
     if(!specialOfferQueries){
         specialOfferMessage = "Special Offer isn't availability"
@@ -460,8 +461,7 @@ const MenuOffers = async(parent, args, ctx) => {
             }
         }
     ])
-    console.log('mh',menuHighlightQueries);
-    console.log('so', recipeQueries)
+    
     return {message: `${menuHighlightMessage} and ${specialOfferMessage}`, menuHighlight: menuHighlightQueries, specialOffer: recipeQueries}
 }
 
