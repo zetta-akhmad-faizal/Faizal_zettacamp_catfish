@@ -92,8 +92,8 @@ const server = new ApolloServer({
 let port = process.env.PORT
 server.start().then(res => {
     server.applyMiddleware({app})
-    app.listen(port, ()=> {
-        console.log(`App running on ${port}`)
+    app.listen(8000, ()=> {
+        console.log(`App running on 8000`)
     })
 })
 
