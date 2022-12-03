@@ -317,8 +317,8 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
             arr.push({
                 recipe_id: indexOfMenu.recipe_id._id,
                 amount: indexOfMenu.amount,
-                total_price: queryCheck.total_price,
-                price: indexOfMenu.recipe_id.price - (indexOfMenu.recipe_id.price * (indexOfMenu.recipe_id.discount/100))
+                discount: indexOfMenu.recipe_id.discount,
+                price: indexOfMenu.recipe_id.price
             })
         }
 
@@ -326,7 +326,7 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
         arr.map(val => {
             if(val.recipe_id.toString() === recipe_id){
                 val.amount = amount
-                val.total_price = val.amount*val.price
+                val.total_price = val.amount*(val.price - (val.price * (val.discount/100)))
             }
         })
         
