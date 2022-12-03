@@ -299,6 +299,7 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
     });
 
     if(recipe_id && amount && note === undefined){
+        console.log('note undef')
         secParam["$set"] = {
             total_price: queryCheck.total_price - (price_var*amount)
         }
@@ -311,6 +312,7 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
     }
 
     if(recipe_id && amount && note || note === ""){
+        console.log("note str")
         let arr = [];
 
         for(let indexOfMenu of queryCheck.menu){
