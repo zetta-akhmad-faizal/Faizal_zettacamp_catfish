@@ -329,7 +329,7 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
             if(val.recipe_id.toString() === recipe_id){
                 val.amount = amount
             }
-             val.total_price = val.amount*(val.price - (val.price * (val.discount)))
+             val.total_price = val.amount*(val.price - (val.price * (val.discount/100)))
              return val.total_price
         })
         
