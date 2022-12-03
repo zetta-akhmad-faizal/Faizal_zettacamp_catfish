@@ -318,6 +318,7 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
                 recipe_id: indexOfMenu.recipe_id._id,
                 amount: indexOfMenu.amount,
                 discount: indexOfMenu.recipe_id.discount,
+                total_price: queryCheck.total_price,
                 price: indexOfMenu.recipe_id.price
             })
         }
