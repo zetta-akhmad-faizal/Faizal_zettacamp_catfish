@@ -318,21 +318,20 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
                 recipe_id: indexOfMenu.recipe_id._id,
                 amount: indexOfMenu.amount,
                 discount: indexOfMenu.recipe_id.discount > 0 ? indexOfMenu.recipe_id.discount: 0,
-                total_price: queryCheck.total_price,
                 price: indexOfMenu.recipe_id.price
             })
         }
 
         console.log('old', arr);
-        arr.map(val => {
+        let totalPrice = arr.map(val => {
             if(val.recipe_id.toString() === recipe_id){
                 val.amount = amount
-                val.total_price = val.amount*(val.price - (val.price * (val.discount/100)))
             }
+             val.total_price = val.amount*(val.price - (val.price * (val.discount)))
+             return val.total_price
         })
         
-        console.log('new', arr);
-        let totalPrice = arr.map(val => val.total_price);
+       
         console.log('new',totalPrice.reduce((arr, num) => arr+num));
 
         secParam["$set"] = {
