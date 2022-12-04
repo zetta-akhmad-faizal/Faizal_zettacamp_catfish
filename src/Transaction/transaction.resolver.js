@@ -281,7 +281,8 @@ let loadingTransaction = async(menu, typetr, ctx) => {
 
 const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}}, ctx) => {
     let secParam = {}
-    let price_var = 0
+    let price_var = 0;
+    let discount = 0;
     let message;
     let thirdParam = {new:true}
 
@@ -295,13 +296,14 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
     queryCheck.menu.map(val => {
         if(val.recipe_id._id.toString() === recipe_id){
             price_var += val.recipe_id.price
+            discount += val.recipe_id.discount
         }
     });
 
     if(recipe_id && amount && note === undefined){
         console.log('note undef')
         secParam["$set"] = {
-            total_price: queryCheck.total_price - (price_var*amount)
+            total_price: queryCheck.total_price - (amount*(price_var - (price_var*(discount/100))))
         }
         secParam["$pull"] = {
             menu: {
