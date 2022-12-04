@@ -281,7 +281,8 @@ let loadingTransaction = async(menu, typetr, ctx) => {
 
 const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}}, ctx) => {
     let secParam = {}
-    let price_var = 0
+    let price_var = 0;
+    let discount = 0;
     let message;
     let thirdParam = {new:true}
 
@@ -295,12 +296,13 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
     queryCheck.menu.map(val => {
         if(val.recipe_id._id.toString() === recipe_id){
             price_var += val.recipe_id.price
+            discount += val.recipe_id.discount
         }
     });
 
     if(recipe_id && amount && note === undefined){
         secParam["$set"] = {
-            total_price: queryCheck.total_price - (price_var*amount)
+            total_price: queryCheck.total_price - (amount*(price_var - (price_var*(discount/100))))
         }
         secParam["$pull"] = {
             menu: {
@@ -317,21 +319,21 @@ const UpdateTransaction = async(parent, {data: {recipe_id, amount, typetr, note}
             arr.push({
                 recipe_id: indexOfMenu.recipe_id._id,
                 amount: indexOfMenu.amount,
-                total_price: indexOfMenu.amount * indexOfMenu.recipe_id.price,
-                price: indexOfMenu.recipe_id.price - (indexOfMenu.recipe_id.price * (indexOfMenu.recipe_id.discount/100))
+                discount: indexOfMenu.recipe_id.discount > 0 ? indexOfMenu.recipe_id.discount: 0,
+                price: indexOfMenu.recipe_id.price
             })
         }
 
         console.log('old', arr);
-        arr.map(val => {
+        let totalPrice = arr.map(val => {
             if(val.recipe_id.toString() === recipe_id){
                 val.amount = amount
-                val.total_price = val.amount*val.price
             }
+             val.total_price = val.amount*(val.price - (val.price * (val.discount)))
+             return val.total_price
         })
         
-        console.log('new', arr);
-        let totalPrice = arr.map(val => val.total_price);
+       
         console.log('new',totalPrice.reduce((arr, num) => arr+num));
 
         secParam["$set"] = {
