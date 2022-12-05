@@ -433,7 +433,7 @@ const MenuOffers = async(parent, args, ctx) => {
             $limit: 3
         }
     ])
-    let specialOfferQueries = await transactionModel.find({order_status:"Success"});
+    let specialOfferQueries = await transactionModel.find({order_status:"Success", status: "Active"});
     
     if(!specialOfferQueries){
         specialOfferMessage = "Special Offer isn't availability"
