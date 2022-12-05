@@ -429,7 +429,7 @@ const MenuOffers = async(parent, args, ctx) => {
             $limit: 3
         }
     ])
-    let specialOfferQueries = await transactionModel.find({order_status:"Success"});
+    let specialOfferQueries = await transactionModel.find({order_status:"Success", status: "Active"});
     
     if(!specialOfferQueries){
         specialOfferMessage = "Special Offer isn't availability"
@@ -453,7 +453,7 @@ const MenuOffers = async(parent, args, ctx) => {
     
     let recipeQueries = await recipeModel.aggregate([
         {
-            $match: {_id: {$in: randomArrays}}
+            $match: {_id: {$in: randomArrays}, status: "Active", published: true}
         },
         {
             $sort: {
