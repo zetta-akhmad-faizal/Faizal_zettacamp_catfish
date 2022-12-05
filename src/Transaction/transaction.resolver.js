@@ -457,7 +457,7 @@ const MenuOffers = async(parent, args, ctx) => {
     
     let recipeQueries = await recipeModel.aggregate([
         {
-            $match: {_id: {$in: randomArrays}}
+            $match: {_id: {$in: randomArrays}, status: "Active", published: true}
         },
         {
             $sort: {
