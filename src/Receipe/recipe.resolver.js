@@ -96,7 +96,7 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe
     }else if(Number.isInteger(price) !== true){
         throw new GraphQLError("Stock must be integer")
     }
-    discount = discount ? parseInt(0): parseInt(discount)
+    discount = discount ? parseInt(discount) : 0  
 
     let container; let obj = {};
 
@@ -114,9 +114,9 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe
 
     let matcherDrive = link_recipe.match(/drive/)
     if(matcherDrive){
-        let matcher = link_recipe.match( /d\/([A-Za-z0-9\-]+)/ )
+        let matcher = link_recipe.split("/")
         if(matcher){
-            link_recipe = 'https://drive.google.com/uc?export=view&id=' + matcher[1]
+            link_recipe = 'https://drive.google.com/uc?export=view&id=' + matcher[5]
         }
     }
 
@@ -182,7 +182,7 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
     let obj = {};
     let message;
 
-    discount = discount ? parseInt(0): parseInt(discount)
+    discount = discount ? parseInt(discount) : 0  
     
     //edit publish
     if(published){
@@ -224,9 +224,9 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
     if(recipe_name || price || link_recipe){
         let matcherDrive = link_recipe.match(/drive/)
         if(matcherDrive){
-            let matcher = link_recipe.match( /d\/([A-Za-z0-9\-]+)/ )
+            let matcher = link_recipe.split("/")
             if(matcher){
-                link_recipe = 'https://drive.google.com/uc?export=view&id=' + matcher[1]
+                link_recipe = `https://drive.google.com/uc?export=view&id=${matcher[5]}` 
             }
         }
         // containerParams2Set["$set"] = {recipe_name, price, link_recipe, discount}
