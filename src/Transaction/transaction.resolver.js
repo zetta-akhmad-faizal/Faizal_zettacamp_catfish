@@ -437,15 +437,15 @@ const DeleteTransaction = async(parent, {data:{_id}}, ctx) => {
 
 let randomArray = (arrays) => {
     let arrSet = new Set(arrays);
-    let [...arrPlaylist] = arrSet;
+    let [...arrRecipe] = arrSet;
     let arr = [];
-    while(arrPlaylist.length !== 0){
-        let randomIndex = Math.floor(Math.random() * arrPlaylist.length);
-        arr.push(arrPlaylist[randomIndex]);
-        arrPlaylist.splice(randomIndex, 1);
+    while(arrRecipe.length !== 0){
+        let randomIndex = Math.floor(Math.random() * arrRecipe.length);
+        arr.push(arrRecipe[randomIndex]);
+        arrRecipe.splice(randomIndex, 1);
     }
-    arrPlaylist = arr;
-    return arrPlaylist;
+    arrRecipe = arr;
+    return arrRecipe;
 }
 
 const MenuOffers = async(parent, args, ctx) => {
