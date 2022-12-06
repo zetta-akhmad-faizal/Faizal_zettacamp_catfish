@@ -7,7 +7,7 @@ let recipeTypeDefs = gql`
     }
     input recipeParams{
         _id: ID
-        discount: Int
+        discount: String
         recipe_name:String
         ingredients: [recipeIngredientsParams]
         status: statusRecipes
