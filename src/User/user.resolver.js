@@ -339,9 +339,6 @@ const getOneUser = async(parent, {data:{_id, email}}, ctx) => {
         }
         return {message: `User ${email} is fetched`, data: queries}
     }
-    if(!email && !_id){
-       throw new GraphQLError("This function filtering only")
-    }
 }
 
 const TopUp = async(parent, {data:{email, credite, password}}, ctx) => {
