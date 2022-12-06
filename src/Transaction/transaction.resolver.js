@@ -40,6 +40,41 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
 
     let date_now = new Date();
 
+    let lte_date = date_now.getDate() + 1;
+    let lte_month = date_now.getMonth() + 1
+    let lte_year = date_now.getFullYear()
+    
+    if(lte_date > 30){
+        lte_date -= 30
+        lte_month += 1
+    }
+
+    if(lte_month > 12){
+        lte_month -= 12
+        lte_year += 1
+    }
+
+    let gte_date = date_now.getDate() - 7;
+    let gte_month = date_now.getMonth() + 1;
+    let gte_year = date_now.getFullYear();
+
+    if(gte_date < 1){
+        gte_date += 30
+        gte_month -= 1
+    }
+
+    if(gte_month < 1){
+        gte_year -= 1
+    }
+    if(gte_date < 10){
+        gte_date = `0${gte_date}`
+    }
+    if(lte_date < 10){
+        lte_date = `0${lte_date}`
+    }
+    let gte_var = new Date(`${gte_year}-${gte_month}-${gte_date}T00:00:00.000Z`)
+    let lte_var = new Date(`${lte_year}-${lte_month}-${lte_date}T17:00:00.000Z`)
+
     let recipesLookup = {
         $lookup: {
             from: 'recipes',
@@ -105,6 +140,10 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
             matchVal["order_status"] = "Draft"
         }else{
             matchVal["order_status"] = {$ne: "Draft"}
+            matchVal["order_date"] = {
+                $gte: gte_var,
+                $lte: lte_var
+            }
         }
     }else if(ctx.user.role === "User"){
         skip = page > 0 ? (page-1)*limit:0;
@@ -114,6 +153,10 @@ const GetAllTransaction = async(parent,{data: {limit, page,last_name_user, recip
         }else{
             matchVal["user_id"] = ctx.user._id
             matchVal["order_status"] = {$ne: "Draft"}
+            matchVal["order_date"] = {
+                $gte: gte_var,
+                $lte: lte_var
+            }
         }
     }
 
