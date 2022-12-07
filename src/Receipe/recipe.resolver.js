@@ -112,7 +112,7 @@ const CreateRecipe = async(parent, {data: {recipe_name, ingredients, link_recipe
     })
     ingredients = container.map(id => obj[id])
 
-    let matcherDrive = link_recipe.match(/drive/)
+    let matcherDrive = link_recipe.match(/usp=/)
     if(matcherDrive){
         let matcher = link_recipe.split("/")
         if(matcher){
@@ -222,7 +222,7 @@ const UpdateRecipe = async(parent, {data: {_id, recipe_name, ingredients, price,
 
     //edit new ingredients to ingredient who has exist
     if(recipe_name || price || link_recipe){
-        let matcherDrive = link_recipe.match(/drive/)
+        let matcherDrive = link_recipe.match(/usp=/)
         if(matcherDrive){
             let matcher = link_recipe.split("/")
             if(matcher){
